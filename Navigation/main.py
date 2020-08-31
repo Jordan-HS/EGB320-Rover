@@ -1,5 +1,5 @@
 # Import the QUT rover bot library
-from roverbot_lib import *
+from dependencies.roverbot_lib import *
 import setup
 from math import radians, degrees
 
@@ -24,8 +24,6 @@ try:
             for sample in samplesRB:
                 sampleRange = sample[0]
                 sampleBearing = sample[1]
-                print("\nSample dist: " + str(sampleRange))
-                print("Sample bearing: " + str(degrees(sampleBearing)))
 
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
