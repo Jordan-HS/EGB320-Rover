@@ -1,6 +1,7 @@
 # Import the QUT rover bot library
 from roverbot_lib import *
 import setup
+from math import radians, degrees
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
@@ -18,21 +19,23 @@ try:
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
         # Check to see if the sample is within the camera's FOV
-        if samplesRB != None:
+        if samplesRB is not None:
             # loop through each sample detected using Pythonian way
             for sample in samplesRB:
                 sampleRange = sample[0]
                 sampleBearing = sample[1]
+                print("\nSample dist: " + str(sampleRange))
+                print("Sample bearing: " + str(degrees(sampleBearing)))
 
         # Check to see if any obstacles are within the camera's FOV
-        if obstaclesRB != None:
+        if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
             for obstacle in obstaclesRB:
                 obstacleRange = obstacle[0]
                 obstacleBearing = obstacle[1]
 
         # Check to see if any obstacles are within the camera's FOV
-        if rocksRB != None:
+        if rocksRB is not None:
             # loop through each obstacle detected using Pythonian way
             for obstacle in obstaclesRB:
                 obstacleRange = obstacle[0]
@@ -40,13 +43,13 @@ try:
 
         # Get Detected Wall Points
         wallPoints = lunarBotSim.GetDetectedWallPoints()
-        if wallPoints == None:
-            print("To close to the wall")
-        else:
-            print("\nDetected Wall Points")
-            # print the range and bearing to each wall point in the list
-            for point in wallPoints:
-                print("\tWall Point (range, bearing): %0.4f, %0.4f"%(point[0], point[1]))
+        # if wallPoints is None:
+        #     print("To close to the wall")
+        # else:
+        #     print("\nDetected Wall Points")
+        #     # print the range and bearing to each wall point in the list
+        #     for point in wallPoints:
+        #         print("\tWall Point (range, bearing): %0.4f, %0.4f"%(point[0], point[1]))
 
 
         #do something here with the robot
