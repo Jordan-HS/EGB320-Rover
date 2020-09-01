@@ -1,4 +1,4 @@
-from dependencies.roverbot_lib import *
+from roverbot_lib import *
 
 
 def init_sim():

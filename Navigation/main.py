@@ -1,5 +1,5 @@
 # Import the QUT rover bot library
-from dependencies.roverbot_lib import *
+from roverbot_lib import *
 import setup
 from math import radians, degrees
 
