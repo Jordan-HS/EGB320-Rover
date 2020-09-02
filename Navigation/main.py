@@ -13,6 +13,8 @@ try:
     lunarBotSim.StartSimulator()
 
     while (True):
+        delta_x = 0
+        delta_y = 0
         targetVel = [0,0]
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
@@ -28,7 +30,7 @@ try:
                 if sampleRange < 0.035 and not lunarBotSim.SampleCollected():
                     lunarBotSim.CollectSample()
                 elif not lunarBotSim.SampleCollected():
-                    delta_X, delta_y = getForce("sample", sampleRange, sampleBearing)
+                    delta_x, delta_y = getForce("sample", sampleRange, sampleBearing)
                 elif lunarBotSim.SampleCollected():
                     forward_vel = -1
                     radial_vel = 0
@@ -41,6 +43,9 @@ try:
             for obstacle in obstaclesRB:
                 obstacleRange = obstacle[0]
                 obstacleBearing = obstacle[1]
+
+                # Obstacle avoidance
+                delta_x, delta_y = getForce("obstacle", obstacleRange, obstacleBearing, [delta_x, delta_y])
 
         # Check to see if any obstacles are within the camera's FOV
         if rocksRB is not None:
@@ -66,7 +71,7 @@ try:
             forward_vel = 0.1
         elif not lunarBotSim.SampleCollected():
             # [forward vel m/s, rotational vel rads/s]
-            radial_vel, forward_vel = calculateMovement(delta_X, delta_y)
+            radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
         lunarBotSim.SetTargetVelocities(forward_vel, radial_vel)
 
 
