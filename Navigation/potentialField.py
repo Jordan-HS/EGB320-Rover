@@ -21,6 +21,16 @@ def getForce(object_type, distance, bearing, force=None):
         elif distance > sample_spread + sample_radius:
             delta_x = (alpha * sample_spread * math.cos(bearing))
             delta_y = (alpha * sample_spread * math.cos(bearing))
+    elif object_type == "lander":
+        if distance < sample_radius:
+            delta_x = 0
+            delta_y = 0
+        elif sample_radius <= distance <= sample_spread+sample_radius:
+            delta_x = (alpha * (distance - sample_radius)*math.cos(bearing))
+            delta_y = (alpha * (distance - sample_radius)*math.sin(bearing))
+        elif distance > sample_spread + sample_radius:
+            delta_x = (alpha * sample_spread * math.cos(bearing))
+            delta_y = (alpha * sample_spread * math.cos(bearing))
     elif object_type == "obstacle":
         if distance <= obs_spread + obs_radius:
             delta_x = (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
