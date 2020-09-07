@@ -70,12 +70,9 @@ def shape_filter(image):
     mask = cv2.dilate(mask, None, iterations=3)
     return mask
     
-def cnt_img(HSV_masks):
-
-    
-    for image in HSV_masks
-    
-        contours,_ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+def contour_obs(HSV_masks): 
+    for mask in HSV_masks:
+        contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         contours_poly = [None]*len(contours)
         boundRect = [None]*len(contours)
@@ -87,22 +84,23 @@ def cnt_img(HSV_masks):
             boundRect[i] = cv2.boundingRect(contours_poly[i])
             centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])    
         
-        for i in range(len(contours)):
-            cv2.rectangle(image, (int(boundRect[i][0]), int(boundRect[i][1])), \
-              (int(boundRect[i][0]+boundRect[i][2]), int(boundRect[i][1]+boundRect[i][3])), (255, 0, 0), 2)
-            cv2.putText(image, 'Obstacle', (int(boundRect[i][0]), int(boundRect[i][1])), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 0, 0), 2)
     return image
 
-def tracking(new_obstacles, new_obstacles)
+def tracking_obs(new_obstacles, new_obstacles):
     if old_obstacles is None:
         return None
 
-    # ID, object, distance, angle
+    # ID, object, distance, angle, 
 
     return obstacle_position
     
-    
-    
+ def result_image(image, new_obstacles)
+    for i in range(len(contours)):
+            cv2.rectangle(image, (int(boundRect[i][0]), int(boundRect[i][1])), \
+              (int(boundRect[i][0]+boundRect[i][2]), int(boundRect[i][1]+boundRect[i][3])), (255, 0, 0), 2)
+            cv2.putText(image, 'Obstacle', (int(boundRect[i][0]), int(boundRect[i][1])), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 0, 0), 2)   
+    return image
+
 # COMMENT
 if __name__ == '__main__':
 
@@ -123,15 +121,16 @@ if __name__ == '__main__':
         #result = cv2.bitwise_and(frame, frame, mask=mask)
         
         #cv2.imshow('result', result)
-        cv2.imshow('blue_mask', HSV_masks[0])
-        new_obstacles = cnt_img(HSV_masks[0])
+        #cv2.imshow('blue_mask', HSV_masks[0])
+        new_obstacles = contour_obs(HSV_masks[0])
         
         obstacle_position = tracking(new_obstacles, old_obstacles)
         old_obstalces = new_obstacles
         
-        cv2.imshow('cnt_images', cnt_images)
+        
+        cv2.imshow('cnt_images', contour_obs)
 
-       
+       if image_c
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.imwrite('results_img_03.jpg',result)
             break
