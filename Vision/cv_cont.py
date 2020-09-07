@@ -9,19 +9,19 @@ import random as rng
 # HSV range values for targets
 # To call: HSV_BLUE[0] = [90, 66, 0]
 
-HSV_BLUE = np.array([[90, 66, 0], [113, 255, 255]])
-HSV_GREEN = np.array([[26, 53, 0], [56, 255, 255]])
-HSV_YELLOW = np.array([[15, 59, 90], [39, 255, 255]])
+#HSV_BLUE = np.array([[90, 66, 0], [113, 255, 255]])
+#HSV_GREEN = np.array([[26, 53, 0], [56, 255, 255]])
+#HSV_YELLOW = np.array([[15, 59, 90], [39, 255, 255]])
 # Orange uses the RGB spectrum
-HSV_ORANGE = np.array([[104, 77, 48], [122, 255, 255]])
+#HSV_ORANGE = np.array([[104, 77, 48], [122, 255, 255]])
 
 HSV_thresh = np.array([[[90, 66, 0], [113, 255, 255]],[[26, 53, 0], [56, 255, 255]],[[15, 59, 90], [39, 255, 255]],[[104, 77, 48], [122, 255, 255]]]);
 
 # Size dimensions for obstacles (mm)
-CRASH = 0;
-ROCK = 0;
-SAMPLE = 0;
-LANDER = 0;
+Satelite = 150;    # 150mm x 150mm
+Rock = 75;      # 75mm x 75mm
+Sample = 55;    # 55mm ball
+Lander = 0;
 
 # COMMENT
 class pi_cam_setup:
@@ -38,11 +38,10 @@ class pi_cam_setup:
         time.sleep(0.1)
 
     def capture_frame(self):
-        self.stream = PiRGBArray(self.camera) 
+        self.stream = PiRGBArray(self.camera)
         self.camera.capture(self.stream, format='bgr',use_video_port=True)
         frame = self.stream.array
-        
-        # Clear the stream between frame captures 
+        # Clear the stream between frame captures
         self.stream.truncate()
         return frame
 
@@ -60,7 +59,6 @@ def shape_detection(image):
     for thresh in HSV_thresh:
         HSV_tempmask = cv2.inRange(hsv, thresh[0], thresh[1])
         HSV_masks.append(shape_filter(HSV_tempmask))
-            
     return HSV_masks
 
 def shape_filter(image):
@@ -69,8 +67,8 @@ def shape_filter(image):
     mask = cv2.erode(mask, None, iterations=5)
     mask = cv2.dilate(mask, None, iterations=3)
     return mask
-    
-def contour_obs(HSV_masks): 
+
+def contour_obs(HSV_masks):
     for mask in HSV_masks:
         contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -78,27 +76,32 @@ def contour_obs(HSV_masks):
         boundRect = [None]*len(contours)
         centers = [None]*len(contours)
         radius = [None]*len(contours)
-        
+
         for i, c in enumerate(contours):
+            obsType[i] = [i]
             contours_poly[i] = cv2.approxPolyDP(c, 3, True)
             boundRect[i] = cv2.boundingRect(contours_poly[i])
-            centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])    
-        
-    return image
+            centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
+            obsWidth[i]
+            obsAngle[i]
+
+
+    
+    return shape_array
 
 def tracking_obs(new_obstacles, new_obstacles):
     if old_obstacles is None:
         return None
 
-    # ID, object, distance, angle, 
+    # ID, object, distance, angle
 
     return obstacle_position
-    
- def result_image(image, new_obstacles)
+
+def result_image(image, new_obstacles)
     for i in range(len(contours)):
             cv2.rectangle(image, (int(boundRect[i][0]), int(boundRect[i][1])), \
-              (int(boundRect[i][0]+boundRect[i][2]), int(boundRect[i][1]+boundRect[i][3])), (255, 0, 0), 2)
-            cv2.putText(image, 'Obstacle', (int(boundRect[i][0]), int(boundRect[i][1])), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 0, 0), 2)   
+                (int(boundRect[i][0]+boundRect[i][2]), int(boundRect[i][1]+boundRect[i][3])), (255, 0, 0), 2)
+            cv2.putText(image, 'Obstacle', (int(boundRect[i][0]), int(boundRect[i][1])), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 0, 0), 2)
     return image
 
 # COMMENT
@@ -109,30 +112,30 @@ if __name__ == '__main__':
     frame = crop_bottom_half(frame)
 
     old_obstacles = None
-    
-    
+
     while True:
 
-        HSV_masks = shape_detection(frame)	
-        
+        HSV_masks = shape_detection(frame)
+
         cv2.imshow('frame', frame)
 
         #mask = blue_mask|green_mask|yellow_mask|orange_mask
         #result = cv2.bitwise_and(frame, frame, mask=mask)
-        
-        #cv2.imshow('result', result)
-        #cv2.imshow('blue_mask', HSV_masks[0])
-        new_obstacles = contour_obs(HSV_masks[0])
-        
-        obstacle_position = tracking(new_obstacles, old_obstacles)
-        old_obstalces = new_obstacles
-        
-        
-        cv2.imshow('cnt_images', contour_obs)
 
-       if image_c
+        new_obstacles = contour_obs(HSV_masks)
+        obstacle_position = tracking(new_obstacles, old_obstacles)
+        # Store obstacles for comparison
+        old_obstalces = new_obstacles
+
+        # Counter to output every 10th frame
+        image_cnt += 1
+        if image_cnt == 10:
+            obs_image = result_image(frame, new_obstacles)
+            cv2.imshow('Rover Obstacles', obs_image)
+            image_cnt = 0
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.imwrite('results_img_03.jpg',result)
             break
-            
+
     cv2.destroyAllWindows()
