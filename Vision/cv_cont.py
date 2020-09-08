@@ -49,28 +49,32 @@ def crop_bottom_half(image):
     crop_img = image[image.shape[0]/4:image.shape[0]]
     return crop_img
 
-def shape_detection(image):
+def mask_obs(image):
     # Convert to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    hsv_orange = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    HSV_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    HSV_image.append(cv2.cvtColor(image, cv2.COLOR_RGB2HSV))
+    
+    # HSV_orange = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
-    HSV_masks = []
+    masks_HSV = []
     # Apply mask for HSV range
-    for thresh in HSV_thresh:
-        HSV_tempmask = cv2.inRange(hsv, thresh[0], thresh[1])
-        HSV_masks.append(shape_filter(HSV_tempmask))
-    return HSV_masks
+    for thresh, val in HSV_thresh:
+        HSV_tempmask = cv2.inRange(HSV_image, thresh[0], thresh[1])
+        masks_HSV.append(HSV_filter(HSV_tempmask))
+    return masks_HSV
 
-def shape_filter(image):
+def HSV_filter(image):
     mask = cv2.GaussianBlur(image,(3,3),0)
     mask = cv2.medianBlur(mask,9)
     mask = cv2.erode(mask, None, iterations=5)
     mask = cv2.dilate(mask, None, iterations=3)
     return mask
 
-def contour_obs(HSV_masks):
-    for mask in HSV_masks:
+def identify_obs(masks_HSV):
+    for mask in masks_HSV:
         contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
+        
 
         contours_poly = [None]*len(contours)
         boundRect = [None]*len(contours)
@@ -78,12 +82,13 @@ def contour_obs(HSV_masks):
         radius = [None]*len(contours)
 
         for i, c in enumerate(contours):
+            print([i])
             obsType[i] = [i]
             contours_poly[i] = cv2.approxPolyDP(c, 3, True)
             boundRect[i] = cv2.boundingRect(contours_poly[i])
             centers[i], radius[i] = cv2.minEnclosingCircle(contours_poly[i])
-            obsWidth[i]
-            obsAngle[i]
+            obsWidth[i] = 0
+            obsAngle[i] = 0
 
 
     
@@ -115,14 +120,12 @@ if __name__ == '__main__':
 
     while True:
 
-        HSV_masks = shape_detection(frame)
-
-        cv2.imshow('frame', frame)
+        masks_HSV = mask_obs(frame)
 
         #mask = blue_mask|green_mask|yellow_mask|orange_mask
         #result = cv2.bitwise_and(frame, frame, mask=mask)
 
-        new_obstacles = contour_obs(HSV_masks)
+        new_obstacles = identify_obs(masks_HSV)
         obstacle_position = tracking(new_obstacles, old_obstacles)
         # Store obstacles for comparison
         old_obstalces = new_obstacles
