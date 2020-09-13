@@ -1,98 +1,157 @@
-import numpy as np
-import cv2
-import imutils
-import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+import numpy as np
+import time
+import cv2
 
-# HSV range values for targets
-# To call: HSV_BLUE[0] = [0, 140, 30]
-HSV_BLUE = np.array([[90, 66, 0], [113, 255, 255]])
-HSV_GREEN = np.array([[26, 53, 0], [61, 255, 255]])
-HSV_YELLOW = np.array([[15, 59, 90], [39, 255, 255]])
-# Orange uses the RGB spectrum
-HSV_ORANGE = np.array([[104, 77, 48], [122, 255, 255]])
+# Initialse variables
+# HSV colour thresholds
+HSV_thresh = np.array([[[90, 66, 0], [113, 255, 255]],[[35, 25, 0],\
+    [75, 255, 255]],[[15, 20, 90], [39, 255, 255]],[[104, 77, 48], [122, 255, 255]]])
+# Set morphology kernel size for image filtering
+kernel = np.ones((15,15))
+# Initiate counter to only show every 10th computation
+image_cnt = 0
+# Define obstacle size, label, and colour
+OBS_size = [75, 150, 250, 55]
+OBS_type = ["ROC", "SAT", "LAND", "SAMP"]
+OBS_col = [[255,127,0], [0,255,0], [0,255,255], [0,127,255]]
+# Set camera image frame
+IMG_X = 320
+IMG_Y = 240
+# Calculate pixel focal width
+KNOWN_PIXEL_WIDTH = 45  # Pixels
+KNOWN_DIST = 40         # cm
+KNOWN_WIDTH = 7         # cm
+FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
-# Size dimensions for obstacles (mm)
-CRASH = 0;
-ROCK = 0;
-SAMPLE = 0;
-LANDER = 0;
+# Initialise camera setup
+camera = PiCamera()
+camera.resolution = (IMG_X, IMG_Y)
+camera.framerate = 8
+rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
+# Allow time for the camera to warmup
+time.sleep(0.1)
 
-# COMMENT
-class pi_cam_setup:
-    def __init__(self):
-        # initialize the camera
-        self.camera = PiCamera()
-        self.camera.resolution = (320, 240)
-        self.camera.framerate = 30
-        #self.camera.rotation = 90
-        self.camera.video_denoise = False
-        self.camera.image_effect = 'blur'
-        self.camera.image_effect_params = (2,)
-        self.rawCapture = PiRGBArray(self.camera, size=(320, 240))
-        time.sleep(0.1)
-
-    def capture_frame(self):
-        self.stream = PiRGBArray(self.camera) 
-        self.camera.capture(self.stream, format='bgr',use_video_port=True)
-        frame = self.stream.array
-        
-        # Clear the stream between frame captures 
-        self.stream.truncate()
-        return frame
-
-def crop_bottom_half(image):
-    crop_img = image[image.shape[0]/2:image.shape[0]]
+# Image crop to decrease image processing time
+def crop_image(image):
+    crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
     return crop_img
 
-def shape_detection(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    hsv_orange = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    
-    blue_mask = cv2.inRange(hsv, HSV_BLUE[0], HSV_BLUE[1])
-    green_mask = cv2.inRange(hsv, HSV_GREEN[0], HSV_GREEN[1])
-    yellow_mask = cv2.inRange(hsv, HSV_YELLOW[0], HSV_YELLOW[1])
-    orange_mask = cv2.inRange(hsv_orange, HSV_ORANGE[0], HSV_ORANGE[1])
+# HSV colour threshold filter
+def mask_obs(image):
+    # Convert BGR to HSV image
+    HSV_bgy = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    # Convert RGB to HSV image
+    HSV_o = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    masks_HSV = []
+    # Apply mask for HSV range
+    for indx, thresh in enumerate(HSV_thresh):
+        # Blue Green and Yellow threshold and filter
+        if indx < 3:
+            HSV_tempmask = cv2.inRange(HSV_bgy, thresh[0], thresh[1])
+            masks_HSV.append(HSV_filter(HSV_tempmask))
+        # Orange threshold and filter
+        else:
+            HSV_tempmask = cv2.inRange(HSV_o, thresh[0], thresh[1])
+            masks_HSV.append(HSV_filter(HSV_tempmask))
+    return masks_HSV
 
-    blue_mask = shape_filter(blue_mask)
-    green_mask = shape_filter(green_mask)
-    yellow_mask = shape_filter(yellow_mask)
-    orange_mask = shape_filter(orange_mask)
-    
-    return blue_mask, green_mask, yellow_mask, orange_mask
-
-def shape_filter(image):
-    mask = cv2.GaussianBlur(image,(3,3),0)
-    mask = cv2.medianBlur(mask,9)
-    mask = cv2.erode(mask, None, iterations=5)
-    mask = cv2.dilate(mask, None, iterations=3)
+# Filters HSV image to remove noise
+def HSV_filter(image):
+    # Opening - Erosion followed by dilation
+    mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+    #mask = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+    #mask = cv2.erode(mask, None, iterations=1)
+    # Applying dilation a second time removes noise
+    mask = cv2.dilate(mask, None, iterations=1)
     return mask
 
-# COMMENT
-if __name__ == '__main__':
-    cam = pi_cam_setup()
-    
-    while True:
-    
-        frame = cam.capture_frame()
-        frame = crop_bottom_half(frame)
-        
-        blue_mask, green_mask, yellow_mask, orange_mask = shape_detection(frame)	
-        
-        cv2.imshow('frame', frame)
-        
-        #cv2.imshow('blue_mask', blue_mask)
-        #cv2.imshow('green_mask', green_mask)
-        #cv2.imshow('yellow_mask', yellow_mask)
-        #cv2.imshow('orange_mask', orange_mask)
+# Define obstacles
+def detect_obs(hsv_masks):
+    obs_array = []
+    colour_count = 0
+    for indx, mask in enumerate(hsv_masks):
+        contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        #print("Number of contours: ", len(contours))
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            #print(area)
+            if area > 100:
+                # obstacle type index
+                obs_indx = indx
+                # Obstacle label
+                id_type = OBS_type[indx]
+                # Boundary (x,y,w,h) box of contour
+                boundary = cv2.boundingRect(cnt)
+                # Find centre of enclosing circle
+                centre, radius = cv2.minEnclosingCircle(cnt)
+                # Width of contour in pixels
+                pix_width = boundary[2]
+                # Angle from centre of screen in radians
+                obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+                # Distance from camera in cm
+                obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+                # Create list of values
+                obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
+    #print(obs_array)
+    return obs_array
 
-        mask = blue_mask|green_mask|yellow_mask|orange_mask
-        
-        result = cv2.bitwise_and(frame, frame, mask=mask)
-        cv2.imshow('result', result)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    stream.release()
-    cv2.destroyAllWindows()
+# Process frame from PiCamera
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    # Initiate timer for vision
+    now = time.time()
+
+    # Grab frame
+    image = frame.array
+
+    # Crop image
+    image = crop_image(image)
+    #cv2.imshow("Original Frame", image)
+
+    # Apply HSV threshold to frame
+    hsv_masks = mask_obs(image)
+    # Output mask for checking
+    #for indx,mask in enumerate(hsv_masks):
+    #    cv2.imshow(OBS_type[indx], mask)
+
+    # Determine distance, angle ID and type
+    new_obs = detect_obs(hsv_masks)
+
+    # Calculate time elapsed
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print("Processing Rate:{}.".format(rate))
+    # Show the frame every 10th iteration
+    image_cnt += 1
+    if image_cnt == 10:
+        # Combine masks and apply to frame
+        mask = hsv_masks[0]|hsv_masks[1]|hsv_masks[2]|hsv_masks[3]
+        obs_image = cv2.bitwise_and(image, image, mask=mask)
+        for i, obs in enumerate(new_obs):
+            # Draw rectangle
+            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
+            (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
+            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 2)
+            # Draw shape type
+            cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1])-28), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+            # Draw distance in cm
+            cv2.putText(obs_image, "{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1])-15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+            # Draw angle in radians to obstacle from camera
+            cv2.putText(obs_image, "{:.1f}".format(new_obs[i][2]), (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1])-2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+        cv2.imshow("Frame", obs_image)
+        image_cnt = 0
+
+    key = cv2.waitKey(1) & 0xFF
+    rawCapture.truncate(0)
+    # Termination by pressing 'q'
+    if key == ord("q"):
+        break
+    # Save image output by pressing 's'    
+    elif key == ord("s"):
+        cv2.imwrite('mask.png',mask)
+        cv2.imwrite('image_frame.png',image)
+        cv2.imwrite('result.png',obs_image)
