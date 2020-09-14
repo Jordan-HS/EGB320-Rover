@@ -6,14 +6,14 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-HSV_thresh = np.array([[[90, 66, 0], [113, 255, 255]],[[35, 25, 0],\
+HSV_thresh = np.array([[[88, 36, 0], [117, 255, 255]],[[35, 35, 25],\
     [75, 255, 255]],[[15, 20, 90], [39, 255, 255]],[[104, 77, 48], [122, 255, 255]]])
 # Set morphology kernel size for image filtering
-kernel = np.ones((15,15))
+kernel = np.ones((5,5))
 # Initiate counter to only show every 10th computation
 image_cnt = 0
 # Define obstacle size, label, and colour
-OBS_size = [75, 150, 250, 55]
+OBS_size = [7.5, 15, 56, 4.4]
 OBS_type = ["ROC", "SAT", "LAND", "SAMP"]
 OBS_col = [[255,127,0], [0,255,0], [0,255,255], [0,127,255]]
 # Set camera image frame
@@ -62,7 +62,7 @@ def HSV_filter(image):
     # Opening - Erosion followed by dilation
     mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
     #mask = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
-    #mask = cv2.erode(mask, None, iterations=1)
+    mask = cv2.erode(mask, None, iterations=1)
     # Applying dilation a second time removes noise
     mask = cv2.dilate(mask, None, iterations=1)
     return mask
@@ -74,26 +74,66 @@ def detect_obs(hsv_masks):
     for indx, mask in enumerate(hsv_masks):
         contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         #print("Number of contours: ", len(contours))
-        for cnt in contours:
-            area = cv2.contourArea(cnt)
-            #print(area)
-            if area > 100:
-                # obstacle type index
-                obs_indx = indx
-                # Obstacle label
-                id_type = OBS_type[indx]
-                # Boundary (x,y,w,h) box of contour
-                boundary = cv2.boundingRect(cnt)
-                # Find centre of enclosing circle
-                centre, radius = cv2.minEnclosingCircle(cnt)
-                # Width of contour in pixels
-                pix_width = boundary[2]
-                # Angle from centre of screen in radians
-                obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-                # Distance from camera in cm
-                obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
-                # Create list of values
-                obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
+        if indx < 2:
+            for cnt in contours:
+                area = cv2.contourArea(cnt)
+                #print(area)
+                if area > 10:
+                    # obstacle type index
+                    obs_indx = indx
+                    # Obstacle label
+                    id_type = OBS_type[indx]
+                    # Boundary (x,y,w,h) box of contour
+                    boundary = cv2.boundingRect(cnt)
+                    # Find centre of enclosing circle
+                    centre, radius = cv2.minEnclosingCircle(cnt)
+                    # Width of contour in pixels
+                    pix_width = boundary[2]
+                    # Angle from centre of screen in radians
+                    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+                    # Distance from camera in cm
+                    obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+                    # Create list of values
+                    obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
+        elif indx == 2:
+            area = cv2.findNonZero(mask)
+            # obstacle type index
+            obs_indx = indx
+            # Obstacle label
+            id_type = OBS_type[indx]
+            # Boundary (x,y,w,h) box of contour
+            boundary = cv2.boundingRect(area)
+            # Find centre of enclosing circle
+            centre, radius = cv2.minEnclosingCircle(area)
+            # Width of contour in pixels
+            pix_width = boundary[2]
+            # Angle from centre of screen in radians
+            obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+            # Distance from camera in cm
+            obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+            # Create list of values
+            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
+        else:
+             for cnt in contours:
+                area = cv2.contourArea(cnt)
+                #print(area)
+                if area > 6:
+                    # obstacle type index
+                    obs_indx = indx
+                    # Obstacle label
+                    id_type = OBS_type[indx]
+                    # Boundary (x,y,w,h) box of contour
+                    boundary = cv2.boundingRect(cnt)
+                    # Find centre of enclosing circle
+                    centre, radius = cv2.minEnclosingCircle(cnt)
+                    # Width of contour in pixels
+                    pix_width = boundary[2]
+                    # Angle from centre of screen in radians
+                    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+                    # Distance from camera in cm
+                    obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+                    # Create list of values
+                    obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
     #print(obs_array)
     return obs_array
 
@@ -107,13 +147,13 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     # Crop image
     image = crop_image(image)
-    #cv2.imshow("Original Frame", image)
+    cv2.imshow("Original Frame", image)
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     # Output mask for checking
-    #for indx,mask in enumerate(hsv_masks):
-    #    cv2.imshow(OBS_type[indx], mask)
+    for indx,mask in enumerate(hsv_masks):
+        cv2.imshow(OBS_type[indx], mask)
 
     # Determine distance, angle ID and type
     new_obs = detect_obs(hsv_masks)
@@ -132,16 +172,16 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             # Draw rectangle
             cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
             (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
-            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 2)
+            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
             # Draw shape type
             cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1])-28), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+            int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
             # Draw distance in cm
             cv2.putText(obs_image, "{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1])-15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+            int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
             # Draw angle in radians to obstacle from camera
-            cv2.putText(obs_image, "{:.1f}".format(new_obs[i][2]), (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1])-2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+            cv2.putText(obs_image, "{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1] + new_obs[i][5][3]) + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
         cv2.imshow("Frame", obs_image)
         image_cnt = 0
 
@@ -155,3 +195,4 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         cv2.imwrite('mask.png',mask)
         cv2.imwrite('image_frame.png',image)
         cv2.imwrite('result.png',obs_image)
+
