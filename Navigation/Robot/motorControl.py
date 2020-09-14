@@ -91,12 +91,12 @@ def SetTargetVelocities(board, x_dot, theta_dot):
     rightWheelSpeed = 0
 
   # Scale to duty
-  leftDuty = leftWheelSpeed * 100
-  rightDuty = rightWheelSpeed * 100
+  leftDuty = leftWheelSpeed * 10
+  rightDuty = rightWheelSpeed * 10
 
   # set motor speeds
   # DC motor 1 movement, orientation clockwise
-  board.motor_movement([board.M1], board.CW, leftDuty)
+  board.motor_movement([board.M1], board.CCW, leftDuty)
   # DC motor 2 movement, orientation count-clockwise
   board.motor_movement([board.M2], board.CW, rightDuty)
   print("Left Wheel Speed: %d     Right Wheel Speed: %d" %
