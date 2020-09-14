@@ -2,4 +2,4 @@ import motorControl
 
 motorControl.initialiseBoard()
 
-motorControl.setTragetVelocities(0.5, 0)
+motorControl.SetTargetVelocities(0.5, 0)
