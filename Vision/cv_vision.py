@@ -13,16 +13,16 @@ kernel = np.ones((5,5))
 # Initiate counter to only show every 10th computation
 image_cnt = 0
 # Define obstacle size, label, and colour
-OBS_size = [7.5, 15, 56, 4.4]
+OBS_size = [7.5, 16, 56, 4.4]
 OBS_type = ["ROC", "SAT", "LAND", "SAMP"]
 OBS_col = [[255,127,0], [0,255,0], [0,255,255], [0,127,255]]
 # Set camera image frame
 IMG_X = 320
 IMG_Y = 240
 # Calculate pixel focal width
-KNOWN_PIXEL_WIDTH = 45  # Pixels
-KNOWN_DIST = 40         # cm
-KNOWN_WIDTH = 7         # cm
+KNOWN_PIXEL_WIDTH = 54  # Pixels
+KNOWN_DIST = 70         # cm
+KNOWN_WIDTH = 16         # cm
 FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 # Initialise camera setup
