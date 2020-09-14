@@ -1,5 +1,5 @@
 import motorControl
 
-motorControl.initialiseBoard()
+board = motorControl.initialiseBoard()
 
-motorControl.SetTargetVelocities(0.5, 0)
+motorControl.SetTargetVelocities(board, 0.5, 0)

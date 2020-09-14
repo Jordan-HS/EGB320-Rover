@@ -50,15 +50,15 @@ def initialiseBoard():
   # Set DC motor pwm frequency to 1000HZ
   board.set_moter_pwm_frequency(1000)
 
+  return board
+
 # Set Target Velocities
 # inputs:
 #	x - the velocity of the robot in the forward direction (in m/s)
 #	theta_dt - the rotational velocity of the robot (in rad/s)
 
 
-def SetTargetVelocities(self, x_dot, theta_dot):
-  
-
+def SetTargetVelocities(board, x_dot, theta_dot):
   # ensure wheel base and wheel radius are set as these are not allowed to be changed
   wheelBase = 95e-3
   wheelRadius = 43e-3
