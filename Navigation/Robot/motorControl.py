@@ -80,7 +80,7 @@ def SetTargetVelocities(board, x_dot, theta_dot):
   rightWheelSpeed = (x_dot + 0.5*theta_dot*wheelBase) / \
       wheelRadius + rightWheelBias
 
-  print("Left wheelL %d, right wheel: %d" %(leftWheelSpeed, rightWheelSpeed))
+#  print("Left wheelL %d, right wheel: %d" %(leftWheelSpeed, rightWheelSpeed))
 
   # ensure wheel speeds are not greater than maximum wheel speed
   leftWheelSpeed = min(leftWheelSpeed, maxWheelSpeed)
@@ -93,13 +93,13 @@ def SetTargetVelocities(board, x_dot, theta_dot):
     rightWheelSpeed = 0
 
   # Scale to duty
-  leftDuty = leftWheelSpeed * 10
-  rightDuty = rightWheelSpeed * 10
+  leftDuty = round(leftWheelSpeed*6.45)
+  rightDuty = round(rightWheelSpeed*6.45)
 
   # set motor speeds
   # DC motor 1 movement, orientation clockwise
-  board.motor_movement([board.M1], board.CW, leftDuty)
+  board.motor_movement([board.M1], board.CCW, rightDuty)
   # DC motor 2 movement, orientation count-clockwise
-  board.motor_movement([board.M2], board.CW, rightDuty)
-  # print("Left Wheel Speed: %d     Right Wheel Speed: %d" %
-  #       (leftWheelSpeed, rightWheelSpeed))
+  board.motor_movement([board.M2], board.CW, leftDuty)
+  print("Left Wheel Speed: %d     Right Wheel Speed: %d" %
+        (leftWheelSpeed, rightWheelSpeed))
