@@ -196,3 +196,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         cv2.imwrite('image_frame.png',image)
         cv2.imwrite('result.png',obs_image)
 
+def current_observation():
+    obersvation = []
+    return observation
