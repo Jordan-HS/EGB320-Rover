@@ -4,6 +4,7 @@ import time
 arm, claw = servoControl.setupServos()
 
 try:
-  servoControl.openClaw(claw)
+  while(True):
+    servoControl.openClaw(claw)
 except KeyboardInterrupt:
   servoControl.stop(arm, claw)
