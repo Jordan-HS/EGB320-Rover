@@ -9,7 +9,7 @@ p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
 p.start(2.5) # Initialization
 try:
   while True:
-    angle = float(90)
+    angle = float(180)
     p.ChangeDutyCycle(2+(angle/18))
     time.sleep(0.5)
     p.ChangeDutyCycle(0)
