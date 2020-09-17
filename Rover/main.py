@@ -42,7 +42,7 @@ while not done:
         
         delta_x, delta_y = potentialField.getForce("sample", sampleRange, sampleBearing)
     
-    radial_vel, forward_vel = potentialField.calculateMovement(delta_x, delta_y)
+        radial_vel, forward_vel = potentialField.calculateMovement(delta_x, delta_y)
 
     motorControl.SetTargetVelocities(board, forward_vel, radial_vel)
 
