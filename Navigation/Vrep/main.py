@@ -82,7 +82,7 @@ try:
 
         # [forward vel m/s, rotational vel rads/s]
         
-        lunarBotSim.SetTargetVelocities(forward_vel/4, radial_vel/2)
+        lunarBotSim.SetTargetVelocities(forward_vel/3, radial_vel/2)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
