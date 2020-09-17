@@ -99,6 +99,7 @@ def SetTargetVelocities(board, x_dot, theta_dot):
   # set motor speeds
   if  leftWheelSpeed == 0 and rightWheelSpeed > 0:
     # DC motor 1 movement, orientation clockwise
+    rightDuty = round(1*6.45)
     board.motor_movement([board.M1], board.CW, rightDuty)
     # DC motor 2 movement, orientation count-clockwise
     board.motor_movement([board.M2], board.CCW, leftDuty)
@@ -106,6 +107,7 @@ def SetTargetVelocities(board, x_dot, theta_dot):
     # DC motor 1 movement, orientation clockwise
     board.motor_movement([board.M1], board.CCW, rightDuty)
     # DC motor 2 movement, orientation count-clockwise
+    leftDuty = round(1*6.45)
     board.motor_movement([board.M2], board.CW, leftDuty)
   else:
     # DC motor 1 movement, orientation clockwise
