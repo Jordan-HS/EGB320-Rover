@@ -31,6 +31,7 @@ try:
             if time.time() - force_memory[0][2] > 5:
                 force_memory = [None]
 
+        print(force_memory)
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
@@ -116,7 +117,7 @@ try:
 
         # [forward vel m/s, rotational vel rads/s]
         
-        lunarBotSim.SetTargetVelocities(forward_vel/1.5, radial_vel/1.3)
+        lunarBotSim.SetTargetVelocities(forward_vel/2, radial_vel/2)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
