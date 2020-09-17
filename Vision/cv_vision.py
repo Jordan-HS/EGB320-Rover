@@ -101,7 +101,7 @@ def detect_obs(hsv_masks):
                 for cnt in contours:
                     area = cv2.contourArea(cnt)
                     # print(area)
-                   . if area > 10:
+                    if area > 10:
                         # obstacle type index
                         obs_indx = indx
                         # Obstacle label
