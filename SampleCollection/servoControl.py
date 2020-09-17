@@ -21,19 +21,19 @@ def setupServos():
 
 def setArmAngle(arm, angle):
     arm.ChangeDutyCycle(2+(angle/18))
-    time.sleep(0.5)
+    time.sleep(1)
     arm.ChangeDutyCycle(0)
 
 def openClaw(claw):
     openAngle = 70
     claw.ChangeDutyCycle(2+(openAngle/18))
-    time.sleep(0.5)
+    time.sleep(1)
     claw.ChangeDutyCycle(0)
 
 def closeClaw(claw):
-    angle = 100
+    angle = 110
     claw.ChangeDutyCycle(2+(angle/18))
-    time.sleep(0.5)
+    time.sleep(1)
     claw.ChangeDutyCycle(0)
 
 def stop(arm, claw):
