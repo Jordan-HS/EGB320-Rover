@@ -1,7 +1,7 @@
-from modules import motorControl
-from modules import cv_vision
-from modules import potentialField
-from modules import servoControl
+import motorControl
+import cv_vision
+import potentialField
+import servoControl
 import time
 
 ## Set up functions
