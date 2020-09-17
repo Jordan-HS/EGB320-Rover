@@ -13,7 +13,7 @@ kernel = np.ones((5, 5))
 # Initiate counter to only show every 10th computation
 image_cnt = 0
 # Define obstacle size, label, and colour
-OBS_size = [0.075, 0.69, 0.56, 0.044]   # size of obstacles in m
+OBS_size = [0.075, 0.151, 0.56, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "SAMP"]
 OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [0, 127, 255]]
 # Set camera image frame

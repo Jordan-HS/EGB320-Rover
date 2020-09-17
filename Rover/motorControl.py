@@ -67,7 +67,7 @@ def SetTargetVelocities(board, x_dot, theta_dot):
   leftWheelBias = 0
   rightWheelBias = 0
 
-  minimumLinearSpeed = 0.02
+  minimumLinearSpeed = 0.1
   maximumLinearSpeed = 1
 
   # determine minimum wheel speed based on minimumLinear and maximumLinear speed

@@ -9,7 +9,7 @@ board = motorControl.initialiseBoard()
 start_time = time.time()
 arm, claw = servoControl.setupServos()
 done = False
-
+time.sleep(2)
 while not done:
     delta_x = 0
     delta_y = 0
@@ -40,15 +40,16 @@ while not done:
             sampleRange = sample[0]
             sampleBearing = sample[1]
         
-        delta_x, delta_y = potentialField.getForce("sample", sampleRange, sampleBearing)
+            delta_x, delta_y = potentialField.getForce("sample", sampleRange, sampleBearing)
     
         radial_vel, forward_vel = potentialField.calculateMovement(delta_x, delta_y)
+        print(forward_vel, radial_vel)
+    motorControl.SetTargetVelocities(board, forward_vel/1.5, radial_vel*2)
 
-    motorControl.SetTargetVelocities(board, forward_vel, radial_vel)
 
-
-    if time.time() - start_time > 5:
-	    board.motor_stop(board.ALL)        
+    if time.time() - start_time > 20:
+	    board.motor_stop(board.ALL)
+            done = True
 	    break
 
 
