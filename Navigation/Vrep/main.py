@@ -16,7 +16,7 @@ GPIO.setup(13, GPIO.OUT) # YELLOW
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('192.168.1.111', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('172.19.3.123', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
 
     while (True):
@@ -101,7 +101,7 @@ try:
 
         # [forward vel m/s, rotational vel rads/s]
         
-        lunarBotSim.SetTargetVelocities(forward_vel/2, radial_vel/2)
+        lunarBotSim.SetTargetVelocities(forward_vel/1.5, radial_vel/2)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
