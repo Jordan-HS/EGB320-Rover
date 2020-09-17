@@ -9,7 +9,7 @@ robotParameters, sceneParameters = setup.init_sim()
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('192.168.1.111', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
 
     while (True):
