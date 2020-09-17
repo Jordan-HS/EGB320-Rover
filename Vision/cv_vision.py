@@ -7,13 +7,13 @@ import cv2
 # Initialse variables
 # HSV colour thresholds
 HSV_thresh = np.array([[[88, 36, 0], [117, 255, 255]], [[35, 35, 25],
-    [75, 255, 255]], [[15, 20, 90], [39, 255, 255]], [[104, 77, 48], [122, 255, 255]]])
+    [75, 255, 255]], [[15, 20, 90], [39, 255, 255]], [[103, 61, 24], [124, 255, 255]]])
 # Set morphology kernel size for image filtering
 kernel = np.ones((5, 5))
 # Initiate counter to only show every 10th computation
 image_cnt = 0
 # Define obstacle size, label, and colour
-OBS_size = [0.075, 0.69, 0.56, 0.044]   # size of obstacles in m
+OBS_size = [0.075, 0.151, 0.56, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "SAMP"]
 OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [0, 127, 255]]
 # Set camera image frame
@@ -27,6 +27,10 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 # Initialise camera setup
 camera = PiCamera()
+camera.awb_mode = 'off'
+camera.awb_mode = 'fluorescent'
+camera.awb_gains = 4
+camera.exposure_mode = 'off'
 camera.resolution = (IMG_X, IMG_Y)
 camera.framerate = 8
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
@@ -34,8 +38,6 @@ rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
 time.sleep(0.1)
 
 # Image crop to decrease image processing time
-
-
 def crop_image(image):
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
     return crop_img
@@ -91,15 +93,15 @@ def detect_obs(hsv_masks):
         HSV_sum = np.sum(mask)
         if HSV_sum == 0:
             continue
-        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         #print("Number of contours: ", len(contours))
         if contours is not None:
-            print([OBS_type[indx], len(contours)])
+            #print([OBS_type[indx], len(contours)])
             if indx < 2:
                 for cnt in contours:
                     area = cv2.contourArea(cnt)
                     # print(area)
-                    if area > 10:
+                   . if area > 10:
                         # obstacle type index
                         obs_indx = indx
                         # Obstacle label
@@ -107,7 +109,7 @@ def detect_obs(hsv_masks):
                         # Boundary (x,y,w,h) box of contour
                         boundary = cv2.boundingRect(cnt)
                         # Find centre of enclosing circle
-                        print(cnt)
+                        #print(cnt)
                         centre, radius = cv2.minEnclosingCircle(cnt)
                         # Width of contour in pixels
                         pix_width = boundary[2]
@@ -116,7 +118,7 @@ def detect_obs(hsv_masks):
                         # Distance from camera in cm
                         obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
                         # Create list of values
-                        print([id_type, pix_width, obs_dist])
+                        #print([id_type, pix_width, obs_dist])
                         obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary])
             elif indx == 2:
                 area = cv2.findNonZero(mask)
