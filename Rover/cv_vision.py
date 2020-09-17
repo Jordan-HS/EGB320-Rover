@@ -164,7 +164,7 @@ def current_observation():
      # Grab frame
     camera.capture(rawCapture, format="bgr", use_video_port=True)
     image = rawCapture.array
-
+    rawCapture.truncate(0)
     # Crop image
     image = crop_image(image)
 
