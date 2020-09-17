@@ -77,7 +77,10 @@ try:
 
         ### SAMPLE COLLECTED - NAVIGATE TOWARDS DROP OFF ###
         elif lunarBotSim.SampleCollected():
-            print(landerRB)
+            # set green LED
+            GPIO.output(26, GPIO.LOW)
+            GPIO.output(16, GPIO.HIGH)
+            GPIO.output(13, GPIO.LOW)
             if landerRB is None:
                 radial_vel = 1.2    # rotate on the spot to search
                 forward_vel = 0.1
@@ -91,17 +94,14 @@ try:
                     # Calculate force to drop off
                     delta_x, delta_y = getForce("lander", landerRange, landerBearing, [delta_x, delta_y])
                     radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
-                # set green LED
-                GPIO.output(26, GPIO.LOW)
-                GPIO.output(16, GPIO.HIGH)
-                GPIO.output(13, GPIO.LOW)
+            
 
         # Get Detected Wall Points
         wallPoints = lunarBotSim.GetDetectedWallPoints()
 
         # [forward vel m/s, rotational vel rads/s]
         
-        lunarBotSim.SetTargetVelocities(forward_vel/3 , radial_vel/2)
+        lunarBotSim.SetTargetVelocities(forward_vel , radial_vel)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
