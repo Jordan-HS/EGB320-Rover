@@ -27,7 +27,7 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
-        if force_memory is not None:
+        if force_memory[0] is not None:
             if time.time() - force_memory[0][2] > 5:
                 force_memory = [None]
 
