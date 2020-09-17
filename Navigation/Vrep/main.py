@@ -56,7 +56,7 @@ try:
                     sampleBearing = sample[1]
 
                     # check if sample is in range and there isnt one currently held
-                    if sampleRange < 0.04 and not lunarBotSim.SampleCollected():
+                    if sampleRange < 0.03 and not lunarBotSim.SampleCollected():
                         lunarBotSim.CollectSample()
                     elif not lunarBotSim.SampleCollected():
                         delta_x, delta_y = getForce("sample", sampleRange, sampleBearing)
