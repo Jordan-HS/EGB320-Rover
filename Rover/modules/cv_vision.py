@@ -72,7 +72,7 @@ def detect_obs(hsv_masks):
     obs_array = []
     colour_count = 0
     for indx, mask in enumerate(hsv_masks):
-        contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         #print("Number of contours: ", len(contours))
         if indx < 2:
             for cnt in contours:
@@ -137,62 +137,76 @@ def detect_obs(hsv_masks):
     #print(obs_array)
     return obs_array
 
-# Process frame from PiCamera
-for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-    # Initiate timer for vision
-    now = time.time()
-
-    # Grab frame
-    image = frame.array
+def current_observation():
+     # Grab frame
+    camera.capture(rawCapture, format="bgr", use_video_port=True)
+    image = rawCapture.array
 
     # Crop image
     image = crop_image(image)
-    cv2.imshow("Original Frame", image)
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
-    # Output mask for checking
-    for indx,mask in enumerate(hsv_masks):
-        cv2.imshow(OBS_type[indx], mask)
 
     # Determine distance, angle ID and type
-    new_obs = detect_obs(hsv_masks)
+    return detect_obs(hsv_masks)
 
-    # Calculate time elapsed
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    print("Processing Rate:{}.".format(rate))
-    # Show the frame every 10th iteration
-    image_cnt += 1
-    if image_cnt == 10:
-        # Combine masks and apply to frame
-        mask = hsv_masks[0]|hsv_masks[1]|hsv_masks[2]|hsv_masks[3]
-        obs_image = cv2.bitwise_and(image, image, mask=mask)
-        for i, obs in enumerate(new_obs):
-            # Draw rectangle
-            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
-            (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
-            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
-            # Draw shape type
-            cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
-            # Draw distance in cm
-            cv2.putText(obs_image, "{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
-            # Draw angle in radians to obstacle from camera
-            cv2.putText(obs_image, "{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
-            int(new_obs[i][5][1] + new_obs[i][5][3]) + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
-        cv2.imshow("Frame", obs_image)
-        image_cnt = 0
+# Process frame from PiCamera
+# for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+#     # Initiate timer for vision
+#     now = time.time()
 
-    key = cv2.waitKey(1) & 0xFF
-    rawCapture.truncate(0)
-    # Termination by pressing 'q'
-    if key == ord("q"):
-        break
-    # Save image output by pressing 's'    
-    elif key == ord("s"):
-        cv2.imwrite('mask.png',mask)
-        cv2.imwrite('image_frame.png',image)
-        cv2.imwrite('result.png',obs_image)
+#     # Grab frame
+#     image = frame.array
+
+#     # Crop image
+#     image = crop_image(image)
+#     cv2.imshow("Original Frame", image)
+
+#     # Apply HSV threshold to frame
+#     hsv_masks = mask_obs(image)
+#     # Output mask for checking
+#     for indx,mask in enumerate(hsv_masks):
+#         cv2.imshow(OBS_type[indx], mask)
+
+#     # Determine distance, angle ID and type
+#     new_obs = detect_obs(hsv_masks)
+
+#     # Calculate time elapsed
+#     elapsed = time.time() - now
+#     rate = 1.0 / elapsed
+#     print("Processing Rate:{}.".format(rate))
+#     # Show the frame every 10th iteration
+#     image_cnt += 1
+#     if image_cnt == 10:
+#         # Combine masks and apply to frame
+#         mask = hsv_masks[0]|hsv_masks[1]|hsv_masks[2]|hsv_masks[3]
+#         obs_image = cv2.bitwise_and(image, image, mask=mask)
+#         for i, obs in enumerate(new_obs):
+#             # Draw rectangle
+#             cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
+#             (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
+#             new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
+#             # Draw shape type
+#             cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
+#             int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+#             # Draw distance in cm
+#             cv2.putText(obs_image, "{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
+#             int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+#             # Draw angle in radians to obstacle from camera
+#             cv2.putText(obs_image, "{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
+#             int(new_obs[i][5][1] + new_obs[i][5][3]) + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, OBS_col[new_obs[i][0]],1)
+#         cv2.imshow("Frame", obs_image)
+#         image_cnt = 0
+
+#     key = cv2.waitKey(1) & 0xFF
+#     rawCapture.truncate(0)
+#     # Termination by pressing 'q'
+#     if key == ord("q"):
+#         break
+#     # Save image output by pressing 's'    
+#     elif key == ord("s"):
+#         cv2.imwrite('mask.png',mask)
+#         cv2.imwrite('image_frame.png',image)
+#         cv2.imwrite('result.png',obs_image)
 
