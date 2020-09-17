@@ -7,7 +7,7 @@ import cv2
 # Initialse variables
 # HSV colour thresholds
 HSV_thresh = np.array([[[88, 36, 0], [117, 255, 255]], [[35, 35, 25],
-    [75, 255, 255]], [[15, 20, 90], [39, 255, 255]], [[104, 77, 48], [122, 255, 255]]])
+    [75, 255, 255]], [[15, 20, 90], [39, 255, 255]], [[103, 61, 24], [124, 255, 255]]])
 # Set morphology kernel size for image filtering
 kernel = np.ones((5, 5))
 # Initiate counter to only show every 10th computation
@@ -27,6 +27,10 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 # Initialise camera setup
 camera = PiCamera()
+camera.awb_mode = 'off'
+camera.awb_mode = 'fluorescent'
+camera.awb_gains = 4
+camera.exposure_mode = 'off'
 camera.resolution = (IMG_X, IMG_Y)
 camera.framerate = 8
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
@@ -34,8 +38,6 @@ rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
 time.sleep(0.1)
 
 # Image crop to decrease image processing time
-
-
 def crop_image(image):
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
     return crop_img
