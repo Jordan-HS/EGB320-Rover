@@ -25,13 +25,13 @@ def setArmAngle(arm, angle):
     arm.ChangeDutyCycle(0)
 
 def openClaw(claw):
-    openAngle = 20
+    openAngle = 70
     claw.ChangeDutyCycle(2+(openAngle/18))
     time.sleep(0.5)
     claw.ChangeDutyCycle(0)
 
 def closeClaw(claw):
-    angle = 0
+    angle = 100
     claw.ChangeDutyCycle(2+(angle/18))
     time.sleep(0.5)
     claw.ChangeDutyCycle(0)
