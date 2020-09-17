@@ -27,6 +27,10 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
+        if force_memory is not None:
+            if time.time() - force_memory[2] > 5:
+                force_memory = [None]
+
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
