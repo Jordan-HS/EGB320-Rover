@@ -93,7 +93,7 @@ def detect_obs(hsv_masks):
         HSV_sum = np.sum(mask)
         if HSV_sum == 0:
             continue
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         #print("Number of contours: ", len(contours))
         if contours is not None:
             #print([OBS_type[indx], len(contours)])
