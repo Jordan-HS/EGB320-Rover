@@ -3,7 +3,7 @@ import time
 
 def setupServos():
     armPIN = 17 # One with the tape
-    clawPIN = 24
+    clawPIN = 27
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(armPIN, GPIO.OUT)
