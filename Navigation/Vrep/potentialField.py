@@ -6,7 +6,7 @@ sample_spread = 2
 sample_radius = 7E-3
 
 # Forces of repulsion
-beta = 8
+beta = 3
 obs_spread = 0.5
 obs_radius = 15E-3
 
