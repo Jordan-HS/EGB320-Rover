@@ -3,9 +3,16 @@ from roverbot_lib import *
 import setup
 from math import radians, degrees
 from potentialField import getForce, calculateMovement
+import RPi.GPIO as GPIO
+import time
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(26, GPIO.OUT) # RED
+GPIO.setup(16, GPIO.OUT) # GREEN
+GPIO.setup(13, GPIO.OUT) # YELLOW
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
@@ -34,6 +41,10 @@ try:
         if samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
             radial_vel = 1.2    # rotate on the spot to search
             forward_vel = 0.1
+            # set red LED
+            GPIO.output(26, GPIO.HIGH)
+            GPIO.output(16, GPIO.LOW)
+            GPIO.output(13, GPIO.LOW)
 
         ### SAMPLE SEEN - NAVIGATE TOWARDS SAMPLE ###
         elif not lunarBotSim.SampleCollected():
@@ -49,6 +60,10 @@ try:
                         lunarBotSim.CollectSample()
                     elif not lunarBotSim.SampleCollected():
                         delta_x, delta_y = getForce("sample", sampleRange, sampleBearing)
+                    # set Yellow LED
+                    GPIO.output(26, GPIO.LOW)
+                    GPIO.output(16, GPIO.LOW)
+                    GPIO.output(13, GPIO.HIGH)
 
             # Check to see if any obstacles are within the camera's FOV
             if rocksRB is not None:
@@ -76,13 +91,17 @@ try:
                     # Calculate force to drop off
                     delta_x, delta_y = getForce("lander", landerRange, landerBearing, [delta_x, delta_y])
                     radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
+                # set green LED
+                GPIO.output(26, GPIO.LOW)
+                GPIO.output(16, GPIO.HIGH)
+                GPIO.output(13, GPIO.LOW)
 
         # Get Detected Wall Points
         wallPoints = lunarBotSim.GetDetectedWallPoints()
 
         # [forward vel m/s, rotational vel rads/s]
         
-        lunarBotSim.SetTargetVelocities(forward_vel/3, radial_vel/2)
+        lunarBotSim.SetTargetVelocities(forward_vel/3 , radial_vel/2)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
