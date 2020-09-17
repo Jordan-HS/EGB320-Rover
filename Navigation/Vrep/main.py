@@ -18,6 +18,7 @@ try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
     lunarBotSim = VREP_RoverRobot('172.19.3.123', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
+    force_memory = [None]
 
     while (True):
         delta_x = 0
@@ -34,7 +35,11 @@ try:
                 obstacleBearing = obstacle[1]
 
                 # Obstacle avoidance
+                if force_memory[0] is not None:
+                            delta_x += force_memory[0][0]
+                            delta_y += force_memory[0][1]
                 delta_x, delta_y = getForce("obstacle", obstacleRange, obstacleBearing, [delta_x, delta_y])
+                force_memory[0] = ([delta_x, delta_y, time.time()])
 
 
         ### NO OBJECTS SEEN - SEARCH FOR OBJECT ###
@@ -59,7 +64,10 @@ try:
                     if sampleRange < 0.03 and not lunarBotSim.SampleCollected():
                         lunarBotSim.CollectSample()
                     elif not lunarBotSim.SampleCollected():
-                        delta_x, delta_y = getForce("sample", sampleRange, sampleBearing)
+                        if force_memory[0] is not None:
+                            delta_x += force_memory[0][0]
+                            delta_y += force_memory[0][1]
+                        delta_x, delta_y = getForce("sample", sampleRange, sampleBearing, [delta_x, delta_y])
                     # set Yellow LED
                     GPIO.output(26, GPIO.LOW)
                     GPIO.output(16, GPIO.LOW)
@@ -92,6 +100,9 @@ try:
                     lunarBotSim.DropSample()
                 else:
                     # Calculate force to drop off
+                    if force_memory[0] is not None:
+                            delta_x += force_memory[0][0]
+                            delta_y += force_memory[0][1]
                     delta_x, delta_y = getForce("lander", landerRange, landerBearing, [delta_x, delta_y])
                     radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
             
