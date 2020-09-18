@@ -106,11 +106,11 @@ try:
                         delta_x, delta_y = getForce("rock", rockRange, rockBearing, [delta_x, delta_y])
 
             # Check to see if any obstacles are within the camera's FOV
-            if rocksRB is not None:
-                # loop through each obstacle detected using Pythonian way
-                for obstacle in obstaclesRB:
-                    obstacleRange = obstacle[0]
-                    obstacleBearing = obstacle[1]
+            # if rocksRB is not None:
+            #     # loop through each obstacle detected using Pythonian way
+            #     for obstacle in obstaclesRB:
+            #         obstacleRange = obstacle[0]
+            #         obstacleBearing = obstacle[1]
 
             radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
 
