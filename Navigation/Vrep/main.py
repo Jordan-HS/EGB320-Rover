@@ -113,11 +113,12 @@ try:
                 if landerRange < 0.035:
                     lunarBotSim.DropSample()
                 else:
+                    delta_x, delta_y = getForce("lander", landerRange, landerBearing, [delta_x, delta_y])
+
                     # Calculate force to drop off
                     if force_memory[0] is not None:
                             delta_x += force_memory[0][0]
                             delta_y += force_memory[0][1]
-                    delta_x, delta_y = getForce("lander", landerRange, landerBearing, [delta_x, delta_y])
                     radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
             
 
