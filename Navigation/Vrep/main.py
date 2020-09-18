@@ -30,6 +30,9 @@ try:
         if force_memory[0] is not None:
             if time.time() - force_memory[0][2] > 13:
                 force_memory = [None]
+            else:
+                force_memory[0][0] = force_memory[0][0] * (((13 - (time.time() - force_memory[0][2]))/13))
+                force_memory[0][1] = force_memory[0][1] * (((13 - (time.time() - force_memory[0][2]))/13))
 
         print(force_memory)
         # Check to see if any obstacles are within the camera's FOV
