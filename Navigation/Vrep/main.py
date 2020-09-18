@@ -98,7 +98,7 @@ try:
                                 delta_x += force_memory[0][0]
                                 delta_y += force_memory[0][1]
 
-                    if rockRange < (0.03+0.072):
+                    if rockRange < (0.03+0.036):
                         radial_vel = 0
                         forward_vel = 0
                         break
