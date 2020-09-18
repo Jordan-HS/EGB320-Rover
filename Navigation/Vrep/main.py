@@ -60,7 +60,7 @@ try:
                 forward_vel = 0
 
             radial_vel += 1.2    # rotate on the spot to search
-            forward_vel += 0.1
+            forward_vel += 0.5
             # set red LED
             GPIO.output(26, GPIO.HIGH)
             GPIO.output(16, GPIO.LOW)
