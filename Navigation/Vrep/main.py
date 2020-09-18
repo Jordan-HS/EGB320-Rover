@@ -89,21 +89,21 @@ try:
                     GPIO.output(13, GPIO.HIGH)
 
             if rocksRB is not None:
-            for rock in rocksRB:
-                rockRange = rock[0]
-                rockBearing = rock[1]
-            
-                # Obstacle avoidance
-                if force_memory[0] is not None:
-                            delta_x += force_memory[0][0]
-                            delta_y += force_memory[0][1]
+                for rock in rocksRB:
+                    rockRange = rock[0]
+                    rockBearing = rock[1]
+                
+                    # Obstacle avoidance
+                    if force_memory[0] is not None:
+                                delta_x += force_memory[0][0]
+                                delta_y += force_memory[0][1]
 
-                if rockRange < 0.03:
-                    radial_vel = 0
-                    forward_vel = 0
-                    break
-                else:
-                    delta_x, delta_y = getForce("rock", rockRange, rockBearing, [delta_x, delta_y])
+                    if rockRange < 0.03:
+                        radial_vel = 0
+                        forward_vel = 0
+                        break
+                    else:
+                        delta_x, delta_y = getForce("rock", rockRange, rockBearing, [delta_x, delta_y])
 
             # Check to see if any obstacles are within the camera's FOV
             if rocksRB is not None:
