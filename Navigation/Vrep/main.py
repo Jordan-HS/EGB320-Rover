@@ -49,8 +49,11 @@ try:
 
         ### NO OBJECTS SEEN - SEARCH FOR OBJECT ###
         if samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
-            radial_vel = 1.2    # rotate on the spot to search
-            forward_vel = 0.1
+            if force_memory[0] is not None:
+                radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
+
+            radial_vel += 1.2    # rotate on the spot to search
+            forward_vel += 0.1
             # set red LED
             GPIO.output(26, GPIO.HIGH)
             GPIO.output(16, GPIO.LOW)
