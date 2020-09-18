@@ -51,6 +51,9 @@ try:
         if samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
             if force_memory[0] is not None:
                 radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
+            else:
+                radial_vel = 0
+                forward_vel = 0
 
             radial_vel += 1.2    # rotate on the spot to search
             forward_vel += 0.1
