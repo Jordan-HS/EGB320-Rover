@@ -28,11 +28,11 @@ try:
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
         if force_memory[0] is not None:
-            if time.time() - force_memory[0][2] > 13:
+            if time.time() - force_memory[0][2] > 10:
                 force_memory = [None]
             else:
-                force_memory[0][0] = force_memory[0][0] * (((13 - (time.time() - force_memory[0][2]))/13))
-                force_memory[0][1] = force_memory[0][1] * (((13 - (time.time() - force_memory[0][2]))/13))
+                force_memory[0][0] = force_memory[0][0] * (((10 - (time.time() - force_memory[0][2]))/13))
+                force_memory[0][1] = force_memory[0][1] * (((10 - (time.time() - force_memory[0][2]))/13))
 
         print(force_memory)
         # Check to see if any obstacles are within the camera's FOV
@@ -104,8 +104,14 @@ try:
             GPIO.output(16, GPIO.HIGH)
             GPIO.output(13, GPIO.LOW)
             if landerRB is None:
-                radial_vel = 1.2    # rotate on the spot to search
-                forward_vel = 0.1
+                if force_memory[0] is not None:
+                    radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
+                else:
+                    radial_vel = 0
+                    forward_vel = 0
+
+                radial_vel += 1.2    # rotate on the spot to search
+                forward_vel += 0.1
             else:
                 landerRange = landerRB[0]
                 landerBearing = landerRB[1]
