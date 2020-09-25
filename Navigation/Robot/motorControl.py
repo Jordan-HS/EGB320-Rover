@@ -7,7 +7,7 @@ board = Board(1, 0x10)    # Select bus 1, set address to 0x10
 
 def board_detect():
     l = board.detecte()
-    print("Board list conform:")
+    print("Board list conform Maybe?:")
     print(l)
 
 
