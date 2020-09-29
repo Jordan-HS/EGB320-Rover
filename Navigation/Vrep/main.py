@@ -3,20 +3,31 @@ from roverbot_lib import *
 import setup
 from math import radians, degrees
 from potentialField import getForce, calculateMovement
-import RPi.GPIO as GPIO
 import time
+
+# GPIO LED output
+LED_out = False
+
+# HUD output
+HUD = True
+
+# Potential fields view
+POT = False
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(26, GPIO.OUT) # RED
-GPIO.setup(16, GPIO.OUT) # GREEN
-GPIO.setup(13, GPIO.OUT) # YELLOW
+
+if LED_out:
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(26, GPIO.OUT) # RED
+    GPIO.setup(16, GPIO.OUT) # GREEN
+    GPIO.setup(13, GPIO.OUT) # YELLOW
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('172.19.3.123', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
     force_memory = [None]
 
@@ -34,7 +45,6 @@ try:
                 force_memory[0][0] = force_memory[0][0] * (((10 - (time.time() - force_memory[0][2]))/13))
                 force_memory[0][1] = force_memory[0][1] * (((10 - (time.time() - force_memory[0][2]))/13))
 
-        print(force_memory)
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
@@ -61,10 +71,12 @@ try:
 
             radial_vel += 1.2    # rotate on the spot to search
             forward_vel += 0.1
-            # set red LED
-            GPIO.output(26, GPIO.HIGH)
-            GPIO.output(16, GPIO.LOW)
-            GPIO.output(13, GPIO.LOW)
+
+            if LED_out:
+                # set red LED
+                GPIO.output(26, GPIO.HIGH)
+                GPIO.output(16, GPIO.LOW)
+                GPIO.output(13, GPIO.LOW)
 
         ### SAMPLE SEEN - NAVIGATE TOWARDS SAMPLE ###
         elif not lunarBotSim.SampleCollected():
@@ -83,10 +95,12 @@ try:
                             delta_x += force_memory[0][0]
                             delta_y += force_memory[0][1]
                         delta_x, delta_y = getForce("sample", sampleRange, sampleBearing, [delta_x, delta_y])
-                    # set Yellow LED
-                    GPIO.output(26, GPIO.LOW)
-                    GPIO.output(16, GPIO.LOW)
-                    GPIO.output(13, GPIO.HIGH)
+
+                    if LED_out:
+                        # set Yellow LED
+                        GPIO.output(26, GPIO.LOW)
+                        GPIO.output(16, GPIO.LOW)
+                        GPIO.output(13, GPIO.HIGH)
 
             if rocksRB is not None:
                 for rock in rocksRB:
@@ -117,10 +131,11 @@ try:
 
         ### SAMPLE COLLECTED - NAVIGATE TOWARDS DROP OFF ###
         elif lunarBotSim.SampleCollected():
-            # set green LED
-            GPIO.output(26, GPIO.LOW)
-            GPIO.output(16, GPIO.HIGH)
-            GPIO.output(13, GPIO.LOW)
+            if LED_out:
+                # set green LED
+                GPIO.output(26, GPIO.LOW)
+                GPIO.output(16, GPIO.HIGH)
+                GPIO.output(13, GPIO.LOW)
             if landerRB is None:
                 if force_memory[0] is not None:
                     radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
