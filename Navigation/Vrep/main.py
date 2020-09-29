@@ -17,6 +17,11 @@ POT = False
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
 
+if HUD:
+    import os
+    import sys
+    clear = lambda: os.system('cls')
+
 if LED_out:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
@@ -27,9 +32,18 @@ if LED_out:
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('192.168.1.111', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
+
+    # memory stuff
+    lander_mem = [None]
+    rocks_mem = [None]
+    sample_mem = [None]
+    obs_mem = [None]
     force_memory = [None]
+
+    # Init position as (0, 0)
+    current_pos = [0, 0]
 
     while (True):
         delta_x = 0
@@ -45,6 +59,7 @@ try:
                 force_memory[0][0] = force_memory[0][0] * (((10 - (time.time() - force_memory[0][2]))/13))
                 force_memory[0][1] = force_memory[0][1] * (((10 - (time.time() - force_memory[0][2]))/13))
 
+        
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
@@ -60,17 +75,22 @@ try:
                 force_memory[0] = ([delta_x, delta_y, time.time()])
 
 
+        ### INITIAL STATE - MOVING OFF LANDER ###
+        if not lunarBotSim.SampleCollected() and landerRB is not None and landerRB[0] < 0.4:
+            current_state = "INITIAL STATE - MOVING OFF LANDER"
 
+            forward_vel = 0.5
         ### NO OBJECTS SEEN - SEARCH FOR OBJECT ###
-        if samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
+        elif samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
+            current_state = "NO OBJECTS SEEN - SEARCH FOR OBJECT"
             if force_memory[0] is not None:
                 radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
             else:
                 radial_vel = 0
                 forward_vel = 0
 
-            radial_vel += 1.2    # rotate on the spot to search
-            forward_vel += 0.1
+            radial_vel += 2    # rotate on the spot to search
+            forward_vel += 0
 
             if LED_out:
                 # set red LED
@@ -80,6 +100,7 @@ try:
 
         ### SAMPLE SEEN - NAVIGATE TOWARDS SAMPLE ###
         elif not lunarBotSim.SampleCollected():
+            current_state = "SAMPLE SEEN - NAVIGATE TOWARDS SAMPLE"
             # Check to see if the sample is within the camera's FOV
             if samplesRB is not None:
                 # loop through each sample detected using Pythonian way
@@ -131,6 +152,7 @@ try:
 
         ### SAMPLE COLLECTED - NAVIGATE TOWARDS DROP OFF ###
         elif lunarBotSim.SampleCollected():
+            current_state = "SAMPLE COLLECTED - NAVIGATE TOWARDS DROP OFF"
             if LED_out:
                 # set green LED
                 GPIO.output(26, GPIO.LOW)
@@ -160,6 +182,15 @@ try:
                             delta_y += force_memory[0][1]
                     radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
             
+
+        ## Display HUD
+        if HUD:
+            clear()
+            HUD_string = ("#### {} ####\n"
+                          "Forward Vel: {}          lander: {}\n"
+                          "Radial Vel: {}".format(current_state, forward_vel, landerRB, radial_vel))
+            print(HUD_string)
+
 
         # Get Detected Wall Points
         wallPoints = lunarBotSim.GetDetectedWallPoints()
