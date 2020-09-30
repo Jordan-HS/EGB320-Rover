@@ -36,11 +36,7 @@ try:
     lunarBotSim.StartSimulator()
 
     # memory stuff
-    lander_mem = [None]
-    rocks_mem = [None]
-    sample_mem = [None]
-    obs_mem = [None]
-    force_memory = [None]
+    rover_mem = Memory()
 
     # Init position as (0, 0)
     current_pos = [0, 0]
@@ -48,7 +44,8 @@ try:
     while (True):
         delta_x = 0
         delta_y = 0
-        targetVel = [0,0]
+        radial_vel = 0
+        forward_vel = 0
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
@@ -199,9 +196,26 @@ try:
         
         lunarBotSim.SetTargetVelocities(forward_vel/2, radial_vel/2)
 
+        # Update memory
+        rover_mem.update(samplesRB, landerRB, obstaclesRB, rocksRB, forward_vel, radial_vel)
+
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
 
 except KeyboardInterrupt as e:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
     lunarBotSim.StopSimulator()
+
+
+class Memory:
+    def __init__(self):
+        lander = [None]
+        rocks = [None]
+        sample = [None]
+        obstacle = [None]
+        last_time = 0
+        last_move = 0
+
+    def update(self, samplesRB, landerRB, obstaclesRB, rocksRB):
+        if samplesRB is None:
+            # 
