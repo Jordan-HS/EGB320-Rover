@@ -36,7 +36,7 @@ try:
     lunarBotSim.StartSimulator()
 
     # memory stuff
-    rover_mem = Memory()
+    rover = Brain()
 
     # Init position as (0, 0)
     current_pos = [0, 0]
@@ -49,6 +49,9 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
+        # Get current bearing
+        bearing = rover.bearing
+
         if force_memory[0] is not None:
             if time.time() - force_memory[0][2] > 10:
                 force_memory = [None]
@@ -56,7 +59,6 @@ try:
                 force_memory[0][0] = force_memory[0][0] * (((10 - (time.time() - force_memory[0][2]))/13))
                 force_memory[0][1] = force_memory[0][1] * (((10 - (time.time() - force_memory[0][2]))/13))
 
-        
         # Check to see if any obstacles are within the camera's FOV
         if obstaclesRB is not None:
             # loop through each obstacle detected using Pythonian way
@@ -81,7 +83,7 @@ try:
         elif samplesRB is None and obstaclesRB is None and rocksRB is None and not lunarBotSim.SampleCollected():
             current_state = "NO OBJECTS SEEN - SEARCH FOR OBJECT"
             if force_memory[0] is not None:
-                radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
+                movement, magnitude = calculateMovement(force_memory[0][0], force_memory[0][1])
             else:
                 radial_vel = 0
                 forward_vel = 0
@@ -144,7 +146,7 @@ try:
             #         obstacleRange = obstacle[0]
             #         obstacleBearing = obstacle[1]
 
-            radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
+            movement, magnitude = calculateMovement(delta_x, delta_y)
 
 
         ### SAMPLE COLLECTED - NAVIGATE TOWARDS DROP OFF ###
@@ -157,7 +159,7 @@ try:
                 GPIO.output(13, GPIO.LOW)
             if landerRB is None:
                 if force_memory[0] is not None:
-                    radial_vel, forward_vel = calculateMovement(force_memory[0][0], force_memory[0][1])
+                    movement, magnitude = calculateMovement(force_memory[0][0], force_memory[0][1])
                 else:
                     radial_vel = 0
                     forward_vel = 0
@@ -177,7 +179,7 @@ try:
                     if force_memory[0] is not None:
                             delta_x += force_memory[0][0]
                             delta_y += force_memory[0][1]
-                    radial_vel, forward_vel = calculateMovement(delta_x, delta_y)
+                    movement, magnitude = calculateMovement(delta_x, delta_y)
             
 
         ## Display HUD
@@ -192,12 +194,11 @@ try:
         # Get Detected Wall Points
         wallPoints = lunarBotSim.GetDetectedWallPoints()
 
-        # [forward vel m/s, rotational vel rads/s]
+        # Move the robot
+        moveBot(movement, magnitude)
         
-        lunarBotSim.SetTargetVelocities(forward_vel/2, radial_vel/2)
-
         # Update memory
-        rover_mem.update(samplesRB, landerRB, obstaclesRB, rocksRB, forward_vel, radial_vel)
+        rover_mem.update(samplesRB, landerRB, obstaclesRB, rocksRB, movement, magnitude)
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
@@ -206,16 +207,71 @@ except KeyboardInterrupt as e:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
     lunarBotSim.StopSimulator()
 
+def moveBot(movement, magnitude):
+    if movement == "forward":
+        lunarBotSim.SetTargetVelocities(magnitude, 0)
+    elif movement == "left":
+        lunarBotSim.SetTargetVelocities(0, -magnitude)
+    elif movement == "right":
+        lunarBotSim.SetTargetVelocities(0, magnitude)
 
-class Memory:
+
+class Brain:
     def __init__(self):
         lander = [None]
         rocks = [None]
-        sample = [None]
-        obstacle = [None]
+        samples = [None]
+        obstacles = [None]
+        bearing = 0
         last_time = 0
-        last_move = 0
+        speed = 0
+        x = 0
+        y = 0
 
-    def update(self, samplesRB, landerRB, obstaclesRB, rocksRB):
+    def update(self, samplesRB, landerRB, obstaclesRB, rocksRB, movement, magnitude):
         if samplesRB is None:
-            # 
+            # make an estimation
+            samples = updateObjectsPosition
+        else:
+            samples = checkInMemory(samplesRB, samples)
+
+            # update with current pos
+
+        if landerRB is None:
+             # make an estimation
+        else:
+            # update with current pos
+            lander = checkInMemory(landerRB, lander)
+
+        if obstaclesRB is None:
+             # make an estimation
+        else:
+            # update with current pos
+            obstacles = checkInMemory(obstaclesRB, obstacles)
+
+        if rocksRB is None:
+             # make an estimation
+        else:
+            # update with current pos
+            rocks = checkInMemory(rocksRB, rocks)
+
+        # Update estimation of current pos and bearing
+
+    def checkInMemory(self, objects_seen, objects_memory):
+        if objects_memory is None:
+                # First samples seen
+                for object_seen in objects_seen:
+                    objects_memory.append(object_seen)
+            
+            # Check that the sample being seen isnt already in memory
+            for object_seen in objects_seen:
+                for object_memory in objects_memory:
+                    if (math.isclose(object_seen[0], objects_seen[0], abs_tol=0.01) 
+                        and math.isclose(object_seen[1], objects_seen[1], abs_tol=math.pi/12)):
+                        objects_seen = object_seen
+
+        return objects_memory
+
+    def updateObjectsPosition(self, objects):
+
+

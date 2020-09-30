@@ -54,8 +54,29 @@ def getForce(object_type, distance, bearing, force=None):
     else:
         return (delta_x + force[0]), (delta_y + force[1])
 
-def calculateMovement(delta_x, delta_y):
-    radial_vel = math.atan2(delta_y, delta_x)
-    forward_vel = math.sqrt(delta_x**2 + delta_y**2)/2
+def calculateMovement(delta_x, delta_y, bearing):
+    radial_dir = math.atan2(delta_y, delta_x)
+    forward_mag = math.sqrt(delta_x**2 + delta_y**2)/2
 
-    return radial_vel, forward_vel
+    pi = math.pi
+    divisions = 16                  # Accuracy of the robots turns
+    div_range = (2*pi)/divisions    # range of each division
+
+    current_div = math.floor(bearing/div_range)
+    target_div = math.floor(radial_dir/div_range)
+    if current_div != target_div:
+        # Adjust to aim to target_div
+        if current_div < target_div:
+            # turn right
+            movement = 'right'
+            magnitude = 0.25
+        else:
+            # turn left
+            movement = 'left'
+            magnitude = 0.25
+    else:
+        # Move forward based on magnitude
+        movement = 'forward'
+        magnitude = 0.5
+
+    return movement, magnitude
