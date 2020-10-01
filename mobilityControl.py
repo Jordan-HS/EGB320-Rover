@@ -34,49 +34,24 @@ motorA.ChangeDutyCycle(0)
 
 ## Functions
 #################################################################
-def motorA_forward(spd):
+def motorA_forward():
     GPIO.output(motorA_in1_pin, True)
     GPIO.output(motorA_in2_pin, False)
 
 
-def motorA_reverse(spd):
+def motorA_reverse():
     GPIO.output(motorA_in1_pin, False)
     GPIO.output(motorA_in2_pin, True)
 
-def motorB_forward(spd):
+def motorB_forward():
     GPIO.output(motorB_in1_pin, True)
     GPIO.output(motorB_in2_pin, False)
 
-def motorB_reverse(spd):
+def motorB_reverse():
     GPIO.output(motorB_in1_pin, False)
     GPIO.output(motorB_in2_pin, True)
 
 
-def turnLeft(spd):
-    runMotor(0, spd, 0)
-    runMotor(1, spd, 1)
-
-def turnRight(spd):
-    runMotor(0, spd, 1)
-    runMotor(1, spd, 0)
-
-def runMotor(motor, spd, direction):
-    GPIO.output(22, GPIO.HIGH);
-    in1 = GPIO.HIGH
-    in2 = GPIO.LOW
-
-    if(direction == 1):
-        in1 = GPIO.LOW
-        in2 = GPIO.HIGH
-
-    if(motor == 0):
-        GPIO.output(16, in1)
-        GPIO.output(18, in2)
-        pwma.ChangeDutyCycle(spd)
-    elif(motor == 1):
-        GPIO.output(15, in1)
-        GPIO.output(13, in2)
-        pwmb.ChangeDutyCycle(spd)
 
 def motorStop():
     GPIO.output(22, GPIO.LOW)
