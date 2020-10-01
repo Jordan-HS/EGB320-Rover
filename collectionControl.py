@@ -16,6 +16,9 @@ MINus = 600
 CENTREus = 1500
 INCREus = 4
 
+RANGEincre = ((MAXus-MINus)/INCREus)
+
+
 # Configure min and max servo pulse lengths
 servo_min = round(MINus/INCREus)  # Min pulse length out of 4096
 servo_max = round(MAXus/INCREus)  # Max pulse length out of 4096
