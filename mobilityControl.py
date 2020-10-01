@@ -61,6 +61,7 @@ def motorStop():
 def main(args=None):
     while True:
         GPIO.output(22, GPIO.HIGH)
+        motorA.ChangeDutyCycle(50)
         motorA_forward()
 
 if __name__ == "__main__":
