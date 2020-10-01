@@ -66,7 +66,7 @@ def calculateMovement(delta_x, delta_y, bearing):
     target_div = math.floor(radial_dir/div_range)
     if current_div != target_div:
         # Adjust to aim to target_div
-        if current_div < target_div:
+        if current_div > target_div:
             # turn right
             movement = 'right'
             magnitude = 0.25
