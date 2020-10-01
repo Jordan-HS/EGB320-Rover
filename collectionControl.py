@@ -19,6 +19,7 @@ INCREus = 4
 # Configure min and max servo pulse lengths
 servo_min = round(MINus/INCREus)  # Min pulse length out of 4096
 servo_max = round(MAXus/INCREus)  # Max pulse length out of 4096
+servo_centre = round(CENTREus/INCREus)
 
 # Helper function to make setting a servo pulse width simpler.
 def set_servo_pulse(channel, pulse):
@@ -40,6 +41,6 @@ while True:
     pwm.set_pwm(0, 0, servo_min)
     pwm.set_pwm(1, 0, servo_min)
     time.sleep(1)
-    pwm.set_pwm(0, 0, servo_max)
-    pwm.set_pwm(1, 0, servo_max)
-    time.sleep(1)
+    #pwm.set_pwm(0, 0, servo_max)
+    #pwm.set_pwm(1, 0, servo_max)
+    #time.sleep(1)
