@@ -30,7 +30,7 @@ GPIO.setup(motorB_in2_pin, GPIO.OUT)    # BIN2
 GPIO.setup(11, GPIO.OUT)    # PWMB
 motorB = GPIO.PWM(11, pwmFreq)    # pin 13 to PWM
 motorB.start(100)
-motorA.ChangeDutyCycle(0)
+motorB.ChangeDutyCycle(0)
 
 ## Functions
 #################################################################
