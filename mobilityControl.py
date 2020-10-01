@@ -64,8 +64,8 @@ def main(args=None):
         motorB.ChangeDutyCycle(50)
         motorB_forward()
         sleep(1)
-        #motorA_reverse()
-        #sleep(1)
+        motorB_reverse()
+        sleep(1)
 
 if __name__ == "__main__":
     main()
