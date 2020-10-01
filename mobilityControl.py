@@ -61,10 +61,10 @@ def motorStop():
 def main(args=None):
     while True:
         GPIO.output(22, GPIO.HIGH)
-        motorB.ChangeDutyCycle(50)
-        motorB_forward()
+        motorA.ChangeDutyCycle(50)
+        motorA_forward()
         sleep(1)
-        motorB_reverse()
+        motorA_reverse()
         sleep(1)
 
 if __name__ == "__main__":
