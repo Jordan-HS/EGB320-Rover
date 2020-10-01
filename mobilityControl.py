@@ -24,7 +24,7 @@ motorA.start(100)
 motorA.ChangeDutyCycle(0)
 
 motorB_in1_pin = 15
-motorB_in2_pin = 13
+motorB_in2_pin = 19
 GPIO.setup(motorB_in1_pin, GPIO.OUT)    # BIN1
 GPIO.setup(motorB_in2_pin, GPIO.OUT)    # BIN2
 GPIO.setup(11, GPIO.OUT)    # PWMB
@@ -61,10 +61,10 @@ def motorStop():
 def main(args=None):
     while True:
         GPIO.output(22, GPIO.HIGH)
-        motorA.ChangeDutyCycle(50)
-        motorA_forward()
+        motorB.ChangeDutyCycle(50)
+        motorB_forward()
         sleep(1)
-        motorA_reverse()
+        motorB_reverse()
         sleep(1)
 
 if __name__ == "__main__":
