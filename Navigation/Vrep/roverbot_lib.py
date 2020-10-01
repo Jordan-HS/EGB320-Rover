@@ -12,7 +12,6 @@ from enum import IntEnum
 ################################
 
 
-
 class VREP_RoverRobot(object):
 	"""docstring for VREP_SoccerBot"""
 	
