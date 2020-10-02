@@ -667,7 +667,7 @@ class VREP_RoverRobot(object):
 		errorCode, robotPosition = vrep.simxGetObjectPosition(self.clientID, self.robotHandle, -1, vrep.simx_opmode_buffer)
 		errorCode, robotOrientation = vrep.simxGetObjectOrientation(self.clientID, self.robotHandle, -1, vrep.simx_opmode_buffer)
 		if errorCode == 0:
-			self.robotPose = [robotPosition[0], robotPosition[1], robotPosition[1], robotOrientation[0], robotOrientation[1], robotOrientation[2]]
+			self.robotPose = [robotPosition[0], robotPosition[1], robotPosition[2], robotOrientation[0], robotOrientation[1], robotOrientation[2]]
 
 		# GET 3D CAMERA POSE
 		errorCode, cameraPosition = vrep.simxGetObjectPosition(self.clientID, self.cameraHandle, -1, vrep.simx_opmode_buffer)

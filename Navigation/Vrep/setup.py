@@ -10,9 +10,9 @@ def init_sim():
     sceneParameters.obstacle1_StartingPosition = None   # starting position of obstacle 1 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
     sceneParameters.obstacle2_StartingPosition = None   # starting position of obstacle 2 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
 
-    sceneParameters.sample0_StartingPosition = [0.5, -0.5]  # starting position of obstacle 0 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
+    sceneParameters.sample0_StartingPosition = [0.4, -0.8]  # starting position of obstacle 0 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
     #sceneParameters.sample0_StartingPosition = None  # starting position of obstacle 0 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
-    sceneParameters.sample1_StartingPosition = None   # starting position of obstacle 1 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
+    sceneParameters.sample1_StartingPosition = [0.6, -0.8]   # starting position of obstacle 1 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
     sceneParameters.sample2_StartingPosition = None   # starting position of obstacle 2 [x, y] (in metres), -1 if want to use current vrep position, or none if not wanted in the scene
 
 
@@ -37,9 +37,9 @@ def init_sim():
     robotParameters.cameraTilt = 0.45 # tilt of the camera in radians
 
     # Vision Processing Parameters
-    robotParameters.maxBallDetectionDistance = 1 # the maximum distance away that you can detect the ball in metres
+    robotParameters.maxBallDetectionDistance = 2 # the maximum distance away that you can detect the ball in metres
     robotParameters.maxLanderDetectionDistance = 2.5 # the maximum distance away that you can detect the goals in metres
-    robotParameters.maxObstacleDetectionDistance = 1.5 # the maximum distance away that you can detect the obstacles in metres
+    robotParameters.maxObstacleDetectionDistance = 2 # the maximum distance away that you can detect the obstacles in metres
 
     # Dribbler Parameters
     robotParameters.collectorQuality = 1 # specifies how good your sample collector is from 0 to 1.0 (with 1.0 being awesome and 0 being non-existent)

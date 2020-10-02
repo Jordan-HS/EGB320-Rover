@@ -38,10 +38,14 @@ class Brain:
         self.samples = []
         self.obstacles = []
         self.last_time = time.time()
+        self.time_scale = 0.2
         self.speed = 0
         self.bearing = 0
+        self.x = 0
+        self.y = 0
 
     def update(self, samplesRB, landerRB, obstaclesRB, rocksRB, movement, magnitude):
+
         if landerRB is not None:
             print('')
         if landerRB is None and len(self.lander) > 0:
@@ -74,11 +78,12 @@ class Brain:
 
         # Update estimation of current pos and bearing
         if movement == "left":
-            delta_time = time.time() - self.last_time
+            delta_time = (time.time() - self.last_time) * self.time_scale
             delta_rad = delta_time * magnitude
             self.bearing -= delta_rad
         elif movement == "right":
-            delta_time = time.time() - self.last_time
+            delta_time = (time.time() - self.last_time) * self.time_scale
+            self.last_time = delta_time
             delta_rad = delta_time * magnitude
             self.bearing += delta_rad
 
@@ -108,7 +113,8 @@ class Brain:
                 obj_y = obj[0] * math.cos(obj[1])
 
                 # Calculate distance travelled by rover
-                delta_time = time.time() - self.last_time
+                delta_time = (time.time() - self.last_time) * self.time_scale
+                self.last_time = delta_time
                 dist = delta_time * magnitude               # distance = time * speed
 
                 # Subtract distace to y
@@ -121,7 +127,7 @@ class Brain:
 
         elif movement == "left":
             for obj in objects:
-                delta_time = time.time() - self.last_time
+                delta_time = (time.time() - self.last_time) * self.time_scale
                 delta_rad = delta_time * magnitude
                 obj[1] += delta_rad
 
@@ -135,7 +141,7 @@ class Brain:
 
         elif movement == "right":
             for obj in objects:
-                delta_time = time.time() - self.last_time
+                delta_time = (time.time() - self.last_time) * self.time_scale
                 delta_rad = delta_time * magnitude
                 obj[1] -= delta_rad
                 obj[1] = obj[1] % (2 * math.pi)
@@ -156,19 +162,26 @@ try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
     lunarBotSim = VREP_RoverRobot('192.168.1.111', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
+    
+
+    # Get the objects exact position and use that to cheat and test logic
 
     # memory stuff
     rover = Brain()
 
     force_memory = [None]
+    rover.last_time = time.time()
 
     while (True):
         delta_x = 0
         delta_y = 0
         movement = 'forward'
         magnitude = 0.1
+        
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
+        # lunarBotSim.GetObjectPositions()
+        # print(lunarBotSim.samplePositions)
 
 
         if force_memory[0] is not None:
@@ -194,7 +207,7 @@ try:
 
 
         ### INITIAL STATE - MOVING OFF LANDER ###
-        if not lunarBotSim.SampleCollected() and landerRB is not None and landerRB[0] < 0.4:
+        if not lunarBotSim.SampleCollected() and ((landerRB is not None and landerRB[0] < 1) or (len(rover.lander) != 0 and rover.lander[0][0] < 1)):
             current_state = "INITIAL STATE - MOVING OFF LANDER"
 
             movement = "forward"
@@ -309,6 +322,7 @@ try:
         
         # Update memory
         rover.update(samplesRB, landerRB, obstaclesRB, rocksRB, movement, magnitude)
+        
 
         ## Display HUD
         if HUD:
@@ -319,7 +333,8 @@ try:
                           "                      Samples: {}\n"
                           "                      Rocks: {}\n"
                           "                      Obstacles: {}"
-                          "".format(current_state, movement, magnitude, rover.lander, rover.samples, rover.rocks, rover.obstacles))
+                          "                      Bearing:{} "
+                          "".format(current_state, movement, magnitude, rover.lander, rover.samples, rover.rocks, rover.obstacles, rover.bearing*(180/math.pi)))
             print(HUD_string)
 
         # Update Ball Position
