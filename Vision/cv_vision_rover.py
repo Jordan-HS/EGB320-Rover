@@ -134,6 +134,7 @@ def detect_obs(hsv_masks):
                         # Exit loop
                         continue
                     # elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
+                        # error = 1   # Obstacle on boundary
                     #     obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
                     #     obs_array.append(obs)
                     #     # Exit loop
@@ -190,7 +191,7 @@ def detect_obs(hsv_masks):
                     #print([area, id_type])
                     # Boundary (x,y,w,h) box of contour
                     boundary = cv2.boundingRect(cnt)
-                    # Error if boundaries outside of norm
+                    # Errors not reported for sample
                     error = 0
                     # Find centre of enclosing circle
                     centre, radius = cv2.minEnclosingCircle(cnt)

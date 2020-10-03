@@ -134,10 +134,11 @@ def detect_obs(hsv_masks):
                         # Exit loop
                         continue
                     # elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
-                    #     obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
-                    #     obs_array.append(obs)
-                    #     # Exit loop
-                    #     continue
+                        # error = 1   # Obstacle on boundary
+                        # obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
+                        # obs_array.append(obs)
+                        # # Exit loop
+                        # continue
                     else:
                         error = 0   # No obstacle overlap
                     # Find centre of enclosing circle
