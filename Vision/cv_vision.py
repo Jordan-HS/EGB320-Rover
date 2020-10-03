@@ -35,20 +35,6 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 # Initialise camera setup
 camera = PiCamera()
-
-#camera.sharpness = 0
-#camera.contrast = 30
-#camera.saturation = 0
-#camera.ISO = 300
-#camera.start_preview()
-#camera.awb_mode = 'off'
-#camera.image_effect = 'none'
-#camera.color_effects = None
-#camera.iso = 100
-#camera.awb_gains = (1.45, 1.45)
-#camera.brightness = 30
-#camera.contrast = 20
-
 camera.resolution = (IMG_X, IMG_Y)
 camera.framerate = 8
 # Allow time for the camera to warmup
