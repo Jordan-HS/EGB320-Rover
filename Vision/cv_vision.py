@@ -138,7 +138,7 @@ def detect_obs(hsv_masks):
                     # Boundary (x,y,w,h) box of contour
                     boundary = cv2.boundingRect(cnt)
                     # Check for error if boundaries outside of expected
-                    if ((boundary[3]/boundary[2])<0.6): 
+                    if ((boundary[3]/boundary[2])<0.6):
                         error = 1   # Obstacle overlapping
                         # Creates boundary for two obstacles with error noted
                         obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
@@ -146,8 +146,13 @@ def detect_obs(hsv_masks):
                         for obs in obs_array_overlap:
                             obs_array.append(obs)
                         # Exit loop
-                        continue   
-                    else: 
+                        continue
+                    # elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
+                    #     obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
+                    #     obs_array.append(obs)
+                    #     # Exit loop
+                    #     continue
+                    else:
                         error = 0   # No obstacle overlap
                     # Find centre of enclosing circle
                     centre, radius = cv2.minEnclosingCircle(cnt)
@@ -172,9 +177,9 @@ def detect_obs(hsv_masks):
             # Boundary (x,y,w,h) box of contour
             boundary = cv2.boundingRect(cnt)
             # Error if boundaries outside of norm
-            if ((boundary[3]/boundary[2])>0.26):  
+            if ((boundary[3]/boundary[2])>0.26):
                 error = 1 # Lander partially obscured
-            else: 
+            else:
                 error = 0 # Lander completely visable
             # Find centre of enclosing circle
             centre, radius = cv2.minEnclosingCircle(cnt)
@@ -215,7 +220,7 @@ def detect_obs(hsv_masks):
     return obs_array
 
 def overlap_obs(cnt, obs_indx, id_type, boundary, error):
-    # Define arrays 
+    # Define arrays
     obs_boundary = []
     obs_array_overlap = []
     # Obstacle type index
@@ -233,7 +238,7 @@ def overlap_obs(cnt, obs_indx, id_type, boundary, error):
     # Create two obstacle list
     for obs in obs_boundary:
         # Centre point for obstacles
-        centre = int(obs[0]+(obs[1]/2)), int(obs[1]+(obs[3]/2))
+        centre = (int(obs[0]+(obs[2]/2)), int(obs[1]+(obs[3]/2)))
         # Width of contour in pixels
         pix_width = obs[2]
         # Angle from centre of screen in radians
@@ -243,6 +248,40 @@ def overlap_obs(cnt, obs_indx, id_type, boundary, error):
         # Create list of values
         obs_array_overlap.append([obs_indx, id_type, obs_ang, obs_dist, centre, obs, error])
     return obs_array_overlap
+
+def boundary_obs(cnt, obs_indx, id_type, boundary, error):
+    # Obstacle type index
+    obs_indx = obs_indx
+    # Obstacle label
+    id_type = id_type
+    # Error = 1 -  Values not to be trusted
+    error = error
+    # Boundary points
+    boundary = boundary
+    if (boundary[0] <= 3):
+        # Centre point for obstacle based on height
+        centre = (int((boundary[0] + boundary[2]) - boundary[3]), int(boundary[1]+(boundary[3]/2)))
+        # Width of contour in pixels
+        pix_width = boundary[3]
+        # Angle from centre of screen in radians
+        obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+        # Distance from camera in cm
+        obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+        # Create list of values
+        obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+        return obs_array_boundary
+    else:
+        # Centre point for obstacle based on height
+        centre = (int(boundary[0] + boundary[3]), int(boundary[1] + (boundary[3]/2)))
+        # Width of contour in pixels
+        pix_width = boundary[3]
+        # Angle from centre of screen in radians
+        obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+        # Distance from camera in cm
+        obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+        # Create list of values
+        obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+        return obs_array_boundary
 
 # Process frame from PiCamera
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -300,7 +339,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     # Termination by pressing 'q'
     if key == ord("q"):
         break
-    # Save image output by pressing 's'    
+    # Save image output by pressing 's'
     elif key == ord("s"):
         cv2.imwrite('mask.png',mask)
         cv2.imwrite('image_frame.png',image)
