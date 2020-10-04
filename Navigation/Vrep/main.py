@@ -39,6 +39,7 @@ class Rover:
         self.samples = None
         self.obstacles = None
         self.target = None
+        self.unseen = None
         self.POT = POT
         self.target_type = ""
         self.target_speed = 1
@@ -79,6 +80,8 @@ class Rover:
             else:
                 self.current_action = "Pick sample"
                 self.initial_bearing = 0
+                self.target = None
+                self.target_type = ""
             return
 
         ### Do this first to gather information ###
@@ -105,7 +108,26 @@ class Rover:
                 if self.distanceToObject(lander_ramp) < self.distanceToObject(self.target):
                     self.target = lander_ramp
             self.target_type = "lander approach"
-            self.target_speed = 2
+            self.target_speed = 1
+            return
+
+        ### Need to find sample - Search unknowns ###
+        if (self.samples is None or len(self.samples) == 0) and self.target is None and self.current_action == "Pick sample":
+            # find closest unknown 
+            dist = 10
+            for unseen in self.unseen:
+                if self.distanceToObject(unseen) < dist:
+                    self.target = unseen
+                    self.target_type = "Searching unknown"
+                    self.target_speed = 1
+                    self.POT = True
+                    dist = self.distanceToObject(unseen)
+            return
+
+        ### Searching unknown - Found a new sample ###
+        if self.target is not None and self.target_type == "Searching unknown" and (samplesRB is not None and len(samplesRB) > 0):
+            self.current_action = "Surveying landing site"
+            self.save_bearing = self.bearing - math.radians(11)
             return
 
         ### Pick a target sample ###
@@ -115,7 +137,7 @@ class Rover:
                 if self.distanceToObject(sample) < dist:
                     self.target = sample
                     self.target_type = "sample"
-                    self.target_speed = 0.4
+                    self.target_speed = 1
                     dist = self.distanceToObject(sample)
             return
         
@@ -195,24 +217,32 @@ class Rover:
         ### Move towards target using potential fields ### 
         if self.target is not None:
             target_angle, target_mag = getForce(self)
+            accuracy = 5
+            lowSpeedBoost = 1
             
             # Display potential field graph
             if self.POT:
                 show(self)
                 self.POT = False
 
-            if math.isclose(self.bearing, target_angle, abs_tol=math.radians(5)):
+            if target_mag > 2:
+                accuracy = 15
+
+            if target_mag < 0.75:
+                lowSpeedBoost = 2.5
+
+            if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
                 self.move("forward", target_mag*self.target_speed)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", target_mag*self.target_speed)
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)
                 elif self.bearing - target_angle > 0:
-                    self.move("right", target_mag*self.target_speed)   
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)   
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", target_mag*self.target_speed)
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)
                 elif self.bearing - target_angle > 0:
-                    self.move("left", target_mag*self.target_speed)   
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
             
             self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movment)
             return
@@ -262,11 +292,11 @@ class Rover:
                     for index, rock_in_mem in enumerate(self.rocks):
                         if math.isclose(rock_in_mem[0], x, abs_tol=0.3) and math.isclose(rock_in_mem[1], y, abs_tol=0.3):
                             self.rocks[index][0] = round((self.rocks[index][0] + x)/2, 2)
-                            self.rocks[index][1] = round((self.rocks[index][1] + x)/2, 2)
+                            self.rocks[index][1] = round((self.rocks[index][1] + y)/2, 2)
                             return
 
                     # Add new obstacle
-                    self.rocks.append(x, y)
+                    self.rocks.append([x, y])
 
         if obstaclesRB is not None:
             for obstacle in obstaclesRB:
@@ -275,18 +305,37 @@ class Rover:
 
                 x, y = self.determinePos(distance, angle)
 
+                self.addUnseen(distance, angle)
+
                 if self.obstacles is None:
                     self.obstacles = [[x, y]]
                     return
                 else:
                     for index, obs_in_mem in enumerate(self.obstacles):
-                        if math.isclose(obs_in_mem[0], x, abs_tol=0.4) and math.isclose(obs_in_mem[1], y, abs_tol=0.4):
+                        if math.isclose(obs_in_mem[0], x, abs_tol=0.3) and math.isclose(obs_in_mem[1], y, abs_tol=0.3):
                             self.obstacles[index][0] = round((self.obstacles[index][0] + x)/2, 2)
-                            self.obstacles[index][1] = round((self.obstacles[index][1] + x)/2, 2)
+                            self.obstacles[index][1] = round((self.obstacles[index][1] + y)/2, 2)
                             return
 
                     # Add a new obstacle
                     self.obstacles.append([x, y])
+
+    def addUnseen(self, distance, angle):
+        further_distance = distance + 0.5
+
+        x, y = self.determinePos(further_distance, angle)
+
+        if self.unseen is None:
+            self.unseen = [[x, y]]
+            return
+        else:
+            for index, unseen_in_mem in enumerate(self.unseen):
+                if math.isclose(unseen_in_mem[0], x, abs_tol=0.5) and math.isclose(unseen_in_mem[1], y, abs_tol=0.5):
+                    self.unseen[index][0] = round((self.unseen[index][0] + x)/2, 2)
+                    self.unseen[index][1] = round((self.unseen[index][1] + y)/2, 2)
+                    return
+
+            self.unseen.append([x, y])
 
     def determinePos(self, distance, angle):
         theta = self.bearing + angle
@@ -334,7 +383,8 @@ try:
                   "Robot x:{:.2f}  Robot y:{:.2f}   Bearing:{:.2f}\n"
                   "Samples at:{}\n"
                   "Rocks at:{}\n"
-                  "Obstacles at:{}\n".format(rover.current_action, rover.x, rover.y, math.degrees(rover.bearing), rover.samples,rover.rocks, rover.obstacles))
+                  "Obstacles at:{}\n"
+                  "Unseen areas: {}".format(rover.current_action, rover.x, rover.y, math.degrees(rover.bearing), rover.samples,rover.rocks, rover.obstacles, rover.unseen))
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()

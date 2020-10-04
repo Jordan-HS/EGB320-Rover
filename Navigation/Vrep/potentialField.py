@@ -4,12 +4,12 @@ from numpy import arange
 
 # Forces of attraction
 alpha = 4
-sample_radius = 7E-3
+sample_radius = 0.07
 
 # Forces of repulsion
-beta = 20
+beta = 40
 obs_spread = 0.3
-obs_radius = 0.075
+obs_radius = 0.1
 
 def dist(vec1, vec2):
     x_dist = abs(vec1[0] - vec2[0])
@@ -42,7 +42,10 @@ def getForce(rover):
         lander_strength = 10
         lander_spread = 0.1
 
-        if lander_size <= distance <= lander_spread+lander_size:
+        if distance < lander_size:
+            delta_x = 0
+            delta_y = 0
+        elif lander_size <= distance <= lander_spread+lander_size:
             delta_x += (-lander_strength * (lander_spread + lander_size - distance)*math.cos(bearing))
             delta_y += (-lander_strength * (lander_spread + lander_size - distance)*math.sin(bearing))
         elif distance > lander_spread + lander_size:
@@ -64,9 +67,12 @@ def getForce(rover):
             distance = dist([rover.x, rover.y], obstacle)
             bearing = angle(obstacle, [rover.x, rover.y])
             
-            if distance <= obs_spread + obs_radius:
+            if distance <= (obs_spread + obs_radius)/2:
                 delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
                 delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
+            elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
+                delta_x += (-beta/2 * (obs_spread + obs_radius - distance)*math.cos(bearing))
+                delta_y += (-beta/2 * (obs_spread + obs_radius - distance)*math.sin(bearing))
             elif distance > obs_spread + obs_radius:
                 delta_x += 0
                 delta_y += 0
@@ -99,8 +105,10 @@ def show(rover):
             lander_size = 0.4
             lander_strength = 10
             lander_spread = 0.2
-
-            if lander_size <= distance <= lander_spread+lander_size:
+            if distance < lander_size:
+                delta_x = 0
+                delta_y = 0
+            elif lander_size <= distance <= lander_spread+lander_size:
                 delta_x += (-lander_strength * (lander_spread + lander_size - distance)*math.cos(bearing))
                 delta_y += (-lander_strength * (lander_spread + lander_size - distance)*math.sin(bearing))
             elif distance > lander_spread + lander_size:
@@ -122,9 +130,12 @@ def show(rover):
                     distance = dist([x, y], obstacle)
                     bearing = angle(obstacle, [x, y])
                     
-                    if distance <= obs_spread + obs_radius:
+                    if distance <= (obs_spread + obs_radius)/2:
                         delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
                         delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
+                    elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
+                        delta_x += (-beta/2 * (obs_spread + obs_radius - distance)*math.cos(bearing))
+                        delta_y += (-beta/2 * (obs_spread + obs_radius - distance)*math.sin(bearing))
                     elif distance > obs_spread + obs_radius:
                         delta_x += 0
                         delta_y += 0
