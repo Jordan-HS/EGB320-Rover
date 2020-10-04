@@ -2,7 +2,7 @@
 from roverbot_lib import *
 import setup
 from math import radians, degrees
-from potentialField import getForce, calculateMovement
+from potentialField import getForce, calculateMovement, show
 import time
 import numpy as np
 
@@ -13,7 +13,7 @@ LED_out = False
 HUD = True
 
 # Potential fields view
-POT = False
+POT = True
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
@@ -31,6 +31,7 @@ if LED_out:
     GPIO.setup(16, GPIO.OUT) # GREEN
     GPIO.setup(13, GPIO.OUT) # YELLOW
 
+
 class Rover:
     def __init__(self, lunarBotSim):
         self.lander = [0,0]
@@ -38,13 +39,16 @@ class Rover:
         self.samples = None
         self.obstacles = None
         self.target = None
+        self.POT = POT
         self.target_type = ""
+        self.target_speed = 1
         self.x = 0
         self.y = 0
         self.bearing = 0
         self.current_action = ""
+        self.current_movment = ""
         self.initial = True
-        self.initial_bearing = 0
+        self.save_bearing = 0
         self.lunarBotSim = lunarBotSim
 
     def updateCurrentPos(self):
@@ -56,10 +60,13 @@ class Rover:
     def move(self, movement, magnitude=None):
         if movement == "forward":
             self.lunarBotSim.SetTargetVelocities(magnitude, 0)
+            self.current_movment = "forward, {:.2f}".format(magnitude)
         elif movement == "left":
             self.lunarBotSim.SetTargetVelocities(0, magnitude)
+            self.current_movment = "left, {:.2f}".format(magnitude)
         elif movement == "right":
             self.lunarBotSim.SetTargetVelocities(0, -magnitude)
+            self.current_movment = "right, {:.2f}".format(magnitude)
         elif movement == "stop":
             self.lunarBotSim.SetTargetVelocities(0, 0)
 
@@ -67,7 +74,11 @@ class Rover:
         ### Survering scene ###    
         if self.current_action == "Surveying landing site":
             self.map(samplesRB, landerRB, obstaclesRB, rocksRB)
-            self.surveySite()
+            if not math.isclose(self.save_bearing, self.bearing, abs_tol=math.radians(10)):
+                self.move("left", 1)
+            else:
+                self.current_action = "Pick sample"
+                self.initial_bearing = 0
             return
 
         ### Do this first to gather information ###
@@ -81,44 +92,130 @@ class Rover:
             ### Off lander - Survey scene ###
             if (not self.lunarBotSim.SampleCollected() and not self.checkOnLander()):
                 self.current_action = "Surveying landing site"
-                self.initial_bearing = self.bearing - math.radians(11)
+                self.save_bearing = self.bearing - math.radians(11)
                 self.initial = False
                 return
 
-        ### Holding sample ###
-        if self.lunarBotSim.SampleCollected() and self.target_type != "lander":
-            self.current_action = "Holding sample - Navigating back to lander"
+        ### Holding sample - Approaching lander ramp###
+        if self.lunarBotSim.SampleCollected() and self.current_action == "Holding sample - Approaching lander ramp" and self.target_type != "lander approach":            
+            # Find closest lander ramp and set as target
             self.target = [0, -0.4]
-            self.target_type = "lander"
+            lander_ramp_pos = [[0, -0.4], [0, 0.4], [0.4, 0], [-0.4, 0]]
+            for lander_ramp in lander_ramp_pos:
+                if self.distanceToObject(lander_ramp) < self.distanceToObject(self.target):
+                    self.target = lander_ramp
+            self.target_type = "lander approach"
+            self.target_speed = 2
             return
 
         ### Pick a target sample ###
-        if self.samples is not None and self.target is None:
+        if self.samples is not None and self.target is None and self.current_action == "Pick sample":
             dist = 10
             for sample in self.samples:
                 if self.distanceToObject(sample) < dist:
                     self.target = sample
                     self.target_type = "sample"
+                    self.target_speed = 0.4
                     dist = self.distanceToObject(sample)
+            return
+        
+        ### At target sample - Pick up ###
+        # if self.target_type == "sample" and self.target_distance is not None and self.target_distance < 0.04:
+        #     self.lunarBotSim.CollectSample()
+        #     self.samples.remove(self.target)
+        #     self.target = None
+        #     self.target_type = ""
+        #     self.current_action = "Holding sample - Approaching lander ramp"
+        #     return
+
+        ### Close range sample collection ###
+        if self.target is not None and self.target_type == "sample" and self.distanceToObject(self.target) < 0.3:
+            if samplesRB is None:
+                if self.bearingToObject(self.target) < self.bearing:
+                    self.move("left", 1)
+                    return
+                else: 
+                    self.move("right", 1)
+                    return
+            else:
+                # Target closest sample
+                dist = 10
+                target = None
+                for sample in samplesRB:
+                    if sample[0] < dist:
+                        target = sample
+                        dist = sample[0]
+                target_angle = target[1]
+                target_mag = 0.2
+                # target_angle, target_mag = getForce(self, closeRange=target)
+                self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
+
+                if target[0] <= 0.04:
+                    self.lunarBotSim.CollectSample()
+                    self.samples.remove(self.target)
+                    self.target = None
+                    self.target_type = ""
+                    self.current_action = "Holding sample - Approaching lander ramp"
+                    return
+
+                if math.isclose(target_angle, 0, abs_tol=math.radians(5)):
+                    self.move("forward", target_mag/3)
+                elif target_angle < -math.radians(5):
+                    self.move("right", target_mag*2)
+                elif target_angle > math.radians(5):
+                    self.move("left", target_mag*2)      
+                return
+            
+        ### At lander ramp - climp lander ###
+        if self.target_type == "lander approach" and self.distanceToObject(self.target) < 0.12:
+            # Drive up lander to drop off sample
+            self.target_type = "drop off"
+            self.target = [self.target[0]/4, self.target[1]/4] # basically 0,0  but scaled to 0.1 for offset
+            self.target_speed = 1.5
+            return
+
+        ### Drop ball ###
+        if self.target_type == "drop off" and self.distanceToObject(self.target) < 0.08:
+            self.lunarBotSim.DropSample()
+            self.current_action = "Continue mission - Moving to other side of lander"
+            # Clear the target
+            self.target = None          
+            self.target_type = ""
+            return
+
+        ### More samples to collect ### 
+        if self.current_action == "Continue mission - Moving to other side of lander":
+            if self.checkOnLander():
+                self.move("forward", 1)
+            else:
+                self.current_action = "Surveying landing site"
+                self.save_bearing = self.bearing - math.radians(11)
             return
 
         ### Move towards target using potential fields ### 
         if self.target is not None:
             target_angle, target_mag = getForce(self)
-            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target)
+            
+            # Display potential field graph
+            if self.POT:
+                show(self)
+                self.POT = False
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(5)):
-                self.move("forward", target_mag)
-            elif self.bearing < target_angle:
-                self.move("left", target_mag*2)
-            else:
-                self.move("right", target_mag*2)      
-            return
-
-        ### At target sample - Pick up ###
-        if self.target_type == "sample" and self.distanceToObject(self.target) < 0.12:
-            self.lunarBotSim.CollectSample()
+                self.move("forward", target_mag*self.target_speed)
+            elif abs(self.bearing - target_angle) < math.pi:
+                if self.bearing - target_angle < 0:
+                    self.move("left", target_mag*self.target_speed)
+                elif self.bearing - target_angle > 0:
+                    self.move("right", target_mag*self.target_speed)   
+            elif abs(self.bearing - target_angle) > math.pi:
+                if self.bearing - target_angle < 0:
+                    self.move("right", target_mag*self.target_speed)
+                elif self.bearing - target_angle > 0:
+                    self.move("left", target_mag*self.target_speed)   
             
+            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movment)
+            return
 
         ### stop moving ###
         if self.current_action == "Stopped":
@@ -128,14 +225,6 @@ class Rover:
         if (-0.4 < self.x < 0.4) and (-0.4 < self.y < 0.4):
             return True
         return False 
-
-    def surveySite(self):
-        # continue moving if not finished surveying site
-        if not math.isclose(self.initial_bearing, self.bearing, abs_tol=math.radians(10)):
-            self.move("left", 1)
-        else:
-            self.current_action = "Stopped"
-            self.initial_bearing = 0
 
     def map(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if samplesRB is not None:
@@ -151,13 +240,53 @@ class Rover:
                 else:
                     for index, sample_in_mem in enumerate(self.samples):
                         # If the sample is already in memory then refine the position
-                        if math.isclose(sample_in_mem[0], x, abs_tol=0.05) and math.isclose(sample_in_mem[1], y, abs_tol=0.05):
+                        if math.isclose(sample_in_mem[0], x, abs_tol=0.1) and math.isclose(sample_in_mem[1], y, abs_tol=0.1):
                             self.samples[index][0] = round((self.samples[index][0] + x)/2, 2)
                             self.samples[index][1] = round((self.samples[index][1] + y)/2, 2)
                             return
 
                     # Add the new sample
                     self.samples.append([x, y])
+
+        if rocksRB is not None:
+            for rock in rocksRB:
+                distance = rock[0] + 0.1
+                angle = rock[1]
+
+                x, y = self.determinePos(distance, angle)
+
+                if self.rocks is None:
+                    self.rocks = [[x, y]]
+                    return
+                else:
+                    for index, rock_in_mem in enumerate(self.rocks):
+                        if math.isclose(rock_in_mem[0], x, abs_tol=0.3) and math.isclose(rock_in_mem[1], y, abs_tol=0.3):
+                            self.rocks[index][0] = round((self.rocks[index][0] + x)/2, 2)
+                            self.rocks[index][1] = round((self.rocks[index][1] + x)/2, 2)
+                            return
+
+                    # Add new obstacle
+                    self.rocks.append(x, y)
+
+        if obstaclesRB is not None:
+            for obstacle in obstaclesRB:
+                distance = obstacle[0] + 0.1
+                angle = obstacle[1]
+
+                x, y = self.determinePos(distance, angle)
+
+                if self.obstacles is None:
+                    self.obstacles = [[x, y]]
+                    return
+                else:
+                    for index, obs_in_mem in enumerate(self.obstacles):
+                        if math.isclose(obs_in_mem[0], x, abs_tol=0.4) and math.isclose(obs_in_mem[1], y, abs_tol=0.4):
+                            self.obstacles[index][0] = round((self.obstacles[index][0] + x)/2, 2)
+                            self.obstacles[index][1] = round((self.obstacles[index][1] + x)/2, 2)
+                            return
+
+                    # Add a new obstacle
+                    self.obstacles.append([x, y])
 
     def determinePos(self, distance, angle):
         theta = self.bearing + angle
@@ -193,7 +322,7 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
         
-        # Update rover global position
+        # Update rover global positio
         rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
@@ -209,6 +338,9 @@ try:
 
         # Update Ball Position
         lunarBotSim.UpdateObjectPositions()
+        # rover.lunarBotSim.UpdateVREPRobot()
+        # rover.lunarBotSim.UpdateObjectPositions()
+        # rover.lunarBotSim.UpdateSample()
 
 except KeyboardInterrupt as e:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
