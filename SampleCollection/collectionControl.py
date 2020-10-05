@@ -13,7 +13,7 @@ pwm = Adafruit_PCA9685.PCA9685()
 
 MAXus = 2400
 MINus = 600
-CENTREus = 1500
+CENTREus = 1300
 INCREus = 4
 
 RANGEincre = ((MAXus-MINus)/INCREus)
