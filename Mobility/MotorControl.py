@@ -70,9 +70,9 @@ def forward(magnitude):
     dt = 1
     while time.time() - start < dt:
         if avg_vel is None:
-            avg_vel = getSpeed
+            avg_vel = getSpeed()
         
-        avg_vel = (avg_vel+getSpeed)/2
+        avg_vel = (avg_vel+getSpeed())/2
 
     return avg_vel*dt
 
