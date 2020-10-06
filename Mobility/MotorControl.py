@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     board = motorSetup()
 
-    duty = 60
+    duty = 20
     r = 0.01925
     Break = False
     while not Break:
