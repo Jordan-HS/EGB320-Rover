@@ -54,17 +54,34 @@ def print_board_status():
 def turnLeft(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
+
+
 def turnRight(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CW, duty)
 
+
 def forward(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
+    
+    start = time.time()
+    avg_vel = None
+    dt = 1
+    while time.time() - start < dt:
+        if avg_vel is None:
+            avg_vel = getSpeed
+        
+        avg_vel = (avg_vel+getSpeed)/2
+
+    return avg_vel*dt
+
+
 
 def backwards(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
+
 
 
 def getDistance(oldTime):
@@ -117,14 +134,12 @@ duty = 20
 oldTime = time.time()
 
 if __name__ == "__main__":
-
-
     
     Break = False
     while not Break:
         try:
             if keyboard.is_pressed('W'):
-                forward(duty)
+                global_distance += forward(duty)
             elif keyboard.is_pressed('s'):
                 backwards(duty)
             elif keyboard.is_pressed('a'):
@@ -133,7 +148,7 @@ if __name__ == "__main__":
                 turnRight(duty)
             else:
                 board.motor_stop(board.ALL)
-            global_distance = getDistance(oldTime)
+            # global_distance = getDistance(oldTime)
 
             print(global_distance)
         except(KeyboardInterrupt):
