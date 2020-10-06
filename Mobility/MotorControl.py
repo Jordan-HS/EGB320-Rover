@@ -74,7 +74,7 @@ def forward(magnitude):
         
         avg_vel = (avg_vel+getSpeed())/2
 
-    return avg_vel*dt
+    return (avg_vel*dt)-0.02
 
 
 
