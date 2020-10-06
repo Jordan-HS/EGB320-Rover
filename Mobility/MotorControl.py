@@ -139,7 +139,8 @@ if __name__ == "__main__":
     while not Break:
         try:
             if keyboard.is_pressed('W'):
-                global_distance += forward(duty)
+                dist = forward(duty)
+                global_distance += dist
             elif keyboard.is_pressed('s'):
                 backwards(duty)
             elif keyboard.is_pressed('a'):
