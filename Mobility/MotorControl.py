@@ -100,7 +100,7 @@ if __name__ == "__main__":
     r = 0.01925
     while True:
         try:
-            if keyboard.is_pressed('w'):
+            if keyboard.is_pressed('W'):
                 forward(duty)
             elif keyboard.is_pressed('s'):
                 backwards(duty)
