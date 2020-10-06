@@ -23,6 +23,7 @@
 
 import time
 import math
+import keyboard
 
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
@@ -49,6 +50,22 @@ def print_board_status():
         print("board status: parameter error, last operate no effective")
     elif board.last_operate_status == board.STA_ERR_SOFT_VERSION:
         print("board status: unsupport board framware version")
+
+def turnLeft(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+def turnRight(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+def forward(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+def backwards(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+
 
 
 if __name__ == "__main__":
@@ -79,36 +96,29 @@ if __name__ == "__main__":
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
 
-    start = time.time()
     duty = 20
     r = 0.01925
-    while time.time() - start < 5:
-        # for duty in range(5, 95, 10):   # slow to fast
-            # DC motor 1 movement, orientation clockwise
-        board.motor_movement([board.M1], board.CW, duty)
-            # DC motor 2 movement, orientation count-clockwise
-        board.motor_movement([board.M2], board.CW, duty)
-            # time.sleep(1)
-            # Use boadrd.all to get all encoders speed
-        speed = board.get_encoder_speed(board.ALL)
-        # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" % (
-                # duty, speed[0], speed[1]))
+    while True:
+        try:
+            if keyboard.is_pressed('w'):
+                forward(duty)
+            elif keyboard.is_pressed('s'):
+                backwards(duty)
+            elif keyboard.is_pressed('a'):
+                turnLeft(duty)
+            elif keyboard.is_pressed('d'):
+                turnRight
+            elif keyboard.is_pressed('p'):
+                duty += 2
+            elif keyboard.is_pressed('l'):
+                duty -= 2
 
-        if speed[0] != 0 and speed[1] != 0:
-            print("speed: {:.4f} \t RPM: {} and {}".format(((2*math.pi*r)/60)*speed[0] , speed[0], speed[1]))
+            speed = board.get_encoder_speed(board.ALL)
 
-        # # for duty in range(95, 5, - 10):   # fast to low
-        #     # DC motor 1 movement, orientation clockwise
-        #     board.motor_movement([board.M1], board.CW, duty)
-        #     # DC motor 2 movement, orientation count-clockwise
-        #     board.motor_movement([board.M2], board.CCW, duty)
-        #     time.sleep(1)
-        #     # Use boadrd.all to get all encoders speed
-        #     speed = board.get_encoder_speed(board.ALL)
-        #     print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" % (
-        #         duty, speed[0], speed[1]))
-
-    print("stop all motor")
-    board.motor_stop(board.ALL)   # stop all DC motor
-    print_board_status()
-        # time.sleep(4)
+            if speed[0] != 0 and speed[1] != 0:
+                print("speed: {:.4f} \t RPM: {} and {}".format(((2*math.pi*r)/60)*speed[0] , speed[0], speed[1]))
+        except(KeyboardInterrupt):
+            print("stop all motor")
+            board.motor_stop(board.ALL)   # stop all DC motor
+            print_board_status()
+               
