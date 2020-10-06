@@ -8,7 +8,7 @@ sample_radius = 0.07
 
 # Forces of repulsion
 beta = 40
-obs_spread = 0.3
+obs_spread = 0.2
 obs_radius = 0.1
 
 def dist(vec1, vec2):
@@ -71,8 +71,8 @@ def getForce(rover):
                 delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
                 delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
             elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
-                delta_x += (-beta/2 * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                delta_y += (-beta/2 * (obs_spread + obs_radius - distance)*math.sin(bearing))
+                delta_x += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.cos(bearing))
+                delta_y += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.sin(bearing))
             elif distance > obs_spread + obs_radius:
                 delta_x += 0
                 delta_y += 0
@@ -134,8 +134,8 @@ def show(rover):
                         delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
                         delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
                     elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
-                        delta_x += (-beta/2 * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                        delta_y += (-beta/2 * (obs_spread + obs_radius - distance)*math.sin(bearing))
+                        delta_x += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.cos(bearing))
+                        delta_y += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.sin(bearing))
                     elif distance > obs_spread + obs_radius:
                         delta_x += 0
                         delta_y += 0
