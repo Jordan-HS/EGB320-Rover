@@ -28,9 +28,7 @@ import keyboard
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
    # Select bus 1, set address to 0x10
-board = motorSetup()
 
-duty = 20
 
 def board_detect(board):
     l = board.detecte()
@@ -107,6 +105,10 @@ def getSpeed():
         vel = 0
 
     return vel
+
+board = motorSetup()
+
+duty = 20
 
 if __name__ == "__main__":
 
