@@ -133,9 +133,9 @@ if __name__ == "__main__":
                 turnRight(duty)
             else:
                 board.motor_stop(board.ALL)
-            
+            global_distance = getDistance(oldTime)
 
-            print(getDistance(oldTime))
+            print(global_distance)
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
