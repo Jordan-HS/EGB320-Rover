@@ -28,7 +28,9 @@ import keyboard
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
    # Select bus 1, set address to 0x10
+board = motorSetup()
 
+duty = 20
 
 def board_detect(board):
     l = board.detecte()
@@ -66,7 +68,14 @@ def backwards(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
+distance = 0
+def getDistance(oldTime):
+    speed = getSpeed(board)
+
+
+
 def motorSetup():
+    distance = 0
     board = Board(1, 0x10) 
 
     board_detect(board)
@@ -88,7 +97,7 @@ def motorSetup():
 
     return board
 
-def getSpeed(board, duty):
+def getSpeed():
 
     speed = board.get_encoder_speed(board.ALL)
     r = 0.01925
@@ -101,9 +110,7 @@ def getSpeed(board, duty):
 
 if __name__ == "__main__":
 
-    board = motorSetup()
 
-    duty = 20
     
     Break = False
     while not Break:
