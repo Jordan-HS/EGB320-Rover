@@ -67,7 +67,7 @@ def forward(magnitude):
     
     start = time.time()
     avg_vel = None
-    dt = 1
+    dt = 2
     while time.time() - start < dt:
         if avg_vel is None:
             avg_vel = getSpeed()
@@ -148,7 +148,7 @@ if __name__ == "__main__":
             elif keyboard.is_pressed('d'):
                 turnRight(duty)
             elif keyboard.is_pressed('p'):
-                print(global_distance)
+                print(global_distance*100)
             else:
                 board.motor_stop(board.ALL)
             # global_distance = getDistance(oldTime)
