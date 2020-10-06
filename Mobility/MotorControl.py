@@ -110,11 +110,13 @@ if __name__ == "__main__":
             elif keyboard.is_pressed('a'):
                 turnLeft(duty)
             elif keyboard.is_pressed('d'):
-                turnRight
-            elif keyboard.is_pressed('p'):
-                duty += 2
-            elif keyboard.is_pressed('l'):
-                duty -= 2
+                turnRight(duty)
+            elif:
+                board.motor_stop(board.ALL)
+            # if keyboard.is_pressed('p'):
+            #     duty += 2
+            # elif keyboard.is_pressed('l'):
+            #     duty -= 2
 
             speed = board.get_encoder_speed(board.ALL)
 
