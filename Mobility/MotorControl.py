@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     start = time.time()
     duty = 10
-    r = 0.1925
+    r = 0.01925
     while time.time() - start < 10:
         # for duty in range(5, 95, 10):   # slow to fast
             # DC motor 1 movement, orientation clockwise
