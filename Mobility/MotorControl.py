@@ -85,9 +85,9 @@ if __name__ == "__main__":
     while time.time() - start < 5:
         # for duty in range(5, 95, 10):   # slow to fast
             # DC motor 1 movement, orientation clockwise
-        board.motor_movement([board.M1], board.CW, duty)
+        board.motor_movement([board.M1], board.CWW, duty)
             # DC motor 2 movement, orientation count-clockwise
-        board.motor_movement([board.M2], board.CCW, duty)
+        board.motor_movement([board.M2], board.CW, duty)
             # time.sleep(1)
             # Use boadrd.all to get all encoders speed
         speed = board.get_encoder_speed(board.ALL)
