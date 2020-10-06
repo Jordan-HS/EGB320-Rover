@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
 
-    duty = 20
+    duty = 30
     r = 0.01925
     Break = False
     while not Break:
@@ -113,10 +113,7 @@ if __name__ == "__main__":
                 turnRight(duty)
             else:
                 board.motor_stop(board.ALL)
-            # if keyboard.is_pressed('p'):
-            #     duty += 2
-            # elif keyboard.is_pressed('l'):
-            #     duty -= 2
+            
 
             speed = board.get_encoder_speed(board.ALL)
 
