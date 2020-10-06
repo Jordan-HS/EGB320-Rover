@@ -147,11 +147,13 @@ if __name__ == "__main__":
                 turnLeft(duty)
             elif keyboard.is_pressed('d'):
                 turnRight(duty)
+            elif keyboard.is_pressed('p'):
+                print(global_distance)
             else:
                 board.motor_stop(board.ALL)
             # global_distance = getDistance(oldTime)
 
-            print(global_distance)
+            
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
