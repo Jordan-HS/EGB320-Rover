@@ -70,10 +70,10 @@ def backwards(magnitude):
 def getDistance(oldTime):
     speed = getSpeed()
     current_time = time.time()
-    if speed > 0:
-        distance = global_distance + (speed * (current_time-oldTime))
-    else:
-        distance = global_distance
+    # if speed > 0:
+    distance = global_distance + (speed * (current_time-oldTime))
+    # else:
+    #     distance = global_distance
     oldTime = current_time
     return distance
 
@@ -110,8 +110,7 @@ def getSpeed():
     else:
         vel = 0
 
-    return vel
-
+    return round(vel,2)
 board = motorSetup()
 global_distance = 0
 duty = 20
