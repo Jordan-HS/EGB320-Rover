@@ -103,8 +103,10 @@ if __name__ == "__main__":
         try:
             if keyboard.is_pressed('W'):
                 forward(duty)
+                print ("forward")
             elif keyboard.is_pressed('s'):
                 backwards(duty)
+                print("back")
             elif keyboard.is_pressed('a'):
                 turnLeft(duty)
             elif keyboard.is_pressed('d'):
