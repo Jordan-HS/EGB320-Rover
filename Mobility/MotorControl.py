@@ -69,7 +69,9 @@ def backwards(magnitude):
 
 def getDistance(oldTime):
     speed = getSpeed()
-    distance += speed * (time.time()-oldTime)
+    current_time = time.time()
+    distance += speed * (current_time-oldTime)
+    oldTime = current_time
     return distance
 
 
