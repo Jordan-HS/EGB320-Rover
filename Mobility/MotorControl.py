@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 turnLeft(duty)
             elif keyboard.is_pressed('d'):
                 turnRight(duty)
-            elif:
+            else:
                 board.motor_stop(board.ALL)
             # if keyboard.is_pressed('p'):
             #     duty += 2
