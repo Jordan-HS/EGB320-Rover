@@ -120,7 +120,7 @@ if __name__ == "__main__":
                 board.motor_stop(board.ALL)
             
 
-            print(getSpeed(bard, duty))
+            print(getSpeed(board, duty))
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
