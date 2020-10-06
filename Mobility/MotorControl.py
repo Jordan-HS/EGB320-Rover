@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
 
-    duty = 30
+    duty = 40
     r = 0.01925
     Break = False
     while not Break:
