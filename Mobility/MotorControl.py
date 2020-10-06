@@ -110,10 +110,8 @@ if __name__ == "__main__":
         try:
             if keyboard.is_pressed('W'):
                 forward(duty)
-                print ("forward")
             elif keyboard.is_pressed('s'):
                 backwards(duty)
-                print("back")
             elif keyboard.is_pressed('a'):
                 turnLeft(duty)
             elif keyboard.is_pressed('d'):
@@ -122,7 +120,7 @@ if __name__ == "__main__":
                 board.motor_stop(board.ALL)
             
 
-            print(getSpeed)
+            print(getSpeed())
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
