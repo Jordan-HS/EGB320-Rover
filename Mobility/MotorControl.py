@@ -70,7 +70,7 @@ def backwards(magnitude):
 
 distance = 0
 def getDistance(oldTime):
-    speed = getSpeed(board)
+    speed = getSpeed()
 
 
 
