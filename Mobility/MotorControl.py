@@ -116,7 +116,7 @@ if __name__ == "__main__":
             speed = board.get_encoder_speed(board.ALL)
 
             if speed[0] != 0 and speed[1] != 0:
-                print("speed: {:.4f} \t RPM: {} and {}".format(((2*math.pi*r)/60)*speed[0] , speed[0], speed[1]))
+                print("speed: {:.4f} \t RPM: {} and {} \t Duty: {}".format(((2*math.pi*r)/60)*speed[0] , speed[0], speed[1], duty))
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
