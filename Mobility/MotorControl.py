@@ -98,7 +98,8 @@ if __name__ == "__main__":
 
     duty = 20
     r = 0.01925
-    while True:
+    Break = False
+    while not Break:
         try:
             if keyboard.is_pressed('W'):
                 forward(duty)
@@ -121,4 +122,5 @@ if __name__ == "__main__":
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
             print_board_status()
+            Break = True
                
