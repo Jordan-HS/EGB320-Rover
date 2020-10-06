@@ -80,9 +80,9 @@ if __name__ == "__main__":
     board.set_moter_pwm_frequency(1000)
 
     start = time.time()
-    duty = 10
+    duty = 20
     r = 0.01925
-    while time.time() - start < 10:
+    while time.time() - start < 5:
         # for duty in range(5, 95, 10):   # slow to fast
             # DC motor 1 movement, orientation clockwise
         board.motor_movement([board.M1], board.CW, duty)
