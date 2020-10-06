@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     start = time.time()
     duty = 10
-    r = (39e-3)/2
+    r = 0.1925
     while time.time() - start < 10:
         # for duty in range(5, 95, 10):   # slow to fast
             # DC motor 1 movement, orientation clockwise
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 # duty, speed[0], speed[1]))
 
         if speed[0] != 0 and speed[1] != 0:
-            print("speed: {:.4f}".format((2*math.pi*r)/((speed[0]+speed[1])/2)))
+            print("speed: {:.4f}".format((2*math.pi*r)/speed[0]))
 
         # # for duty in range(95, 5, - 10):   # fast to low
         #     # DC motor 1 movement, orientation clockwise
