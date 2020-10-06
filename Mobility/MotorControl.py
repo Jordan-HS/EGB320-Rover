@@ -66,14 +66,15 @@ def backwards(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
-distance = 0
+
 def getDistance(oldTime):
     speed = getSpeed()
+    distance += speed * (time.time()-oldTime)
+    return distance
 
 
 
 def motorSetup():
-    distance = 0
     board = Board(1, 0x10) 
 
     board_detect(board)
@@ -107,8 +108,9 @@ def getSpeed():
     return vel
 
 board = motorSetup()
-
+distance = 0
 duty = 20
+oldTime = time.time()
 
 if __name__ == "__main__":
 
@@ -129,7 +131,7 @@ if __name__ == "__main__":
                 board.motor_stop(board.ALL)
             
 
-            print(getSpeed())
+            print(getDistance(oldTime))
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
