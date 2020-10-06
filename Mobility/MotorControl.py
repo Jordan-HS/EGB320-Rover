@@ -70,7 +70,10 @@ def backwards(magnitude):
 def getDistance(oldTime):
     speed = getSpeed()
     current_time = time.time()
-    distance = global_distance +  (speed * (current_time-oldTime))
+    if speed > 0:
+        distance = global_distance + (speed * (current_time-oldTime))
+    else:
+        distance = global_distance
     oldTime = current_time
     return distance
 
