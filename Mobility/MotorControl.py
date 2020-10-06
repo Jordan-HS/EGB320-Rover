@@ -22,6 +22,7 @@
 '''
 
 import time
+import math
 
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
@@ -80,6 +81,7 @@ if __name__ == "__main__":
 
     start = time.time()
     duty = 10
+    r = (39e-3)/2
     while time.time() - start < 10:
         # for duty in range(5, 95, 10):   # slow to fast
             # DC motor 1 movement, orientation clockwise
@@ -89,8 +91,10 @@ if __name__ == "__main__":
             # time.sleep(1)
             # Use boadrd.all to get all encoders speed
         speed = board.get_encoder_speed(board.ALL)
-        print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" % (
-                duty, speed[0], speed[1]))
+        # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" % (
+                # duty, speed[0], speed[1]))
+
+        print("speed: {:.2f}".format((2*math.pi*r)/((speed[0]+speed[1])/2))
 
         # # for duty in range(95, 5, - 10):   # fast to low
         #     # DC motor 1 movement, orientation clockwise
