@@ -41,7 +41,7 @@ def encodercount(term):
     else:
         error += 1
 
-	Encoder_B_old = Encoder_B
+    Encoder_B_old = Encoder_B
 
 GPIO.add_event_detect(pinA, GPIO.BOTH, callback=encodercount)
 GPIO.add_event_detect(pinB, GPIO.BOTH, callback=encodercount)
