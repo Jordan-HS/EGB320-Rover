@@ -162,7 +162,6 @@ if __name__ == "__main__":
                 dt = np.append(dt, time.time()-oldtime)
                 speeds = np.append(speeds, current)
                 oldtime = time.time()
-           
 
             if current < target:
                 duty += 0.02
