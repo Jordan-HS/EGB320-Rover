@@ -145,6 +145,7 @@ while ang < 90:
         ang += ang2
     elif (count_E1 > 0) and (count_E2 < 0):
         ang -= ang2
+    print(ang)
 
 forward(duty)
 time.sleep(3)
