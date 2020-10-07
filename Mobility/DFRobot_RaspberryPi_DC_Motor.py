@@ -31,7 +31,7 @@ class DFRobot_DC_Motor:
   _REG_PID = 0x01
   _REG_PVD = 0x02
   _REG_CTRL_MODE = 0x03
-  _REG_ENCODER1_EN = 0x04
+  _REG_ENCODER1_EN = 0x04               # Encoder enable
   _REG_ENCODER1_SPPED = 0x05
   _REG_ENCODER1_REDUCTION_RATIO = 0x07
   _REG_ENCODER2_EN = 0x09

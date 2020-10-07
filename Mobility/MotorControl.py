@@ -27,9 +27,6 @@ import keyboard
 
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
-import os
-import sys
-clear = lambda: os.system('cls')
 
    # Select bus 1, set address to 0x10
 
@@ -69,16 +66,16 @@ def forward(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
     
-    start = time.time()
-    avg_vel = None
-    dt = 2
-    while time.time() - start < dt:
-        if avg_vel is None:
-            avg_vel = getSpeed()
+    # start = time.time()
+    # avg_vel = None
+    # dt = 2
+    # while time.time() - start < dt:
+    #     if avg_vel is None:
+    #         avg_vel = getSpeed()
         
-        avg_vel = (avg_vel+getSpeed())/2
+    #     avg_vel = (avg_vel+getSpeed())/2
 
-    return (avg_vel*dt)-0.015
+    # return (avg_vel*dt)-0.015
 
 
 
@@ -142,12 +139,11 @@ if __name__ == "__main__":
     Break = False
     while not Break:
         try:
-            speed = board.get_encoder_speed_2(board.ALL)
+            speed = board.get_encoder_speed(board.ALL)
             forward(duty)
 
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            clear()
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0]/2, speed[1]/2))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
