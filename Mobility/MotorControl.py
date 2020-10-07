@@ -130,7 +130,7 @@ def motorSetup():
     return board
 
 board = motorSetup()
-duty = 10
+duty = 20
 r = 0.018559
 turnLeft(duty)
 time.sleep(3)
