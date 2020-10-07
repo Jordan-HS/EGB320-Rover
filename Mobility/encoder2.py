@@ -24,22 +24,22 @@ def reset(addr,tags,stuff,source):
 	error = 0
 
 def encodercount(term):
-	global counts
-	global Encoder_A
-	global Encoder_B
-	global Encoder_B_old
-	global error
+    global counts
+    global Encoder_A
+    global Encoder_B
+    global Encoder_B_old
+    global error
 
-	Encoder_A,Encoder_B = GPIO.input(pinA),GPIO.input(pinB)
+    Encoder_A,Encoder_B = GPIO.input(pinA),GPIO.input(pinB)
 
-if((Encoder_A,Encoder_B_old) == (1,0)) or((Encoder_A,Encoder_B_old) == (0,1)):
-	counts += 1
+    if((Encoder_A,Encoder_B_old) == (1,0)) or((Encoder_A,Encoder_B_old) == (0,1)):
+        counts += 1
 
-elif ((Encoder_A,Encoder_B_old) == (1,1)) or((Encoder_A,Encoder_B_old) == (0,0)):
-	counts -= 1
+    elif ((Encoder_A,Encoder_B_old) == (1,1)) or((Encoder_A,Encoder_B_old) == (0,0)):
+        counts -= 1
 
-else:
-	error += 1
+    else:
+        error += 1
 
 	Encoder_B_old = Encoder_B
 
