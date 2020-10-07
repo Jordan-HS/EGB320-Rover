@@ -98,7 +98,7 @@ board = motorSetup()
 duty = 20
 r = 0.018559
 start = time.time()
-while time.time() - start < 12:
+while time.time() - start < 1:
     forward(duty)
     
     time.sleep(.1)
