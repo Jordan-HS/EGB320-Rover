@@ -146,7 +146,7 @@ if __name__ == "__main__":
     
     time.sleep(2)
     start = time.time()
-    while time.time()-start<10.5:
+    while time.time()-start<10.6:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
