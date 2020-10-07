@@ -33,6 +33,7 @@ class DFRobot_DC_Motor:
   _REG_CTRL_MODE = 0x03
   _REG_ENCODER1_EN = 0x04               # Encoder enable
   _REG_ENCODER1_SPPED = 0x05
+  _REG_UNKNOWN = 0x06
   _REG_ENCODER1_REDUCTION_RATIO = 0x07
   _REG_ENCODER2_EN = 0x09
   _REG_ENCODER2_SPEED = 0x0a
@@ -155,7 +156,7 @@ class DFRobot_DC_Motor:
     '''
     l = []
     for i in self._parse_id(id):
-      rslt = self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (i - 1), 2)
+      rslt = self._read_bytes(self._REG_ENCODER2_SPEED, 2)
       s = (rslt[0] << 8) | rslt[1]
       if s & 0x8000:
         s = - (0x10000 - s)
@@ -169,7 +170,7 @@ class DFRobot_DC_Motor:
       @return :list     List of encoders speed
     '''
 
-    print(self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (2-1), 2))
+    print(self._read_bytes(self._REG_UNKNOWN, 2))
     # l = []
 
     # for i in self._parse_id(id):
