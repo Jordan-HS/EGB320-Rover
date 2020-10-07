@@ -27,6 +27,10 @@ import keyboard
 
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
+import os
+import sys
+clear = lambda: os.system('cls')
+
    # Select bus 1, set address to 0x10
 
 
@@ -111,7 +115,7 @@ def motorSetup():
     board.set_encoder_enable(board.ALL)
     # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
     # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 35)
+    board.set_encoder_reduction_ratio(board.ALL, 50)
 
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
@@ -140,6 +144,10 @@ if __name__ == "__main__":
         try:
             speed = board.get_encoder_speed_2(board.ALL)
             forward(duty)
+
+            speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
+            clear()
+            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
