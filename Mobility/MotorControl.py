@@ -136,7 +136,8 @@ r = 0.018559
 r2 = 0.137
 forward(duty)
 time.sleep(3)
-
+count_E1 = 0
+count_E2 = 0
 while ang < 90:
     turnRight(duty)
 
@@ -149,7 +150,8 @@ while ang < 90:
 
 forward(duty)
 time.sleep(3)
-
+count_E1 = 0
+count_E2 = 0
 while ang < 180:
     turnRight(duty)
 
@@ -161,7 +163,8 @@ while ang < 180:
 
 forward(duty)
 time.sleep(3)
-
+count_E1 = 0
+count_E2 = 0
 while ang < 270:
     turnRight(duty)
 
