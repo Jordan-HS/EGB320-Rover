@@ -67,18 +67,18 @@ Encoder_B_old = GPIO.input(pinB)
 
 
 def reset(addr, tags, stuff, source):
-	global counts
-	global error
+	# global counts
+	# global error
 	counts = 0
 	error = 0
 
 
 def encodercount(term):
-    global counts
-    global Encoder_A
-    global Encoder_B
-    global Encoder_B_old
-    global error
+    # global counts
+    # global Encoder_A
+    # global Encoder_B
+    # global Encoder_B_old
+    # global error
     print("here")
     Encoder_A, Encoder_B = GPIO.input(pinA), GPIO.input(pinB)
 
