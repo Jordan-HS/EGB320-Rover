@@ -156,11 +156,11 @@ if __name__ == "__main__":
             current = r * ((speed[0]+speed[1])/2) * 0.10472
             # print("speed: {:.3f}".format(current))
             if oldtime == 0:
-                dt = np.append(dt, time.time()-start)
+                # dt = np.append(dt, time.time()-start)
                 speeds = np.append(speeds, current)
                 oldtime=time.time()
             else:
-                dt = np.append(dt, time.time()-oldtime)
+                # dt = np.append(dt, time.time()-oldtime)
                 speeds = np.append(speeds, current)
                 oldtime = time.time()
 
@@ -191,7 +191,7 @@ if __name__ == "__main__":
             Break = True
                
     distances = np.multiply(speeds, dt)
-    tot_dist = np.sum(distances)
+    tot_dist = np.mean(speeds) * 1.1
     print(dt)
     print(np.sum(dt))
     print(speeds)
