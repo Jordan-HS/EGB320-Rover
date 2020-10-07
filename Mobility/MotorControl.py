@@ -188,7 +188,7 @@ if __name__ == "__main__":
                
     distances = np.multiply(speeds, dt)
     tot_dist = np.sum(distances)
-    print("distance travelled: {}".format(tot_distance))
+    print("distance travelled: {}".format(tot_dist))
     
     print("stop all motor")
     board.motor_stop(board.ALL)   # stop all DC motor
