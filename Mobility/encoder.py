@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import Encoder
-
+from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 enc = Encoder.Encoder(23, 24)
 
 
