@@ -154,21 +154,21 @@ if __name__ == "__main__":
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
             # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
             current = r * ((speed[0]+speed[1])/2) * 0.10472
-            print("speed: {:.3f}".format(current))
-            # if oldtime == 0:
-            #     dt = np.append(dt, time.time()-start)
-            #     speeds = np.append(speeds, current)
-            #     oldtime=time.time()
-            # else:
-            #     dt = np.append(dt, time.time()-oldtime)
-            #     speeds = np.append(speeds, current)
-            #     oldtime = time.time()
+            # print("speed: {:.3f}".format(current))
+            if oldtime == 0:
+                dt = np.append(dt, time.time()-start)
+                speeds = np.append(speeds, current)
+                oldtime=time.time()
+            else:
+                dt = np.append(dt, time.time()-oldtime)
+                speeds = np.append(speeds, current)
+                oldtime = time.time()
 
             # if current < target:
             #     duty += 0.02
             # elif current > target:
             #     duty -= 0.02
-            # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
+            print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
