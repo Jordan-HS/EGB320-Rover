@@ -95,7 +95,7 @@ def motorSetup():
     return board
 
 board = motorSetup()
-duty = 60
+duty = 100
 r = 0.018559
 start = time.time()
 while time.time() - start < 3:
