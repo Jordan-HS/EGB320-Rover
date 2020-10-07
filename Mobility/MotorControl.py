@@ -152,12 +152,12 @@ if __name__ == "__main__":
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
             current = r * ((speed[0]+speed[1])/2) * 0.10472
             if oldtime == 0:
-                np.append(dt, time.time()-start)
-                np.append(speeds, current)
+                dt = np.append(dt, time.time()-start)
+                speeds = np.append(speeds, current)
                 oldtime=time.time()
             else:
-                np.append(dt, time.time()-oldtime)
-                np.append(speeds, current)
+                dt = np.append(dt, time.time()-oldtime)
+                speeds = np.append(speeds, current)
                 oldtime = time.time()
            
 
