@@ -144,7 +144,7 @@ if __name__ == "__main__":
             forward(duty)
 
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, (speed[0]/60) *10, (speed[1]/60)*10))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
