@@ -132,8 +132,8 @@ def getSpeed():
     return round(vel,2)
 board = motorSetup()
 global_distance = 0
-duty = 30
-target = 0.1
+duty = 20
+target = 0.2
 oldTime = time.time()
 r = 0.01925
 if __name__ == "__main__":
@@ -164,10 +164,10 @@ if __name__ == "__main__":
                 speeds = np.append(speeds, current)
                 oldtime = time.time()
 
-            # if current < target:
-            #     duty += 0.02
-            # elif current > target:
-            #     duty -= 0.02
+            if current < target:
+                duty += 0.02
+            elif current > target:
+                duty -= 0.02
             print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
