@@ -1,36 +1,90 @@
-# -*- coding:utf-8 -*-
-
-'''
-  # DC_Motor_Demo.py
-  #
-  # Connect board with raspberryPi.
-  # Make board power and motor connection correct.
-  # Run this demo.
-  #
-  # Motor 1 will move slow to fast, orientation clockwise, 
-  # motor 2 will move fast to slow, orientation count-clockwise, 
-  # then fast to stop. loop in few seconds.
-  # Motor speed will print on terminal
-  #
-  # test motor: https://www.dfrobot.com/product-634.html
-  #
-  # Copyright   [DFRobot](http://www.dfrobot.com), 2016
-  # Copyright   GNU Lesser General Public License
-  #
-  # version  V1.0
-  # date  2019-3-26
-'''
+#!/usr/bin/python
 
 import time
+import RPi.GPIO as GPIO
 import math
-import keyboard
-import numpy as np
-
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
+# First encoder
+pinE1A = 23
+pinE1B = 24
 
-   # Select bus 1, set address to 0x10
+# Second encoder
+pinE2A = 25
+pinE2B = 8
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pinE1A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(pinE1B, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(pinE2A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(pinE2B, GPIO.IN, pull_up_down = GPIO.PUD_DONW)
+
+error = 0
+count_E1 = 0
+count_E2 = 0
+
+Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
+Encoder_E1B_old = GPIO.input(pinE1B)
+
+Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
+Encoder_E2B_old = GPIO.input(pinE2B)
+
+def encodercount_E1(term):
+    global count_E1
+    global Encoder_E1A
+    global Encoder_E1B
+    global Encoder_E1B_old
+    global error
+
+    Encoder_E1A,Encoder_E1B = GPIO.input(pinE1A),GPIO.input(pinE1B)
+
+    if((Encoder_E1A,Encoder_E1B_old) == (1,0)) or((Encoder_E1A,Encoder_E1B_old) == (0,1)):
+        count_E1 += 1
+    elif ((Encoder_E1A,Encoder_E1B_old) == (1,1)) or((Encoder_E1A,Encoder_E1B_old) == (0,0)):
+        count_E1 -= 1
+    else:
+        error += 1
+
+    Encoder_E1B_old = Encoder_E1B
+
+def encodercount_E2(term):
+    global count_E2
+    global Encoder_E2A
+    global Encoder_E2B
+    global Encoder_E2B_old
+    global error
+
+    Encoder_E2A,Encoder_E2B = GPIO.input(pinE2A),GPIO.input(pinE2B)
+
+    if((Encoder_E2A,Encoder_E2B_old) == (1,0)) or((Encoder_E2A,Encoder_E2B_old) == (0,1)):
+        count_E2 += 1
+    elif ((Encoder_E2A,Encoder_E2B_old) == (1,1)) or((Encoder_E2A,Encoder_E2B_old) == (0,0)):
+        count_E2 -= 1
+    else:
+        error += 1
+
+    Encoder_E2B_old = Encoder_E2B
+
+GPIO.add_event_detect(pinE1A, GPIO.BOTH, callback=encodercount_E1)
+GPIO.add_event_detect(pinE1B, GPIO.BOTH, callback=encodercount_E1)
+GPIO.add_event_detect(pinE2A, GPIO.BOTH, callback=encodercount_E2)
+GPIO.add_event_detect(pinE2B, GPIO.BOTH, callback=encodercount_E2)
+
+def turnLeft(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+
+def turnRight(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+def forward(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+def backwards(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
 
 def board_detect(board):
     l = board.detecte()
@@ -52,51 +106,6 @@ def print_board_status():
         print("board status: parameter error, last operate no effective")
     elif board.last_operate_status == board.STA_ERR_SOFT_VERSION:
         print("board status: unsupport board framware version")
-
-def turnLeft(magnitude):
-    board.motor_movement([board.M1], board.CCW, duty)
-    board.motor_movement([board.M2], board.CCW, duty)
-
-
-def turnRight(magnitude):
-    board.motor_movement([board.M1], board.CW, duty)
-    board.motor_movement([board.M2], board.CW, duty)
-
-
-def forward(magnitude):
-    board.motor_movement([board.M1], board.CCW, duty)
-    board.motor_movement([board.M2], board.CW, duty)
-    
-    # start = time.time()
-    # avg_vel = None
-    # dt = 2
-    # while time.time() - start < dt:
-    #     if avg_vel is None:
-    #         avg_vel = getSpeed()
-        
-    #     avg_vel = (avg_vel+getSpeed())/2
-
-    # return (avg_vel*dt)-0.015
-
-
-
-def backwards(magnitude):
-    board.motor_movement([board.M1], board.CW, duty)
-    board.motor_movement([board.M2], board.CCW, duty)
-
-
-
-def getDistance(oldTime):
-    speed = getSpeed()
-    current_time = time.time()
-    # if speed > 0:
-    distance = global_distance + (speed * (current_time-oldTime))
-    # else:
-    #     distance = global_distance
-    oldTime = current_time
-    return distance
-
-
 
 def motorSetup():
     board = Board(1, 0x10) 
@@ -120,87 +129,15 @@ def motorSetup():
 
     return board
 
-def getSpeed():
-
-    speed = board.get_encoder_speed(board.ALL)
-    r = 0.01925
-    if speed[0] != 0 and speed[1] != 0:
-        vel = ((2*math.pi*r)/60)*((speed[0]+speed[0])/2)
-    else:
-        vel = 0
-
-    return round(vel,2)
 board = motorSetup()
-global_distance = 0
-duty = 25
-target = 0.1
-oldTime = time.time()
-r = 0.01925
-if __name__ == "__main__":
-    
-    Break = False
-    
-    speeds = np.array([])
-    dt = np.array([])
-    oldtime = 0
-    # forward(1)
-    speed = board.get_encoder_speed(board.ALL)
-    time.sleep(5)
-    start = time.time()
-    t = 1
-    while time.time()-start<t:
-        try:
-            # speed = board.get_encoder_speed(board.ALL)
-            forward(duty)
-            
-            speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
-            current = r * ((speed[0]+speed[1])/2) * 0.10472
-            print("speed: {:.3f}".format(current))
-            if oldtime == 0:
-                # dt = np.append(dt, time.time()-start)
-                speeds = np.append(speeds, current)
-                oldtime=time.time()
-            else:
-                # dt = np.append(dt, time.time()-oldtime)
-                speeds = np.append(speeds, current)
-                oldtime = time.time()
+duty = 0.1
+r = 0.018559
+forward(duty)
+time.sleep(3)
 
-            if current < target:
-                duty += 0.01
-            elif current > target:
-                duty -= 0.01
-            # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
-            # if keyboard.is_pressed('W'):
-            #     dist = forward(duty)
-            #     global_distance += dist
-            # elif keyboard.is_pressed('s'):
-            #     backwards(duty)
-            # elif keyboard.is_pressed('a'):
-            #     turnLeft(duty)
-            # elif keyboard.is_pressed('d'):
-            #     turnRight(duty)
-            # elif keyboard.is_pressed('p'):
-            #     print(global_distance*100)
-            # else:
-            #     board.motor_stop(board.ALL)
-            # global_distance = getDistance(oldTime)
- 
-        except(KeyboardInterrupt):
-            print("stop all motor")
-            board.motor_stop(board.ALL)   # stop all DC motor
-            print_board_status()
-            Break = True
-               
-    # distances = np.multiply(speeds, dt)
-    val = round(len(speeds)/4)
-    tot_dist = np.mean(speeds[-val:]) * t
-    # print(dt)
-    # print(np.sum(dt))
-    # print(speeds)
-    print("distance travelled: {:.2f}cm".format(tot_dist*100))
-    
-    print("stop all motor")
-    board.motor_stop(board.ALL)   # stop all DC motor
-    print_board_status()
-    Break = True
+distance = count_E1/1200 * 2*math.pi*r
+print("Count E1: {}\tCount E2: {}".format(count_E1, count_E2))
+
+print("stop all motor")
+board.motor_stop(board.ALL)   # stop all DC motor
+print_board_status()

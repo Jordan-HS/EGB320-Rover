@@ -47,9 +47,23 @@ def encodercount(term):
 GPIO.add_event_detect(pinA, GPIO.BOTH, callback=encodercount)
 GPIO.add_event_detect(pinB, GPIO.BOTH, callback=encodercount)
 
+def turnLeft(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+
+
+def turnRight(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+
 def forward(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
+
+def backwards(magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
 
 def board_detect(board):
     l = board.detecte()
@@ -101,7 +115,7 @@ start = time.time()
 while time.time() - start < 3:
     forward(duty)
     
-    time.sleep(.1)
+    # time.sleep(.1)
 
 distance = counts/1200 * 2*math.pi*r
 print("distance: {:.2f}cm".format(distance*100))
