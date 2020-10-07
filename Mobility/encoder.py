@@ -32,16 +32,14 @@ def encodercount(term):
 
 	Encoder_A,Encoder_B = GPIO.input(pinA),GPIO.input(pinB)
 
-    if((Encoder_A,Encoder_B_old) == (1,0)) or((Encoder_A,Encoder_B_old) == (0,1)):
+    if((Encoder_A,Encoder_B_old) == (1,0)) or ((Encoder_A,Encoder_B_old) == (0,1)):
         counts += 1
-
-    elif ((Encoder_A,Encoder_B_old) == (1,1)) or((Encoder_A,Encoder_B_old) == (0,0)):
+    elif ((Encoder_A,Encoder_B_old) == (1,1)) or ((Encoder_A,Encoder_B_old) == (0,0)):
         counts -= 1
-
     else:
         error += 1
 
-        Encoder_B_old = Encoder_B
+    Encoder_B_old = Encoder_B
 
 GPIO.add_event_detect(pinA, GPIO.BOTH, callback=encodercount)
 GPIO.add_event_detect(pinB, GPIO.BOTH, callback=encodercount)
