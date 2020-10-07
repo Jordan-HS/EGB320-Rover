@@ -104,7 +104,7 @@ while time.time() - start < 1:
     time.sleep(.1)
 
 distance = counts/1200 * 2*math.pi*r
-print("distance: {:.2f}".format(distance))
+print("distance: {:.2f}cm".format(distance*100))
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
