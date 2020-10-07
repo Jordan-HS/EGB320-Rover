@@ -135,6 +135,9 @@ r = 0.018559
 turnRight(duty)
 time.sleep(4.25)
 
+turnLeft(duty)
+time.sleep(4.25)
+
 distance = count_E1/1200 * 2*math.pi*r
 print("Count E1: {}\tCount E2: {}".format(count_E1, count_E2))
 
