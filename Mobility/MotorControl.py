@@ -145,7 +145,7 @@ if __name__ == "__main__":
     oldtime = 0
     # forward(1)
     speed = board.get_encoder_speed(board.ALL)
-    # time.sleep(2)
+    time.sleep(5)
     start = time.time()
     t = 0.5
     while time.time()-start<t:
