@@ -113,7 +113,7 @@ def motorSetup():
     board.set_encoder_enable(board.ALL)
     # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
     # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 35)
+    board.set_encoder_reduction_ratio(board.ALL, 35*4)
 
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
@@ -152,22 +152,22 @@ if __name__ == "__main__":
             forward(duty)
             
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
-            # current = r * ((speed[0]+speed[1])/2) * 0.10472
-            # if oldtime == 0:
-            #     dt = np.append(dt, time.time()-start)
-            #     speeds = np.append(speeds, current)
-            #     oldtime=time.time()
-            # else:
-            #     dt = np.append(dt, time.time()-oldtime)
-            #     speeds = np.append(speeds, current)
-            #     oldtime = time.time()
+            # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            current = r * ((speed[0]/4+speed[1]/4)/2) * 0.10472
+            if oldtime == 0:
+                dt = np.append(dt, time.time()-start)
+                speeds = np.append(speeds, current)
+                oldtime=time.time()
+            else:
+                dt = np.append(dt, time.time()-oldtime)
+                speeds = np.append(speeds, current)
+                oldtime = time.time()
            
 
-            # if current < target:
-            #     duty += 0.02
-            # elif current > target:
-            #     duty -= 0.02
+            if current < target:
+                duty += 0.02
+            elif current > target:
+                duty -= 0.02
             # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)

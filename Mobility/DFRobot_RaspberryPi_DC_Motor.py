@@ -91,7 +91,7 @@ class DFRobot_DC_Motor:
       if pid[0] != self._REG_DEF_PID:
         self.last_operate_status = self.STA_ERR_DEVICE_NOT_DETECTED
       else:
-        self._set_control_mode(self._control_mode_stepper)
+        self._set_control_mode(self._control_mode_dc_motor)
         self.motor_stop(self.ALL)
         self.set_encoder_disable(self.ALL)
     return self.last_operate_status
