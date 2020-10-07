@@ -169,10 +169,11 @@ class DFRobot_DC_Motor:
       @return :list     List of encoders speed
     '''
     l = []
-    print(self._parse_id(id))
+
     for i in self._parse_id(id):
       rslt = self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (i - 1), 2)
       s = (rslt[0] << 8) | rslt[1]
+      print(s)
       if s & 0x8000:
         s = - (0x10000 - s)
       l.append(s)
