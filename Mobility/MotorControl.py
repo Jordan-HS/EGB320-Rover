@@ -138,19 +138,20 @@ if __name__ == "__main__":
     Break = False
     while not Break:
         try:
-            if keyboard.is_pressed('W'):
-                dist = forward(duty)
-                global_distance += dist
-            elif keyboard.is_pressed('s'):
-                backwards(duty)
-            elif keyboard.is_pressed('a'):
-                turnLeft(duty)
-            elif keyboard.is_pressed('d'):
-                turnRight(duty)
-            elif keyboard.is_pressed('p'):
-                print(global_distance*100)
-            else:
-                board.motor_stop(board.ALL)
+            speed = board.get_encoder_speed_2(board.ALL)
+            # if keyboard.is_pressed('W'):
+            #     dist = forward(duty)
+            #     global_distance += dist
+            # elif keyboard.is_pressed('s'):
+            #     backwards(duty)
+            # elif keyboard.is_pressed('a'):
+            #     turnLeft(duty)
+            # elif keyboard.is_pressed('d'):
+            #     turnRight(duty)
+            # elif keyboard.is_pressed('p'):
+            #     print(global_distance*100)
+            # else:
+            #     board.motor_stop(board.ALL)
             # global_distance = getDistance(oldTime)
 
             
