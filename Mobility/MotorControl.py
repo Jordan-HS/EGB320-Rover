@@ -151,7 +151,7 @@ if __name__ == "__main__":
                 duty += 0.01
             elif current > target:
                 duty -= 0.01
-            print("current: %d" %(current))
+            print("current: {:.2f}" %(current))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
