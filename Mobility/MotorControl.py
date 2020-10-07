@@ -192,7 +192,7 @@ if __name__ == "__main__":
             Break = True
                
     # distances = np.multiply(speeds, dt)
-    tot_dist = np.mean(speeds[-30:]) * t
+    tot_dist = np.mean(speeds[-40:]) * t
     # print(dt)
     # print(np.sum(dt))
     # print(speeds)
