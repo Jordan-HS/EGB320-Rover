@@ -2,6 +2,7 @@
 
 import time
 import RPi.GPIO as GPIO
+import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
 pinA = 23
@@ -45,6 +46,10 @@ def encodercount(term):
 
 GPIO.add_event_detect(pinA, GPIO.BOTH, callback=encodercount)
 GPIO.add_event_detect(pinB, GPIO.BOTH, callback=encodercount)
+
+def forward(magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
 
 def board_detect(board):
     l = board.detecte()
@@ -90,7 +95,17 @@ def motorSetup():
     return board
 
 board = motorSetup()
-
-while True:
-    print(counts, error)
+duty = 10
+r = 0.01925
+start = time.time()
+while time.time() - start < 1:
+    forward(duty)
+    
     time.sleep(.1)
+
+distance = counts/1200 * 2*math.pi*r
+print("distance: {:.2f}".format(distance))
+
+print("stop all motor")
+board.motor_stop(board.ALL)   # stop all DC motor
+print_board_status()
