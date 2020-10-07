@@ -143,6 +143,8 @@ if __name__ == "__main__":
     speeds = np.array([])
     dt = np.array([])
     oldtime = 0
+    
+    time.sleep(2)
     start = time.time()
     while time.time()-start<1:
         try:
@@ -190,6 +192,7 @@ if __name__ == "__main__":
     distances = np.multiply(speeds, dt)
     tot_dist = np.sum(distances)
     print(dt)
+    print(np.sum(dt))
     print(speeds)
     print("distance travelled: {:.2f}cm".format(tot_dist*100))
     
