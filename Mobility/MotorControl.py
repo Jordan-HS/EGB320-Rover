@@ -144,7 +144,7 @@ if __name__ == "__main__":
     dt = np.array([])
     oldtime = 0
     start = time.time()
-    while time.time()-start<5:
+    while time.time()-start<7:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
@@ -162,9 +162,9 @@ if __name__ == "__main__":
            
 
             if current < target:
-                duty += 0.04
+                duty += 0.02
             elif current > target:
-                duty -= 0.04
+                duty -= 0.02
             # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     tot_dist = np.sum(distances)
     print(dt)
     print(speeds)
-    print("distance travelled: {}".format(tot_dist))
+    print("distance travelled: {:.2f}cm".format(tot_dist*100))
     
     print("stop all motor")
     board.motor_stop(board.ALL)   # stop all DC motor
