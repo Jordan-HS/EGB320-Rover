@@ -166,9 +166,9 @@ if __name__ == "__main__":
                 oldtime = time.time()
 
             if current < target:
-                duty += 0.02
+                duty += 0.01
             elif current > target:
-                duty -= 0.02
+                duty -= 0.01
             print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
