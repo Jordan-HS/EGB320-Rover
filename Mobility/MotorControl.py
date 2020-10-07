@@ -130,7 +130,7 @@ def motorSetup():
     return board
 
 board = motorSetup()
-duty = 0.1
+duty = 10
 r = 0.018559
 forward(duty)
 time.sleep(3)
