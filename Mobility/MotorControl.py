@@ -135,6 +135,8 @@ r = 0.018559
 turnRight(duty)
 time.sleep(4.25)
 
+print("Count E1: {}\tCount E2: {}".format(count_E1, count_E2))
+
 turnLeft(duty)
 time.sleep(4.25)
 
