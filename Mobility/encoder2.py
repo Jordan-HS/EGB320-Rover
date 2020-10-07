@@ -92,4 +92,5 @@ def motorSetup():
 board = motorSetup()
 
 while True:
-    print(counts)
+    print(counts, error)
+    time.sleep(.1)
