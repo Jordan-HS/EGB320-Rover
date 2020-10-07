@@ -153,7 +153,7 @@ if __name__ == "__main__":
             forward(duty)
             
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
             current = r * ((speed[0]+speed[1])/2) * 0.10472
             # print("speed: {:.3f}".format(current))
             if oldtime == 0:
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 duty += 0.01
             elif current > target:
                 duty -= 0.01
-            print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
+            # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
