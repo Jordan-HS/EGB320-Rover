@@ -132,8 +132,9 @@ def getSpeed():
 board = motorSetup()
 global_distance = 0
 duty = 23.5
+target = 0.1
 oldTime = time.time()
-
+r = 0.01925
 if __name__ == "__main__":
     
     Break = False
@@ -142,9 +143,15 @@ if __name__ == "__main__":
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
-
+            
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, (speed[0]/60) *10, (speed[1]/60)*10))
+            current = r * ((speed[0]+speed[1])/2) * 0.10472
+
+            if current < target:
+                duty += 1
+            elif current > target:
+                duty -= 1
+            print("current: %d" %(current)
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
