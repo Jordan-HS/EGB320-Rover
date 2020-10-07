@@ -133,7 +133,7 @@ def getSpeed():
 board = motorSetup()
 global_distance = 0
 duty = 40
-target = 0.2
+target = 0.1
 oldTime = time.time()
 r = 0.01925
 if __name__ == "__main__":
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     speed = board.get_encoder_speed(board.ALL)
     time.sleep(5)
     start = time.time()
-    t = 0.5
+    t = 1
     while time.time()-start<t:
         try:
             # speed = board.get_encoder_speed(board.ALL)
