@@ -132,7 +132,7 @@ def motorSetup():
 board = motorSetup()
 duty = 20
 r = 0.018559
-turnLeft(duty)
+turnRight(duty)
 time.sleep(4.25)
 
 distance = count_E1/1200 * 2*math.pi*r
