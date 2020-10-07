@@ -132,7 +132,7 @@ def getSpeed():
     return round(vel,2)
 board = motorSetup()
 global_distance = 0
-duty = 20
+duty = 25
 target = 0.1
 oldTime = time.time()
 r = 0.01925
@@ -193,7 +193,7 @@ if __name__ == "__main__":
             Break = True
                
     # distances = np.multiply(speeds, dt)
-    val = round(len(speeds)/3)
+    val = round(len(speeds)/4)
     tot_dist = np.mean(speeds[-val:]) * t
     # print(dt)
     # print(np.sum(dt))
