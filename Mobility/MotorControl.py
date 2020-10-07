@@ -148,9 +148,9 @@ if __name__ == "__main__":
             current = r * ((speed[0]+speed[1])/2) * 0.10472
 
             if current < target:
-                duty += 1
+                duty += 0.01
             elif current > target:
-                duty -= 1
+                duty -= 0.01
             print("current: %d" %(current))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
