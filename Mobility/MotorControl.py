@@ -113,7 +113,7 @@ def motorSetup():
     board.set_encoder_enable(board.ALL)
     # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
     # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 35)
+    board.set_encoder_reduction_ratio(board.ALL, 40)
 
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
@@ -154,7 +154,7 @@ if __name__ == "__main__":
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
             # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
             current = r * ((speed[0]+speed[1])/2) * 0.10472
-            print("speed: {:.2f}".format(current))
+            print("speed: {:.3f}".format(current))
             # if oldtime == 0:
             #     dt = np.append(dt, time.time()-start)
             #     speeds = np.append(speeds, current)
