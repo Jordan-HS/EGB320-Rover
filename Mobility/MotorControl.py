@@ -138,13 +138,13 @@ if __name__ == "__main__":
     
     Break = False
     start = time.time()
-    while time.time()-start<2:
+    while not Break:
         try:
-            speed = board.get_encoder_speed(board.ALL)
+            # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
 
-            speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0]/60, speed[1]/60))
+            board.test(board.ALL)      # Use boadrd.all to get all encoders speed
+            # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0]/60, speed[1]/60))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist

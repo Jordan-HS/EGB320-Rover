@@ -162,22 +162,24 @@ class DFRobot_DC_Motor:
       l.append(s)
     return l
 
-  def get_encoder_speed_2(self, id):
+  def test(self, id):
     '''
       @brief    Get dc motor encoder speed, unit rpm
       @param id: list   Encoder list, items in range 1 to 2, or id = self.ALL
       @return :list     List of encoders speed
     '''
-    l = []
 
-    for i in self._parse_id(id):
-      print(self._REG_ENCODER1_SPPED)
-      rslt = self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (i - 1), 2)
-      s = (rslt[0] << 8) | rslt[1]
-      if s & 0x8000:
-        s = - (0x10000 - s)
-      l.append(s)
-    return l
+    print(self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (1-1), 2))
+    # l = []
+
+    # for i in self._parse_id(id):
+    #   print(self._REG_ENCODER1_SPPED)
+    #   rslt = self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (i - 1), 2)
+    #   s = (rslt[0] << 8) | rslt[1]
+    #   if s & 0x8000:
+    #     s = - (0x10000 - s)
+    #   l.append(s)
+    # return l
 
   def set_moter_pwm_frequency(self, frequency):
     '''
