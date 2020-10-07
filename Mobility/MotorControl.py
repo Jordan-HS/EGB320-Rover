@@ -145,7 +145,7 @@ while ang < 90:
     if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
 
-    print(ang)
+    # print(ang)
 
 forward(duty)
 time.sleep(3)
@@ -157,7 +157,7 @@ while ang < 180:
     ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
     if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
-    print(ang)
+    # print(ang)
 forward(duty)
 time.sleep(3)
 count_E1 = 0
@@ -168,7 +168,7 @@ while ang < 270:
     ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
     if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
-    print(ang)
+    # print(ang)
 forward(duty)
 time.sleep(3)   
 print("Angle: {:.2f}".format(ang))
