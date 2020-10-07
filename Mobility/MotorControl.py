@@ -172,7 +172,7 @@ count_E1 = 0
 count_E2 = 0
 
 turnLeft(duty)
-time.sleep(8)
+time.sleep(3)
 
 distance = count_E1/1200 * 2*math.pi*r
 ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
