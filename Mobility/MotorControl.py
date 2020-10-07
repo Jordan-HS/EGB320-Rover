@@ -132,7 +132,7 @@ def getSpeed():
     return round(vel,2)
 board = motorSetup()
 global_distance = 0
-duty = 20
+duty = 30
 target = 0.1
 oldTime = time.time()
 r = 0.01925
