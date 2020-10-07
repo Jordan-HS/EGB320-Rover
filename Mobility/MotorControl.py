@@ -113,7 +113,7 @@ def motorSetup():
     board.set_encoder_enable(board.ALL)
     # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
     # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 39)
+    board.set_encoder_reduction_ratio(board.ALL, 40)
 
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     
     time.sleep(2)
     start = time.time()
-    while time.time()-start<10:
+    while time.time()-start<10.5:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
