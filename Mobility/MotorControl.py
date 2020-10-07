@@ -130,7 +130,7 @@ def getSpeed():
     return round(vel,2)
 board = motorSetup()
 global_distance = 0
-duty = 20
+duty = 10
 oldTime = time.time()
 
 if __name__ == "__main__":
@@ -139,6 +139,7 @@ if __name__ == "__main__":
     while not Break:
         try:
             speed = board.get_encoder_speed_2(board.ALL)
+            forward(duty)
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
@@ -153,8 +154,7 @@ if __name__ == "__main__":
             # else:
             #     board.motor_stop(board.ALL)
             # global_distance = getDistance(oldTime)
-
-            
+ 
         except(KeyboardInterrupt):
             print("stop all motor")
             board.motor_stop(board.ALL)   # stop all DC motor
