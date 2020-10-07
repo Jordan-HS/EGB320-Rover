@@ -143,7 +143,8 @@ if __name__ == "__main__":
     speeds = np.array([])
     dt = np.array([])
     oldtime = 0
-    
+    forward(0)
+    speed = board.get_encoder_speed(board.ALL)
     time.sleep(2)
     start = time.time()
     t = 0.5
