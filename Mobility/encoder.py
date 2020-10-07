@@ -79,7 +79,7 @@ def encodercount(term):
     global Encoder_B
     global Encoder_B_old
     global error
-
+    print("here")
     Encoder_A, Encoder_B = GPIO.input(pinA), GPIO.input(pinB)
 
     if (((Encoder_A,Encoder_B_old) == (1,0)) or ((Encoder_A,Encoder_B_old) == (0,1))):
