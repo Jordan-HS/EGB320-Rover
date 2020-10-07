@@ -24,6 +24,7 @@
 import time
 import math
 import keyboard
+import numpy as np
 
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
@@ -138,6 +139,10 @@ r = 0.01925
 if __name__ == "__main__":
     
     Break = False
+    
+    speeds = np.array([])
+    dt = np.array([])
+    oldtime = 0
     start = time.time()
     while time.time()-start<10:
         try:
@@ -145,6 +150,14 @@ if __name__ == "__main__":
             forward(duty)
             
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
+            if oldtime == 0:
+                dt.append(time.time()-start)
+                speeds.append(speed[0])
+                oldtime=time.time()
+            else:
+                dt.append(time.time()-oldtime)
+                speeds.append(speed[0])
+                oldtime = time.time()
             current = r * ((speed[0]+speed[1])/2) * 0.10472
 
             if current < target:
@@ -173,6 +186,10 @@ if __name__ == "__main__":
             print_board_status()
             Break = True
                
+    distances = np.multiply(speeds, dt)
+    tot_dist = np.sum(distances)
+    print("distance travelled: {}".format(tot_distance))
+    
     print("stop all motor")
     board.motor_stop(board.ALL)   # stop all DC motor
     print_board_status()
