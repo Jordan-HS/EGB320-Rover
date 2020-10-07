@@ -152,8 +152,9 @@ if __name__ == "__main__":
             forward(duty)
             
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
-            # current = r * ((speed[0]/4+speed[1]/4)/2) * 0.10472
+            # print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            current = r * ((speed[0]/4+speed[1]/4)/2) * 0.10472
+            print("speed: {:.2f}".format(current))
             # if oldtime == 0:
             #     dt = np.append(dt, time.time()-start)
             #     speeds = np.append(speeds, current)
