@@ -17,7 +17,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinE1A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(pinE1B, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(pinE2A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(pinE2B, GPIO.IN, pull_up_down = GPIO.PUD_DONW)
+GPIO.setup(pinE2B, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 error = 0
 count_E1 = 0
