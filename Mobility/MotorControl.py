@@ -138,7 +138,7 @@ if __name__ == "__main__":
     
     Break = False
     start = time.time()
-    while not Break:
+    while time.time()-start<1:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
