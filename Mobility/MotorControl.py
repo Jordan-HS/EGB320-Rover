@@ -150,15 +150,16 @@ if __name__ == "__main__":
             forward(duty)
             
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
+            current = r * ((speed[0]+speed[1])/2) * 0.10472
             if oldtime == 0:
                 np.append(dt, time.time()-start)
-                np.append(speeds, speed[0])
+                np.append(speeds, current)
                 oldtime=time.time()
             else:
                 np.append(dt, time.time()-oldtime)
-                np.append(speeds, speed[0])
+                np.append(speeds, current)
                 oldtime = time.time()
-            current = r * ((speed[0]+speed[1])/2) * 0.10472
+           
 
             if current < target:
                 duty += 0.04
