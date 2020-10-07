@@ -169,7 +169,7 @@ class DFRobot_DC_Motor:
       @return :list     List of encoders speed
     '''
 
-    print(self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (1-1), 2))
+    print(self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (2-1), 2))
     # l = []
 
     # for i in self._parse_id(id):
