@@ -134,53 +134,49 @@ duty = 20
 ang = 0
 r = 0.018559
 r2 = 0.137
-turnRight(duty)
-time.sleep(4.25)
-ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-if (count_E1 < 0) and (count_E2 > 0):
-    ang += ang2
-elif (count_E1 > 0) and (count_E2 < 0):
-    ang -= ang2
+forward(duty)
+time.sleep(3)
+
+while ang < 90:
+    turnright(duty)
+
+    ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
+    if (count_E1 < 0) and (count_E2 > 0):
+        ang += ang2
+    elif (count_E1 > 0) and (count_E2 < 0):
+        ang -= ang2
+
+forward(duty)
+time.sleep(3)
+
+while ang < 180:
+    turnright(duty)
+
+    ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
+    if (count_E1 < 0) and (count_E2 > 0):
+        ang += ang2
+    elif (count_E1 > 0) and (count_E2 < 0):
+        ang -= ang2
+
+forward(duty)
+time.sleep(3)
+
+while ang < 270:
+    turnright(duty)
+
+    ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
+    if (count_E1 < 0) and (count_E2 > 0):
+        ang += ang2
+    elif (count_E1 > 0) and (count_E2 < 0):
+        ang -= ang2
+
+forward(duty)
+time.sleep(3)   
 print("Angle: {:.2f}".format(ang))
 count_E1 = 0
 count_E2 = 0
 
-turnLeft(duty)
-time.sleep(4.25)
 
-distance = count_E1/1200 * 2*math.pi*r
-ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-if (count_E1 < 0) and (count_E2 > 0):
-    ang += ang2
-elif (count_E1 > 0) and (count_E2 < 0):
-    ang -= ang2
-print("Angle: {:.2f}".format(ang))
-count_E1 = 0
-count_E2 = 0
-
-turnRight(duty)
-time.sleep(2)
-
-distance = count_E1/1200 * 2*math.pi*r
-ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-if (count_E1 < 0) and (count_E2 > 0):
-    ang += ang2
-elif (count_E1 > 0) and (count_E2 < 0):
-    ang -= ang2
-print("Angle: {:.2f}".format(ang))
-count_E1 = 0
-count_E2 = 0
-
-turnLeft(duty)
-time.sleep(4)
-
-distance = count_E1/1200 * 2*math.pi*r
-ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-if (count_E1 < 0) and (count_E2 > 0):
-    ang += ang2
-elif (count_E1 > 0) and (count_E2 < 0):
-    ang -= ang2
-print("Angle: {:.2f}".format(ang))
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
