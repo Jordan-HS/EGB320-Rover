@@ -49,7 +49,7 @@ def motorSetup():
 
     return board
 
-board - motorSetup()
+board = motorSetup()
 
 panelNum = 1
 pinA = 23
