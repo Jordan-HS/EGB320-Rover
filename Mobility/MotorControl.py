@@ -131,17 +131,28 @@ def motorSetup():
 
 board = motorSetup()
 duty = 20
+ang = 0
 r = 0.018559
+r2 = 0.137
 turnRight(duty)
 time.sleep(4.25)
-
-print("Count E1: {}\tCount E2: {}".format(count_E1, count_E2))
+ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
+if (count_E1 < 0) and (count_E2 > 0):
+    ang -= ang2
+elif (count_E1 > 0) and (count_E2 < 0):
+    ang += ang2
+print("Angle: {:.2f}".format(ang))
 
 turnLeft(duty)
 time.sleep(4.25)
 
 distance = count_E1/1200 * 2*math.pi*r
-print("Count E1: {}\tCount E2: {}".format(count_E1, count_E2))
+ang2 = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
+if (count_E1 < 0) and (count_E2 > 0):
+    ang -= ang2
+elif (count_E1 > 0) and (count_E2 < 0):
+    ang += ang2
+print("Angle: {:.2f}".format(ang))
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
