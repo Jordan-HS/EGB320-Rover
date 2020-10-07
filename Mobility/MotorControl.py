@@ -142,7 +142,7 @@ while ang < 90:
     turnRight(duty)
 
     ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-    if (count_E1 < 0) and (count_E2 > 0):
+    if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
 
     print(ang)
@@ -155,7 +155,7 @@ while ang < 180:
     turnRight(duty)
 
     ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-    if (count_E1 < 0) and (count_E2 > 0):
+    if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
     print(ang)
 forward(duty)
@@ -166,7 +166,7 @@ while ang < 270:
     turnRight(duty)
 
     ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-    if (count_E1 < 0) and (count_E2 > 0):
+    if (count_E1 > 0) and (count_E2 < 0):
         ang = -ang
     print(ang)
 forward(duty)
