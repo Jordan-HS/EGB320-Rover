@@ -112,7 +112,7 @@ def motorSetup():
     board.set_encoder_enable(board.ALL)
     # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
     # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 35)
+    board.set_encoder_reduction_ratio(board.ALL, 1)
 
     # Set DC motor pwm frequency to 1000HZ
     board.set_moter_pwm_frequency(1000)
@@ -138,13 +138,13 @@ if __name__ == "__main__":
     
     Break = False
     start = time.time()
-    while not Break:
+    while time.time()-start<1:
         try:
             speed = board.get_encoder_speed(board.ALL)
             forward(duty)
 
             speed = board.get_encoder_speed(board.ALL)      # Use boadrd.all to get all encoders speed
-            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0], speed[1]))
+            print("duty: %d, M1 encoder speed: %d rpm, M2 encoder speed %d rpm" %(duty, speed[0]/60, speed[1]/60))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
