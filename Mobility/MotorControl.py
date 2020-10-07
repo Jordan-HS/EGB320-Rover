@@ -144,7 +144,7 @@ if __name__ == "__main__":
     dt = np.array([])
     oldtime = 0
     start = time.time()
-    while time.time()-start<10:
+    while time.time()-start<5:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                 duty += 0.04
             elif current > target:
                 duty -= 0.04
-            print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
+            # print("current: {:.5f}\t Duty: {:.2f}".format(current, duty))
             # if keyboard.is_pressed('W'):
             #     dist = forward(duty)
             #     global_distance += dist
