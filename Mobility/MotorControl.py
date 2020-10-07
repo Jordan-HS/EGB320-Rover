@@ -144,7 +144,7 @@ if __name__ == "__main__":
     dt = np.array([])
     oldtime = 0
     start = time.time()
-    while time.time()-start<7:
+    while time.time()-start<2:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
