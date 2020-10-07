@@ -156,7 +156,7 @@ class DFRobot_DC_Motor:
     '''
     l = []
     for i in self._parse_id(id):
-      rslt = self._read_bytes(self._REG_ENCODER2_SPEED, 2)
+      rslt = self._read_bytes(self._REG_ENCODER1_SPPED + 5 * (i - 1), 2)
       s = (rslt[0] << 8) | rslt[1]
       if s & 0x8000:
         s = - (0x10000 - s)
