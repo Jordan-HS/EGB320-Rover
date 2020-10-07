@@ -190,7 +190,7 @@ if __name__ == "__main__":
             print_board_status()
             Break = True
                
-    distances = np.multiply(speeds, dt)
+    # distances = np.multiply(speeds, dt)
     tot_dist = np.mean(speeds) * 1.1
     print(dt)
     print(np.sum(dt))
