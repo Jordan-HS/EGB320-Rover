@@ -160,7 +160,7 @@ while ang < 180:
         ang += ang2
     elif (count_E1 > 0) and (count_E2 < 0):
         ang -= ang2
-
+    print(ang)
 forward(duty)
 time.sleep(3)
 count_E1 = 0
@@ -173,7 +173,7 @@ while ang < 270:
         ang += ang2
     elif (count_E1 > 0) and (count_E2 < 0):
         ang -= ang2
-
+    print(ang)
 forward(duty)
 time.sleep(3)   
 print("Angle: {:.2f}".format(ang))
