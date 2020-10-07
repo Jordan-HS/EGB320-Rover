@@ -146,7 +146,8 @@ if __name__ == "__main__":
     
     time.sleep(2)
     start = time.time()
-    while time.time()-start<1.1:
+    t = 2
+    while time.time()-start<t:
         try:
             # speed = board.get_encoder_speed(board.ALL)
             forward(duty)
@@ -191,7 +192,7 @@ if __name__ == "__main__":
             Break = True
                
     # distances = np.multiply(speeds, dt)
-    tot_dist = np.mean(speeds[-30:]) * 1.1
+    tot_dist = np.mean(speeds[-30:]) * t
     # print(dt)
     # print(np.sum(dt))
     # print(speeds)
