@@ -4,105 +4,94 @@ import time
 import RPi.GPIO as GPIO
 import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
-
-# First encoder
-pinE1A = 23
-pinE1B = 24
-
-# Second encoder
-pinE2A = 25
-pinE2B = 8
+import threading
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-error = 0
-count_E1 = 0
-count_E2 = 0
+class EncoderCounter(threading.Thread):
+    def __init__(self):
+      threading.Thread.__init__(self)
+      # First encoder
+      self.pinE1A = 23
+      self.pinE1B = 24
 
-Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
-Encoder_E1B_old = GPIO.input(pinE1B)
+      # Second encoder
+      self.pinE2A = 25
+      self.pinE2B = 8
 
-Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
-Encoder_E2B_old = GPIO.input(pinE2B)
+      GPIO.setup(self.pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+      GPIO.setup(self.pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+      GPIO.setup(self.pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+      GPIO.setup(self.pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+      GPIO.add_event_detect(self.pinE1A, GPIO.BOTH, callback=self.encodercount_E1)
+      GPIO.add_event_detect(self.pinE1B, GPIO.BOTH, callback=self.encodercount_E1)
+      GPIO.add_event_detect(self.pinE2A, GPIO.BOTH, callback=self.encodercount_E2)
+      GPIO.add_event_detect(self.pinE2B, GPIO.BOTH, callback=self.encodercount_E2)
 
-def encodercount_E1(term):
-    global count_E1
-    global Encoder_E1A
-    global Encoder_E1B
-    global Encoder_E1B_old
-    global error
+      self.error = 0
+      self.count_E1 = 0
+      self.count_E2 = 0
 
-    Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
+      self.Encoder_E1A, self.Encoder_E1B = GPIO.input(self.pinE1A), GPIO.input(self.pinE1B)
+      self.Encoder_E1B_old = GPIO.input(self.pinE1B)
 
-    if((Encoder_E1A, Encoder_E1B_old) == (1, 0)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 1)):
-        count_E1 += 1
-    elif ((Encoder_E1A, Encoder_E1B_old) == (1, 1)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 0)):
-        count_E1 -= 1
-    else:
-        error += 1
-
-    Encoder_E1B_old = Encoder_E1B
+      self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+      self.Encoder_E2B_old = GPIO.input(self.pinE2B)
 
 
-def encodercount_E2(term):
-    global count_E2
-    global Encoder_E2A
-    global Encoder_E2B
-    global Encoder_E2B_old
-    global error
+    def encodercount_E1(term):
+        # global count_E1
+        # global Encoder_E1A
+        # global Encoder_E1B
+        # global Encoder_E1B_old
+        # global error
 
-    Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
+        self.Encoder_E1A, self.Encoder_E1B = GPIO.input(self.pinE1A), GPIO.input(self.pinE1B)
 
-    if((Encoder_E2A, Encoder_E2B_old) == (1, 0)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 1)):
-        count_E2 += 1
-    elif ((Encoder_E2A, Encoder_E2B_old) == (1, 1)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 0)):
-        count_E2 -= 1
-    else:
-        error += 1
+        if((self.Encoder_E1A, self.Encoder_E1B_old) == (1, 0)) or ((self.Encoder_E1A, self.Encoder_E1B_old) == (0, 1)):
+            self.count_E1 += 1
+        elif ((self.Encoder_E1A, self.Encoder_E1B_old) == (1, 1)) or ((self.Encoder_E1A, self.Encoder_E1B_old) == (0, 0)):
+            self.count_E1 -= 1
+        else:
+            self.error += 1
 
-    Encoder_E2B_old = Encoder_E2B
-
-
-GPIO.add_event_detect(pinE1A, GPIO.BOTH, callback=encodercount_E1)
-GPIO.add_event_detect(pinE1B, GPIO.BOTH, callback=encodercount_E1)
-GPIO.add_event_detect(pinE2A, GPIO.BOTH, callback=encodercount_E2)
-GPIO.add_event_detect(pinE2B, GPIO.BOTH, callback=encodercount_E2)
+        self.Encoder_E1B_old = self.Encoder_E1B
 
 
-# def turnLeft(board, magnitude):
-#     board.motor_movement([board.M1], board.CW, duty)
-#     board.motor_movement([board.M2], board.CCW, duty)
+    def encodercount_E2(term):
+        # global count_E2
+        # global Encoder_E2A
+        # global Encoder_E2B
+        # global Encoder_E2B_old
+        # global error
+
+        self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+
+        if((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 0)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 1)):
+            self.count_E2 += 1
+        elif ((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 1)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 0)):
+            self.count_E2 -= 1
+        else:
+            self.error += 1
+
+        self.Encoder_E2B_old = self.Encoder_E2B
 
 
-# def turnRight(board, magnitude):
-#     board.motor_movement([board.M1], board.CCW, duty)
-#     board.motor_movement([board.M2], board.CW, duty)
 
 
-# def forward(board, magnitude):
-#     board.motor_movement([board.M1], board.CCW, duty)
-#     board.motor_movement([board.M2], board.CCW, duty)
 
-
-# def stop(board):
-#     board.motor_stop(board.ALL)
-
-def turnLeft(magnitude):
+def turnLeft(board, magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
 
-def turnRight(magnitude):
+def turnRight(board, magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
 
 
-def forward(magnitude):
+def forward(board, magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
@@ -155,21 +144,17 @@ def motorSetup():
 
     return board
 
-
+enc = EncoderCounter()
 board = motorSetup()
-duty = 30
+duty = 20
 # ang = 0
 # r = 0.018559
 # r2 = 0.137
 start = time.time()
-forward(duty)
-# while time.time() - start < 1:
-    # continue
-time.sleep(1)
+forward(board, duty)
+while time.time() - start < 3:
+    print(enc.count_E2)
 
-print(count_E1)
-print(count_E2)
-print(count_E1 - count_E2)
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
 print_board_status()

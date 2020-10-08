@@ -4,6 +4,9 @@ import time
 import RPi.GPIO as GPIO
 import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
+import threading
+
+class EncoderCounter
 
 # First encoder
 pinE1A = 23
