@@ -80,7 +80,7 @@ def turnRight(magnitude):
 
 def forward(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
-    board.motor_movement([board.M2], board.CW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
 
 def backwards(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
