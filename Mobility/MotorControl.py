@@ -10,8 +10,8 @@ pinE1A = 23
 pinE1B = 24
 
 # Second encoder
-pinE2A = 8
-pinE2B = 25
+pinE2A = 25
+pinE2B = 8
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
