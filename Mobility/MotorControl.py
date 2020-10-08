@@ -158,13 +158,14 @@ def motorSetup():
 
 board = motorSetup()
 duty = 30
-ang = 0
-r = 0.018559
-r2 = 0.137
+# ang = 0
+# r = 0.018559
+# r2 = 0.137
 start = time.time()
 
-while time.time() - start < 1:
-    forward(duty)
+# while time.time() - start < 1:
+forward(duty)
+time.sleep(1)
 
 print(count_E1)
 print(count_E2)
