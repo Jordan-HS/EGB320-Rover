@@ -40,7 +40,7 @@ class EncoderCounter(threading.Thread):
       self.Encoder_E2B_old = GPIO.input(self.pinE2B)
 
 
-    def encodercount_E1(term):
+    def encodercount_E1(self):
         # global count_E1
         # global Encoder_E1A
         # global Encoder_E1B
@@ -59,7 +59,7 @@ class EncoderCounter(threading.Thread):
         self.Encoder_E1B_old = self.Encoder_E1B
 
 
-    def encodercount_E2(term):
+    def encodercount_E2(self):
         # global count_E2
         # global Encoder_E2A
         # global Encoder_E2B
