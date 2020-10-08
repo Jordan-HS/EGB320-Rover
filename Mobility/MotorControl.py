@@ -192,7 +192,7 @@ duty = 20
 forward(board, duty)
 try:
     while True:
-        print(enc.count_E1)
+        print(enc.count_E2)
 except KeyboardInterrupt:
     print("stop all motor")
     board.motor_stop(board.ALL)   # stop all DC motor
