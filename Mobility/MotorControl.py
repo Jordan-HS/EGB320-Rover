@@ -152,8 +152,8 @@ duty = 20
 # r2 = 0.137
 start = time.time()
 forward(board, duty)
-while time.time() - start < 3:
-    print(enc.count_E2)
+time.sleep(2)
+print(enc.count_E2)
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
