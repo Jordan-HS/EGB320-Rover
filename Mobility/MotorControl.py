@@ -182,7 +182,7 @@ def motorSetup():
 
     return board
 
-enc = Encoder_E1()
+enc = Encoder_E2()
 board = motorSetup()
 duty = 20
 # ang = 0
