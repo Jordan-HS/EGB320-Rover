@@ -148,6 +148,8 @@ start = time.time()
 while time.time() - start < 3:
     forward(board, duty)
 
+print(count_E1)
+print(count_E2)
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
 print_board_status()
