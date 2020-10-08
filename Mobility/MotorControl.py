@@ -164,7 +164,7 @@ r2 = 0.137
 start = time.time()
 
 while time.time() - start < 3:
-    forward(board, duty)
+    forward(duty)
 
 print(count_E1)
 print(count_E2)
