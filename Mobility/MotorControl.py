@@ -130,7 +130,7 @@ def motorSetup():
     return board
 
 board = motorSetup()
-duty = 30
+duty = 40
 ang = 0
 r = 0.018559
 r2 = 0.137
