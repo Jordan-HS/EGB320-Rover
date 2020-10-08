@@ -21,5 +21,5 @@ servo_centre = round(CENTREus/INCREus)
 
 
 while True:
-    pwm.set_pwm(4, 0, int(servo_min))
+    pwm.set_pwm(5, 0, int(servo_min))
     time.sleep(1)
