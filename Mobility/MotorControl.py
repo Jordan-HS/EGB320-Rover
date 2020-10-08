@@ -14,10 +14,10 @@ pinE2A = 25
 pinE2B = 8
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(pinE1A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(pinE1B, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(pinE2A, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(pinE2B, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 error = 0
 count_E1 = 0
@@ -29,6 +29,7 @@ Encoder_E1B_old = GPIO.input(pinE1B)
 Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
 Encoder_E2B_old = GPIO.input(pinE2B)
 
+
 def encodercount_E1(term):
     global count_E1
     global Encoder_E1A
@@ -36,16 +37,17 @@ def encodercount_E1(term):
     global Encoder_E1B_old
     global error
 
-    Encoder_E1A,Encoder_E1B = GPIO.input(pinE1A),GPIO.input(pinE1B)
+    Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
 
-    if((Encoder_E1A,Encoder_E1B_old) == (1,0)) or((Encoder_E1A,Encoder_E1B_old) == (0,1)):
+    if((Encoder_E1A, Encoder_E1B_old) == (1, 0)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 1)):
         count_E1 += 1
-    elif ((Encoder_E1A,Encoder_E1B_old) == (1,1)) or((Encoder_E1A,Encoder_E1B_old) == (0,0)):
+    elif ((Encoder_E1A, Encoder_E1B_old) == (1, 1)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 0)):
         count_E1 -= 1
     else:
         error += 1
 
     Encoder_E1B_old = Encoder_E1B
+
 
 def encodercount_E2(term):
     global count_E2
@@ -54,37 +56,42 @@ def encodercount_E2(term):
     global Encoder_E2B_old
     global error
 
-    Encoder_E2A,Encoder_E2B = GPIO.input(pinE2A),GPIO.input(pinE2B)
+    Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
 
-    if((Encoder_E2A,Encoder_E2B_old) == (1,0)) or((Encoder_E2A,Encoder_E2B_old) == (0,1)):
+    if((Encoder_E2A, Encoder_E2B_old) == (1, 0)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 1)):
         count_E2 += 1
-    elif ((Encoder_E2A,Encoder_E2B_old) == (1,1)) or((Encoder_E2A,Encoder_E2B_old) == (0,0)):
+    elif ((Encoder_E2A, Encoder_E2B_old) == (1, 1)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 0)):
         count_E2 -= 1
     else:
         error += 1
 
     Encoder_E2B_old = Encoder_E2B
 
+
 GPIO.add_event_detect(pinE1A, GPIO.BOTH, callback=encodercount_E1)
 GPIO.add_event_detect(pinE1B, GPIO.BOTH, callback=encodercount_E1)
 GPIO.add_event_detect(pinE2A, GPIO.BOTH, callback=encodercount_E2)
 GPIO.add_event_detect(pinE2B, GPIO.BOTH, callback=encodercount_E2)
 
-def turnLeft(magnitude):
+
+def turnLeft(board, magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
-def turnRight(magnitude):
+
+def turnRight(board, magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
 
-def forward(magnitude):
+
+def forward(board, magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
-def backwards(magnitude):
-    board.motor_movement([board.M1], board.CW, duty)
-    board.motor_movement([board.M2], board.CW, duty)
+
+def stop(board):
+    board.motor_stop(board.ALL)
+
 
 def board_detect(board):
     l = board.detecte()
@@ -107,8 +114,9 @@ def print_board_status():
     elif board.last_operate_status == board.STA_ERR_SOFT_VERSION:
         print("board status: unsupport board framware version")
 
+
 def motorSetup():
-    board = Board(1, 0x10) 
+    board = Board(1, 0x10)
 
     board_detect(board)
 
@@ -129,21 +137,16 @@ def motorSetup():
 
     return board
 
+
 board = motorSetup()
-duty = 40
+duty = 20
 ang = 0
 r = 0.018559
 r2 = 0.137
-forward(duty)
-time.sleep(1)
-ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
-if (count_E1 > 0) and (count_E2 < 0):
-    ang = - ang
-print("Angle: {:.2f}".format(ang))
-count_E1 = 0
-count_E2 = 0
+start = time.time()
 
-
+while time.time() - start < 3:
+    forward(board, duty)
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor

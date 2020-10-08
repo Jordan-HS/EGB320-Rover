@@ -1,11 +1,99 @@
-import time
+#!/usr/bin/python
 
+import time
+import RPi.GPIO as GPIO
+import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
-board = Board(1, 0x10)    # Select bus 1, set address to 0x10
+# First encoder
+pinE1A = 23
+pinE1B = 24
+
+# Second encoder
+pinE2A = 25
+pinE2B = 8
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+error = 0
+count_E1 = 0
+count_E2 = 0
+
+Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
+Encoder_E1B_old = GPIO.input(pinE1B)
+
+Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
+Encoder_E2B_old = GPIO.input(pinE2B)
 
 
-def board_detect():
+def encodercount_E1(term):
+    global count_E1
+    global Encoder_E1A
+    global Encoder_E1B
+    global Encoder_E1B_old
+    global error
+
+    Encoder_E1A, Encoder_E1B = GPIO.input(pinE1A), GPIO.input(pinE1B)
+
+    if((Encoder_E1A, Encoder_E1B_old) == (1, 0)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 1)):
+        count_E1 += 1
+    elif ((Encoder_E1A, Encoder_E1B_old) == (1, 1)) or ((Encoder_E1A, Encoder_E1B_old) == (0, 0)):
+        count_E1 -= 1
+    else:
+        error += 1
+
+    Encoder_E1B_old = Encoder_E1B
+
+
+def encodercount_E2(term):
+    global count_E2
+    global Encoder_E2A
+    global Encoder_E2B
+    global Encoder_E2B_old
+    global error
+
+    Encoder_E2A, Encoder_E2B = GPIO.input(pinE2A), GPIO.input(pinE2B)
+
+    if((Encoder_E2A, Encoder_E2B_old) == (1, 0)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 1)):
+        count_E2 += 1
+    elif ((Encoder_E2A, Encoder_E2B_old) == (1, 1)) or ((Encoder_E2A, Encoder_E2B_old) == (0, 0)):
+        count_E2 -= 1
+    else:
+        error += 1
+
+    Encoder_E2B_old = Encoder_E2B
+
+
+GPIO.add_event_detect(pinE1A, GPIO.BOTH, callback=encodercount_E1)
+GPIO.add_event_detect(pinE1B, GPIO.BOTH, callback=encodercount_E1)
+GPIO.add_event_detect(pinE2A, GPIO.BOTH, callback=encodercount_E2)
+GPIO.add_event_detect(pinE2B, GPIO.BOTH, callback=encodercount_E2)
+
+
+def turnLeft(board, magnitude):
+    board.motor_movement([board.M1], board.CW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+
+
+def turnRight(board, magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
+
+
+def forward(board, magnitude):
+    board.motor_movement([board.M1], board.CCW, duty)
+    board.motor_movement([board.M2], board.CCW, duty)
+
+
+def stop(board):
+    board.motor_stop(board.ALL)
+
+
+def board_detect(board):
     l = board.detecte()
     print("Board list conform:")
     print(l)
@@ -26,94 +114,40 @@ def print_board_status():
     elif board.last_operate_status == board.STA_ERR_SOFT_VERSION:
         print("board status: unsupport board framware version")
 
-def initialiseBoard():
-  board_detect()  # If you forget address you had set, use this to detected them, must have class instance
 
-  # Set board controler address, use it carefully, reboot module to make it effective
-  '''
-  board.set_addr(0x10)
-  if board.last_operate_status != board.STA_OK:
-  print("set board address faild")
-  else:
-  print("set board address success")
-  '''
+def motorSetup():
+    board = Board(1, 0x10)
 
-  while board.begin() != board.STA_OK:    # Board begin and check board status
-    print_board_status()
-    print("board begin faild")
-    time.sleep(2)
+    board_detect(board)
+
+    while board.begin() != board.STA_OK:    # Board begin and check board status
+        print_board_status()
+        print("board begin faild")
+        time.sleep(2)
     print("board begin success")
 
-  # Set selected DC motor encoder disable
-  board.set_encoder_disable(board.ALL)
+    # Set selected DC motor encoder enable
+    board.set_encoder_enable(board.ALL)
+    # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
+    # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
+    board.set_encoder_reduction_ratio(board.ALL, 40)
 
-  # Set DC motor pwm frequency to 1000HZ
-  board.set_moter_pwm_frequency(1000)
+    # Set DC motor pwm frequency to 1000HZ
+    board.set_moter_pwm_frequency(1000)
 
-  return board
-
-# Set Target Velocities
-# inputs:
-#	x - the velocity of the robot in the forward direction (in m/s)
-#	theta_dt - the rotational velocity of the robot (in rad/s)
+    return board
 
 
-def SetTargetVelocities(board, x_dot, theta_dot):
-  # ensure wheel base and wheel radius are set as these are not allowed to be changed
-  wheelBase = 95e-3
-  wheelRadius = 43e-3
+board = motorSetup()
+duty = 20
+ang = 0
+r = 0.018559
+r2 = 0.137
+start = time.time()
 
-  # Might not need
-  leftWheelBias = 0
-  rightWheelBias = 0
+while time.time() - start < 3:
+    forward(board, duty)
 
-  minimumLinearSpeed = 0.1
-  maximumLinearSpeed = 1
-
-  # determine minimum wheel speed based on minimumLinear and maximumLinear speed
-  minWheelSpeed = minimumLinearSpeed / wheelRadius
-  maxWheelSpeed = maximumLinearSpeed / wheelRadius
-
-  # calculate left and right wheel speeds in rad/s
-  leftWheelSpeed = (x_dot - 0.5*theta_dot*wheelBase) / \
-      wheelRadius + leftWheelBias
-  rightWheelSpeed = (x_dot + 0.5*theta_dot*wheelBase) / \
-      wheelRadius + rightWheelBias
-
-#  print("Left wheelL %d, right wheel: %d" %(leftWheelSpeed, rightWheelSpeed))
-
-  # ensure wheel speeds are not greater than maximum wheel speed
-  leftWheelSpeed = min(leftWheelSpeed, maxWheelSpeed)
-  rightWheelSpeed = min(rightWheelSpeed, maxWheelSpeed)
-
-  # set wheel speeds to 0 if less than the minimum wheel speed
-  if abs(leftWheelSpeed) < minWheelSpeed:
-    leftWheelSpeed = 0
-  if abs(rightWheelSpeed) < minWheelSpeed:
-    rightWheelSpeed = 0
-
-  # Scale to duty
-  leftDuty = round(leftWheelSpeed*6.45)
-  rightDuty = round(rightWheelSpeed*6.45)
-
-  # set motor speeds
-  if  leftWheelSpeed == 0 and rightWheelSpeed > 0:
-    # DC motor 1 movement, orientation clockwise
-    rightDuty = round(1*6.45)
-    board.motor_movement([board.M1], board.CW, rightDuty)
-    # DC motor 2 movement, orientation count-clockwise
-    board.motor_movement([board.M2], board.CCW, leftDuty)
-  elif rightWheelSpeed == 0 and leftWheelSpeed > 0:
-    # DC motor 1 movement, orientation clockwise
-    board.motor_movement([board.M1], board.CCW, rightDuty)
-    # DC motor 2 movement, orientation count-clockwise
-    leftDuty = round(1*6.45)
-    board.motor_movement([board.M2], board.CW, leftDuty)
-  else:
-    # DC motor 1 movement, orientation clockwise
-    board.motor_movement([board.M1], board.CCW, rightDuty)
-    # DC motor 2 movement, orientation count-clockwise
-    board.motor_movement([board.M2], board.CCW, leftDuty)
-  
-  print("Left Wheel Speed: %d     Right Wheel Speed: %d" %
-        (leftWheelSpeed, rightWheelSpeed))
+print("stop all motor")
+board.motor_stop(board.ALL)   # stop all DC motor
+print_board_status()
