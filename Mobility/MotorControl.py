@@ -163,7 +163,7 @@ r = 0.018559
 r2 = 0.137
 start = time.time()
 
-while time.time() - start < 3:
+while time.time() - start < 1:
     forward(duty)
 
 print(count_E1)
