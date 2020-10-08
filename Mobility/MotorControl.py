@@ -135,7 +135,7 @@ ang = 0
 r = 0.018559
 r2 = 0.137
 turnLeft(duty)
-time.sleep(4.25)
+time.sleep(2)
 ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
 if (count_E1 > 0) and (count_E2 < 0):
     ang = - ang
