@@ -162,9 +162,9 @@ duty = 30
 # r = 0.018559
 # r2 = 0.137
 start = time.time()
-
+forward(duty)
 while time.time() - start < 1:
-    forward(duty)
+    continue
 # time.sleep(1)
 
 print(count_E1)
