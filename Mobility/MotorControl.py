@@ -150,10 +150,10 @@ duty = 20
 # ang = 0
 # r = 0.018559
 # r2 = 0.137
-start = time.time()
+# start = time.time()
 forward(board, duty)
-time.sleep(2)
-print(enc.count_E2)
+while True:
+    print(enc.count_E2)
 
 print("stop all motor")
 board.motor_stop(board.ALL)   # stop all DC motor
