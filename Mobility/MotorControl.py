@@ -134,7 +134,7 @@ duty = 30
 ang = 0
 r = 0.018559
 r2 = 0.137
-turnRight(duty)
+turnLeft(duty)
 time.sleep(4.25)
 ang = ( ( ( (abs(count_E1)/1200)*2*math.pi*r) + ( (abs(count_E2)/1200)*2*math.pi*r) ) / (r2*math.pi) ) * 180 
 if (count_E1 > 0) and (count_E2 < 0):
