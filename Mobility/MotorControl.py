@@ -84,7 +84,7 @@ def forward(magnitude):
 
 def backwards(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
-    board.motor_movement([board.M2], board.CCW, duty)
+    board.motor_movement([board.M2], board.CW, duty)
 
 def board_detect(board):
     l = board.detecte()
@@ -130,7 +130,7 @@ def motorSetup():
     return board
 
 board = motorSetup()
-duty = 20
+duty = 40
 ang = 0
 r = 0.018559
 r2 = 0.137
