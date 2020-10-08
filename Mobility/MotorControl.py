@@ -74,17 +74,35 @@ GPIO.add_event_detect(pinE2A, GPIO.BOTH, callback=encodercount_E2)
 GPIO.add_event_detect(pinE2B, GPIO.BOTH, callback=encodercount_E2)
 
 
-def turnLeft(board, magnitude):
+# def turnLeft(board, magnitude):
+#     board.motor_movement([board.M1], board.CW, duty)
+#     board.motor_movement([board.M2], board.CCW, duty)
+
+
+# def turnRight(board, magnitude):
+#     board.motor_movement([board.M1], board.CCW, duty)
+#     board.motor_movement([board.M2], board.CW, duty)
+
+
+# def forward(board, magnitude):
+#     board.motor_movement([board.M1], board.CCW, duty)
+#     board.motor_movement([board.M2], board.CCW, duty)
+
+
+# def stop(board):
+#     board.motor_stop(board.ALL)
+
+def turnLeft(magnitude):
     board.motor_movement([board.M1], board.CW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
 
-def turnRight(board, magnitude):
+def turnRight(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CW, duty)
 
 
-def forward(board, magnitude):
+def forward(magnitude):
     board.motor_movement([board.M1], board.CCW, duty)
     board.motor_movement([board.M2], board.CCW, duty)
 
