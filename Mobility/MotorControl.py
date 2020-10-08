@@ -159,3 +159,4 @@ except KeyboardInterrupt:
     print("stop all motor")
     board.motor_stop(board.ALL)   # stop all DC motor
     print_board_status()
+    GPIO.cleanup() 
