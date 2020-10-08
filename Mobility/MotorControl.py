@@ -6,12 +6,12 @@ import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 
 # First encoder
-pinE1A = 23
-pinE1B = 24
+pinE1A = 27
+pinE1B = 22
 
 # Second encoder
-pinE2A = 8
-pinE2B = 25
+pinE2A = 20
+pinE2B = 21
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
