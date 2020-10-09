@@ -181,9 +181,9 @@ class Rover:
                 # target_angle, target_mag = getForce(self, closeRange=target)
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
-                # if target[0] < 0.13:
-                #     self.move("stop")
-                #     return
+                if target[0] < 0.13:
+                    self.move("stop")
+                    return
 
                 if target[0] <= 0.04:
                     self.lunarBotSim.CollectSample()
@@ -412,9 +412,9 @@ try:
         # Update rover global positio
         rover.updateCurrentPos()
 
-        rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        # rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        # rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
+        rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
              
         ## Display HUD
         if HUD:
