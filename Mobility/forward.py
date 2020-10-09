@@ -188,7 +188,7 @@ def motorSetup():
 def main(args=None):
     board = motorSetup()
     duty = 20
-    while(True)
+    while True:
         forward(board, duty)
         sleep(2)
         stop(board)
