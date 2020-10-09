@@ -191,7 +191,7 @@ duty = 20
 # start = time.time()
 forward(board, duty)
 try:
-    while True:
+    for x in range:
         print(enc.count_E2)
 except KeyboardInterrupt:
     print("stop all motor")

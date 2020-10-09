@@ -360,7 +360,7 @@ class Rover:
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('172.19.9.220', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
 
     # memory stuff
