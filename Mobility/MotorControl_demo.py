@@ -5,10 +5,11 @@ import RPi.GPIO as GPIO
 import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 import threading
+import keyboard
 
 GPIO.setmode(GPIO.BCM)
 
-class EncoderCounter(threading.Thread):
+class Encoder_E1(threading.Thread):
     def __init__(self):
       threading.Thread.__init__(self)
       # First encoder
@@ -16,31 +17,31 @@ class EncoderCounter(threading.Thread):
       self.pinE1B = 24
 
       # Second encoder
-      self.pinE2A = 25
-      self.pinE2B = 8
+    #   self.pinE2A = 25
+    #   self.pinE2B = 8
 
       GPIO.setup(self.pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
       GPIO.setup(self.pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-      GPIO.setup(self.pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-      GPIO.setup(self.pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    #   GPIO.setup(self.pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    #   GPIO.setup(self.pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
       GPIO.add_event_detect(self.pinE1A, GPIO.BOTH, callback=self.encodercount_E1)
       GPIO.add_event_detect(self.pinE1B, GPIO.BOTH, callback=self.encodercount_E1)
-      GPIO.add_event_detect(self.pinE2A, GPIO.BOTH, callback=self.encodercount_E2)
-      GPIO.add_event_detect(self.pinE2B, GPIO.BOTH, callback=self.encodercount_E2)
+    #   GPIO.add_event_detect(self.pinE2A, GPIO.BOTH, callback=self.encodercount_E2)
+    #   GPIO.add_event_detect(self.pinE2B, GPIO.BOTH, callback=self.encodercount_E2)
 
       self.error = 0
       self.count_E1 = 0
-      self.count_E2 = 0
+    #   self.count_E2 = 0
 
       self.Encoder_E1A, self.Encoder_E1B = GPIO.input(self.pinE1A), GPIO.input(self.pinE1B)
       self.Encoder_E1B_old = GPIO.input(self.pinE1B)
 
-      self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
-      self.Encoder_E2B_old = GPIO.input(self.pinE2B)
+    #   self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+    #   self.Encoder_E2B_old = GPIO.input(self.pinE2B)
 
 
-    def encodercount_E1(term):
+    def encodercount_E1(self, term):
         # global count_E1
         # global Encoder_E1A
         # global Encoder_E1B
@@ -59,7 +60,45 @@ class EncoderCounter(threading.Thread):
         self.Encoder_E1B_old = self.Encoder_E1B
 
 
-    def encodercount_E2(term):
+    # def encodercount_E2(self, term):
+    #     # global count_E2
+    #     # global Encoder_E2A
+    #     # global Encoder_E2B
+    #     # global Encoder_E2B_old
+    #     # global error
+
+    #     self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+
+    #     if((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 0)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 1)):
+    #         self.count_E2 += 1
+    #     elif ((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 1)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 0)):
+    #         self.count_E2 -= 1
+    #     else:
+    #         self.error += 1
+
+    #     self.Encoder_E2B_old = self.Encoder_E2B
+
+
+class Encoder_E2(threading.Thread):
+    def __init__(self):
+      threading.Thread.__init__(self)
+      # Second encoder
+      self.pinE2A = 25
+      self.pinE2B = 8
+
+      GPIO.setup(self.pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+      GPIO.setup(self.pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+      GPIO.add_event_detect(self.pinE2A, GPIO.BOTH, callback=self.encodercount_E2)
+      GPIO.add_event_detect(self.pinE2B, GPIO.BOTH, callback=self.encodercount_E2)
+
+      self.error = 0
+      self.count_E2 = 0
+
+      self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+      self.Encoder_E2B_old = GPIO.input(self.pinE2B)
+
+    def encodercount_E2(self, term):
         # global count_E2
         # global Encoder_E2A
         # global Encoder_E2B
@@ -144,17 +183,57 @@ def motorSetup():
 
     return board
 
-enc = EncoderCounter()
-board = motorSetup()
-duty = 20
-ang = 0
-r = 0.018559
-r2 = 0.137
-start = time.time()
+## Main
+#################################################################
+def main(args=None):
+    board = motorSetup()
+    duty = 20
+    try: 
+        while True:
+            if keyboard.read_key() == "q":
+                stop(board)
+            elif keyboard.read_key() == "w":
+                forward(board, duty)
+            elif keyboard.read_key() == "a":
+                turnLeft(board, 1.5*duty)
+            elif keyboard.read_key() == "d":
+                turnRight(board, 1.5*duty)
 
-while time.time() - start < 3:
-    forward(board, duty)
+    except KeyboardInterrupt:
+        print("stop all motor")
+        board.motor_stop(board.ALL)   # stop all DC motor
+        print_board_status()
+        GPIO.cleanup() 
+        
+if __name__ == "__main__":
+    main()
 
-print("stop all motor")
-board.motor_stop(board.ALL)   # stop all DC motor
-print_board_status()
+#
+#enc = Encoder_E2()
+##board = motorSetup()
+#duty = 20
+# ang = 0
+# r = 0.018559
+# r2 = 0.137
+# start = time.time()
+<<<<<<< HEAD
+#forward(board, duty)
+#try:
+#    while True:
+#        print(enc.count_E2)
+#except KeyboardInterrupt:
+#    print("stop all motor")
+#    board.motor_stop(board.ALL)   # stop all DC motor
+#    print_board_status()
+#    GPIO.cleanup() 
+=======
+forward(board, duty)
+try:
+    for x in range:
+        print(enc.count_E2)
+except KeyboardInterrupt:
+    print("stop all motor")
+    board.motor_stop(board.ALL)   # stop all DC motor
+    print_board_status()
+    GPIO.cleanup() 
+>>>>>>> b901913bf377d194495353495a74aa6ef59209b0

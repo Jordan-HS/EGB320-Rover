@@ -13,7 +13,7 @@ LED_out = False
 HUD = True
 
 # Potential fields view
-POT = True
+POT = False
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
@@ -21,7 +21,7 @@ robotParameters, sceneParameters = setup.init_sim()
 if HUD:
     import os
     import sys
-    clear = lambda: os.system('cls')
+    clear = lambda: os.system('clear')
 
 if LED_out:
     import RPi.GPIO as GPIO
@@ -59,6 +59,8 @@ class Rover:
         self.bearing = self.lunarBotSim.robotPose[5]
 
     def move(self, movement, magnitude=None):
+        if magnitude is not None:
+            magnitude = magnitude/2
         if movement == "forward":
             self.lunarBotSim.SetTargetVelocities(magnitude, 0)
             self.current_movment = "forward, {:.2f}".format(magnitude)
@@ -89,7 +91,7 @@ class Rover:
             ### Initial state - Move off lander ###
             if not self.lunarBotSim.SampleCollected() and self.checkOnLander():
                 self.current_action = "On lander - Moving off"
-                self.move("forward", 0.5)
+                self.move("forward", 0.25)
                 return
 
             ### Off lander - Survey scene ###
@@ -172,6 +174,9 @@ class Rover:
                 # target_angle, target_mag = getForce(self, closeRange=target)
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
+                if target[0] < 0.1:
+                    self.move("stop")
+
                 if target[0] <= 0.04:
                     self.lunarBotSim.CollectSample()
                     self.samples.remove(self.target)
@@ -179,6 +184,8 @@ class Rover:
                     self.target_type = ""
                     self.current_action = "Holding sample - Approaching lander ramp"
                     return
+
+                
 
                 if math.isclose(target_angle, 0, abs_tol=math.radians(5)):
                     self.move("forward", target_mag/3)
@@ -208,7 +215,7 @@ class Rover:
         ### More samples to collect ### 
         if self.current_action == "Continue mission - Moving to other side of lander":
             if self.checkOnLander():
-                self.move("forward", 1)
+                self.move("forward", 0.25)
             else:
                 self.current_action = "Surveying landing site"
                 self.save_bearing = self.bearing - math.radians(11)
@@ -252,7 +259,7 @@ class Rover:
             self.move("stop")
 
     def checkOnLander(self):
-        if (-0.4 < self.x < 0.4) and (-0.4 < self.y < 0.4):
+        if (-0.35 < self.x < 0.35) and (-0.35 < self.y < 0.35):
             return True
         return False 
 
@@ -360,7 +367,7 @@ class Rover:
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('172.19.9.220', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
 
     # memory stuff
@@ -370,11 +377,15 @@ try:
     while (True):
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
+
+
         
         # Update rover global positio
         rover.updateCurrentPos()
 
-        rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        # rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+
+        rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
              
         ## Display HUD
         if HUD:
