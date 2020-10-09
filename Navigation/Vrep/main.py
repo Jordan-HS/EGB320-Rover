@@ -13,7 +13,7 @@ LED_out = False
 HUD = True
 
 # Potential fields view
-POT = True
+POT = False
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
