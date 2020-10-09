@@ -400,6 +400,15 @@ try:
         observation = current_observation()
 
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
+
+        if samplesRB is not None:
+            if math.isclose(target_angle, 0, abs_tol=math.radians(5)):
+                    rover.move("forward", 30)
+                elif target_angle < -math.radians(5):
+                    rover.move("right", 30)
+                elif target_angle > math.radians(5):
+                    rover.move("left", 30)      
+                return
         
         # Update rover global positio
         rover.updateCurrentPos()
