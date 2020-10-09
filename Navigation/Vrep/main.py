@@ -59,6 +59,8 @@ class Rover:
         self.bearing = self.lunarBotSim.robotPose[5]
 
     def move(self, movement, magnitude=None):
+        if magnitude is not None:
+            magnitude = magnitude/2
         if movement == "forward":
             self.lunarBotSim.SetTargetVelocities(magnitude, 0)
             self.current_movment = "forward, {:.2f}".format(magnitude)
