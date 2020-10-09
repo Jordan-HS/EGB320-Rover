@@ -372,11 +372,15 @@ try:
     while (True):
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
+
+
         
         # Update rover global positio
         rover.updateCurrentPos()
 
-        rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        # rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+
+        rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
              
         ## Display HUD
         if HUD:
