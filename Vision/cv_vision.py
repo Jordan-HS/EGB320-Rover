@@ -112,7 +112,7 @@ def detect_obs(hsv_masks):
         #contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # Check for rocks and satellite crash obstacles
         if indx < 2:
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 # print(area)
@@ -133,12 +133,18 @@ def detect_obs(hsv_masks):
                             obs_array.append(obs)
                         # Exit loop
                         continue
-                    # elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
-                        # error = 1   # Obstacle on boundary
-                        # obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
-                        # obs_array.append(obs)
-                        # # Exit loop
-                        # continue
+                    elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
+                        error = 1   # Obstacle on boundary
+                        obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
+                        obs_array.append(obs_array_boundary)
+                        # Exit loop
+                        continue
+                    elif ((boundary[3]/boundary[2]) > 1.4):
+                        error = 1   # Obstacle on boundary
+                        obs_array_hidden = hidden_obs(cnt, obs_indx, id_type, boundary, error)
+                        obs_array.append(obs_array_hidden)
+                        # Exit loop
+                        continue
                     else:
                         error = 0   # No obstacle overlap
                     # Find centre of enclosing circle
@@ -154,7 +160,7 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for lander
         elif indx == 2:
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
             # obstacle type index
@@ -180,7 +186,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for samples
         else:
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 if area > 40:
@@ -269,6 +275,27 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
         # Create list of values
         obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         return obs_array_boundary
+
+def hidden_obs(cnt, obs_indx, id_type, boundary, error):
+    # Obstacle type index
+    obs_indx = obs_indx
+    # Obstacle label
+    id_type = id_type
+    # Error = 1 -  Values not to be trusted
+    error = error
+    # Boundary points
+    boundary = boundary
+    # Centre point for obstacle based on height
+    centre, radius = cv2.minEnclosingCircle(cnt)
+    # Width of contour in pixels
+    pix_width = boundary[3]
+    # Angle from centre of screen in radians
+    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+    # Distance from camera in cm
+    obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
+    # Create list of values
+    obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+    return obs_array_boundary       
 
 # Process frame from PiCamera
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
