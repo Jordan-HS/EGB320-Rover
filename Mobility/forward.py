@@ -184,14 +184,9 @@ def motorSetup():
     return board
 
 ## Main
-#################################################################
-def main(args=None):
-    board = motorSetup()
-    duty = 20
-    while True:
-        forward(board, duty)
-        sleep(2)
-        stop(board)
-
-if __name__ == "__main__":
-    main()
+board = motorSetup()
+duty = 20
+while True:
+    forward(board, duty)
+    sleep(2)
+    stop(board)
