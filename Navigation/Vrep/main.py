@@ -400,13 +400,13 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
-        if samplesRB is None:
-            redON()
-        else:
-            yellowON()
+        # if samplesRB is None:
+        #     redON()
+        # else:
+        #     yellowON()
 
-        if rover.lunarBotSim.SampleCollected():
-            greenON()
+        # if rover.lunarBotSim.SampleCollected():
+        #     greenON()
         
         # Update rover global positio
         rover.updateCurrentPos()
