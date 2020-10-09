@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import math
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 import threading
+import keyboard
 
 GPIO.setmode(GPIO.BCM)
 
@@ -182,19 +183,45 @@ def motorSetup():
 
     return board
 
-enc = Encoder_E2()
-board = motorSetup()
-duty = 20
+## Main
+#################################################################
+def main(args=None):
+    board = motorSetup()
+    duty = 20
+    try: 
+        while True:
+            if keyboard.read_key() == "q":
+                stop(board)
+            elif keyboard.read_key() == "w":
+                forward(board, duty)
+            elif keyboard.read_key() == "a":
+                turnLeft(board, 1.5*duty)
+            elif keyboard.read_key() == "d":
+                turnRight(board, 1.5*duty)
+
+    except KeyboardInterrupt:
+        print("stop all motor")
+        board.motor_stop(board.ALL)   # stop all DC motor
+        print_board_status()
+        GPIO.cleanup() 
+        
+if __name__ == "__main__":
+    main()
+
+#
+#enc = Encoder_E2()
+##board = motorSetup()
+#duty = 20
 # ang = 0
 # r = 0.018559
 # r2 = 0.137
 # start = time.time()
-forward(board, duty)
-try:
-    while True:
-        print(enc.count_E2)
-except KeyboardInterrupt:
-    print("stop all motor")
-    board.motor_stop(board.ALL)   # stop all DC motor
-    print_board_status()
-    GPIO.cleanup() 
+#forward(board, duty)
+#try:
+#    while True:
+#        print(enc.count_E2)
+#except KeyboardInterrupt:
+#    print("stop all motor")
+#    board.motor_stop(board.ALL)   # stop all DC motor
+#    print_board_status()
+#    GPIO.cleanup() 
