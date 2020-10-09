@@ -188,5 +188,4 @@ board = motorSetup()
 duty = 40
 while True:
     forward(board, duty)
-    time.sleep(2)
-    stop(board)
+
