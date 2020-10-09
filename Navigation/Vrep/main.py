@@ -21,7 +21,7 @@ robotParameters, sceneParameters = setup.init_sim()
 if HUD:
     import os
     import sys
-    clear = lambda: os.system('cls')
+    clear = lambda: os.system('clear')
 
 if LED_out:
     import RPi.GPIO as GPIO
@@ -210,7 +210,7 @@ class Rover:
         ### More samples to collect ### 
         if self.current_action == "Continue mission - Moving to other side of lander":
             if self.checkOnLander():
-                self.move("forward", 1)
+                self.move("forward", 0.25)
             else:
                 self.current_action = "Surveying landing site"
                 self.save_bearing = self.bearing - math.radians(11)
