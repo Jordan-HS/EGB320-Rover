@@ -185,8 +185,8 @@ def motorSetup():
 
 ## Main
 board = motorSetup()
-duty = 40
+duty = 20
 while True:
-    turnLeft(board, duty)
+    forward(board, duty)
     sleep(2)
     stop(board)
