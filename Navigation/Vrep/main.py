@@ -5,6 +5,7 @@ from math import radians, degrees
 from potentialField import getForce, calculateMovement, show
 import time
 import numpy as np
+import math
 
 # GPIO LED output
 LED_out = False
@@ -24,13 +25,19 @@ if HUD:
     clear = lambda: os.system('clear')
 
 if LED_out:
+    redPIN = 26
+    greenPIN = 16
+    yellowPIN = 13
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(26, GPIO.OUT) # RED
-    GPIO.setup(16, GPIO.OUT) # GREEN
-    GPIO.setup(13, GPIO.OUT) # YELLOW
+    GPIO.setup(redPIN, GPIO.OUT) # RED
+    GPIO.setup(greenPIN, GPIO.OUT) # GREEN
+    GPIO.setup(yellowPIN, GPIO.OUT) # YELLOW
 
+    # GPIO.output(redPIN, GPIO.HIGH)
+    # GPIO.output(redPIN, GPIO.LOW)
+    # GPIO.output(redPIN, GPIO.LOW)
 
 class Rover:
     def __init__(self, lunarBotSim):
@@ -174,8 +181,9 @@ class Rover:
                 # target_angle, target_mag = getForce(self, closeRange=target)
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
-                if target[0] < 0.1:
-                    self.move("stop")
+                # if target[0] < 0.13:
+                #     self.move("stop")
+                #     return
 
                 if target[0] <= 0.04:
                     self.lunarBotSim.CollectSample()
@@ -365,6 +373,21 @@ class Rover:
         y_dist = vector[1] - self.y
         return math.atan2(y_dist, x_dist) + self.bearing
 
+# def redON():
+#     GPIO.output(redPIN, GPIO.HIGH)
+#     GPIO.output(greenPIN, GPIO.LOW)
+#     GPIO.output(yellowPIN, GPIO.LOW)
+
+# def greenON():
+#     GPIO.output(redPIN, GPIO.LOW)
+#     GPIO.output(greenPIN, GPIO.HIGH)
+#     GPIO.output(yellowPIN, GPIO.LOW)
+
+# def yellowON():
+#     GPIO.output(redPIN, GPIO.LOW)
+#     GPIO.output(greenPIN, GPIO.LOW)
+#     GPIO.output(yellowPIN, GPIO.HIGH)
+
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
     lunarBotSim = VREP_RoverRobot('172.19.9.220', robotParameters, sceneParameters)
@@ -378,14 +401,20 @@ try:
         # Get Detected Objects
         samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
 
+        # if samplesRB is None:
+        #     redON()
+        # else:
+        #     yellowON()
 
+        # if rover.lunarBotSim.SampleCollected():
+        #     greenON()
         
         # Update rover global positio
         rover.updateCurrentPos()
 
-        # rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
+        # rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
              
         ## Display HUD
         if HUD:
