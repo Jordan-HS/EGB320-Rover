@@ -207,21 +207,3 @@ def main(args=None):
         
 if __name__ == "__main__":
     main()
-
-#
-#enc = Encoder_E2()
-##board = motorSetup()
-#duty = 20
-# ang = 0
-# r = 0.018559
-# r2 = 0.137
-# start = time.time()
-#forward(board, duty)
-#try:
-#    while True:
-#        print(enc.count_E2)
-#except KeyboardInterrupt:
-#    print("stop all motor")
-#    board.motor_stop(board.ALL)   # stop all DC motor
-#    print_board_status()
-#    GPIO.cleanup() 

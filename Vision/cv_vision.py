@@ -6,10 +6,10 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-HSV_blue = [[88, 36, 0], [117, 255, 255]]
-HSV_green = [[33, 20, 25], [75, 255, 255]]
-HSV_yellow = [[15, 20, 90], [39, 255, 255]]
-HSV_orange = [[103, 30, 55], [125, 255, 255]]
+HSV_blue = [[88, 36, 15], [117, 255, 255]]
+HSV_green = [[33, 42, 25], [75, 255, 255]]
+HSV_yellow = [[13, 40, 105], [35, 255, 255]]
+HSV_orange = [[103, 35, 55], [125, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_orange])
 
 # Set morphology kernel size for image filtering
@@ -112,7 +112,7 @@ def detect_obs(hsv_masks):
         #contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # Check for rocks and satellite crash obstacles
         if indx < 2:
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 # print(area)
@@ -160,7 +160,7 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for lander
         elif indx == 2:
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
             # obstacle type index
@@ -186,7 +186,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for samples
         else:
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 if area > 40:
