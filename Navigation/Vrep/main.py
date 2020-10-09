@@ -34,9 +34,9 @@ if LED_out:
     GPIO.setup(greenPIN, GPIO.OUT) # GREEN
     GPIO.setup(yellowPIN, GPIO.OUT) # YELLOW
 
-    GPIO.output(redPIN, GPIO.HIGH)
-    GPIO.output(redPIN, GPIO.LOW)
-    GPIO.output(redPIN, GPIO.LOW)
+    # GPIO.output(redPIN, GPIO.HIGH)
+    # GPIO.output(redPIN, GPIO.LOW)
+    # GPIO.output(redPIN, GPIO.LOW)
 
 class Rover:
     def __init__(self, lunarBotSim):
@@ -372,20 +372,20 @@ class Rover:
         y_dist = vector[1] - self.y
         return math.atan2(y_dist, x_dist) + self.bearing
 
-def redON():
-    GPIO.output(redPIN, GPIO.HIGH)
-    GPIO.output(greenPIN, GPIO.LOW)
-    GPIO.output(yellowPIN, GPIO.LOW)
+# def redON():
+#     GPIO.output(redPIN, GPIO.HIGH)
+#     GPIO.output(greenPIN, GPIO.LOW)
+#     GPIO.output(yellowPIN, GPIO.LOW)
 
-def greenON():
-    GPIO.output(redPIN, GPIO.LOW)
-    GPIO.output(greenPIN, GPIO.HIGH)
-    GPIO.output(yellowPIN, GPIO.LOW)
+# def greenON():
+#     GPIO.output(redPIN, GPIO.LOW)
+#     GPIO.output(greenPIN, GPIO.HIGH)
+#     GPIO.output(yellowPIN, GPIO.LOW)
 
-def yellowON():
-    GPIO.output(redPIN, GPIO.LOW)
-    GPIO.output(greenPIN, GPIO.LOW)
-    GPIO.output(yellowPIN, GPIO.HIGH)
+# def yellowON():
+#     GPIO.output(redPIN, GPIO.LOW)
+#     GPIO.output(greenPIN, GPIO.LOW)
+#     GPIO.output(yellowPIN, GPIO.HIGH)
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
