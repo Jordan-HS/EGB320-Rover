@@ -5,6 +5,7 @@ from math import radians, degrees
 from potentialField import getForce, calculateMovement, show
 import time
 import numpy as np
+import math
 
 # GPIO LED output
 LED_out = False
