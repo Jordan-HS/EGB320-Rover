@@ -91,7 +91,7 @@ class Rover:
             ### Initial state - Move off lander ###
             if not self.lunarBotSim.SampleCollected() and self.checkOnLander():
                 self.current_action = "On lander - Moving off"
-                self.move("forward", 0.5)
+                self.move("forward", 0.25)
                 return
 
             ### Off lander - Survey scene ###
