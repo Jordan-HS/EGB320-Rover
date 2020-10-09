@@ -174,6 +174,9 @@ class Rover:
                 # target_angle, target_mag = getForce(self, closeRange=target)
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
+                if target[0] < 0.1:
+                    self.move("stop")
+
                 if target[0] <= 0.04:
                     self.lunarBotSim.CollectSample()
                     self.samples.remove(self.target)
@@ -181,6 +184,8 @@ class Rover:
                     self.target_type = ""
                     self.current_action = "Holding sample - Approaching lander ramp"
                     return
+
+                
 
                 if math.isclose(target_angle, 0, abs_tol=math.radians(5)):
                     self.move("forward", target_mag/3)
