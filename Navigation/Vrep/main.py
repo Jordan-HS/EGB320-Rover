@@ -34,9 +34,9 @@ if LED_out:
     GPIO.setup(greenPIN, GPIO.OUT) # GREEN
     GPIO.setup(yellowPIN, GPIO.OUT) # YELLOW
 
-GPIO.output(redPIN, GPIO.HIGH)
-GPIO.output(redPIN, GPIO.LOW)
-GPIO.output(redPIN, GPIO.LOW)
+    GPIO.output(redPIN, GPIO.HIGH)
+    GPIO.output(redPIN, GPIO.LOW)
+    GPIO.output(redPIN, GPIO.LOW)
 
 class Rover:
     def __init__(self, lunarBotSim):
