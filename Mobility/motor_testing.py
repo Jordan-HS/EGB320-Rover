@@ -1,6 +1,6 @@
 import gpiozero
 import time
-# import serial
+import serial
 
 #Setup pins
 Backward = gpiozero.OutputDevice(18) # On/Off output
