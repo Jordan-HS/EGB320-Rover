@@ -1,6 +1,6 @@
 import gpiozero
 import time
-import serial
+# import serial
 
 #Setup pins
 Backward = gpiozero.OutputDevice(18) # On/Off output
@@ -8,13 +8,13 @@ Forward = gpiozero.OutputDevice(23) #On/Off output
 
 SpeedPWM = gpiozero.PWMOutputDevice(24) # set up PWM pin
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-ser.flush()
+# ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+# ser.flush()
 
 while True:
-    if ser.in_waiting > 0:
-        line = ser.readline().decode('utf-8').rstrip()
-        print(line)
+    # if ser.in_waiting > 0:
+    #     line = ser.readline().decode('utf-8').rstrip()
+    #     print(line)
     directionFlag = input("set motor direction: ")
     if directionFlag == "back": # if user types "back" change direction of motor
         Backward.on() # Sets Backward Direction pin on
