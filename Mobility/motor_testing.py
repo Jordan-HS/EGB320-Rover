@@ -13,7 +13,7 @@ ser.flush()
 
 while True:
     if ser.in_waiting > 0:
-        line = ser.readline().decode('utf-8').rstrip()
+        line = ser.readline()
         print(line)
     # directionFlag = input("set motor direction: ")
     # if directionFlag == "back": # if user types "back" change direction of motor
