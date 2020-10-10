@@ -3,10 +3,13 @@ import time
 import serial
 
 #Setup pins
-Backward = gpiozero.OutputDevice(18) # On/Off output
-Forward = gpiozero.OutputDevice(23) #On/Off output
+M1_back = gpiozero.OutputDevice(18) # On/Off output
+M1_fwd = gpiozero.OutputDevice(23) #On/Off output
+M1_PWM = gpiozero.PWMOutputDevice(24) # set up PWM pin
 
-SpeedPWM = gpiozero.PWMOutputDevice(24) # set up PWM pin
+M2_back = gpiozero.OutputDevice(25) # On/Off output
+M2_fwd = gpiozero.OutputDevice(8) #On/Off output
+M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 ser.flush()
@@ -22,7 +25,10 @@ while True:
     #     Backward.on() # Sets Backward Direction pin on
     #     Forward.off() # Sets Backward Direction pin on
     # else:
-    Backward.off() # Sets Backward Direction off
-    Forward.on()   # Sets Backward Direction pin on
-    # speedFlag = float(input("set speed (between 0-1000): ")) # Gets a number from the from the user
-    SpeedPWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
+    M1_back.off() # Sets Backward Direction off
+    M1_fwd.on()   # Sets Backward Direction pin on
+    M1_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
+    
+    M2_back.off() # Sets Backward Direction off
+    M2_fwd.on()   # Sets Backward Direction pin on
+    M2_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
