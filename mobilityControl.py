@@ -43,13 +43,13 @@ def motorA_reverse():
     GPIO.output(motorA_in1_pin, False)
     GPIO.output(motorA_in2_pin, True)
 
-def motorB_forward():
-    GPIO.output(motorB_in1_pin, True)
-    GPIO.output(motorB_in2_pin, False)
+# def motorB_forward():
+#     GPIO.output(motorB_in1_pin, True)
+#     GPIO.output(motorB_in2_pin, False)
 
-def motorB_reverse():
-    GPIO.output(motorB_in1_pin, False)
-    GPIO.output(motorB_in2_pin, True)
+# def motorB_reverse():
+#     GPIO.output(motorB_in1_pin, False)
+#     GPIO.output(motorB_in2_pin, True)
 
 
 
