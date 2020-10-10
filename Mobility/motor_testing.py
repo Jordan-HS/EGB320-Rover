@@ -25,4 +25,4 @@ while True:
     Backward.off() # Sets Backward Direction off
     Forward.on()   # Sets Backward Direction pin on
     # speedFlag = float(input("set speed (between 0-1000): ")) # Gets a number from the from the user
-    SpeedPWM.value = 50/1000 # Sets the duty cycle of the PWM between 0-1
+    SpeedPWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
