@@ -1,7 +1,8 @@
 import gpiozero
 import time
 import serial
-
+ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
+ser.flush()
 #Setup pins
 M1_back = gpiozero.OutputDevice(18) # On/Off output
 M1_fwd = gpiozero.OutputDevice(23) #On/Off output
@@ -13,9 +14,6 @@ STBY.on()
 M2_back = gpiozero.OutputDevice(25) # On/Off output
 M2_fwd = gpiozero.OutputDevice(8) #On/Off output
 M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
-
-ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
-ser.flush()
 
 time.sleep(2)
 
