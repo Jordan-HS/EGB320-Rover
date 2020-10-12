@@ -62,10 +62,14 @@ def move(movement, magnitude=None):
         # Motor 2
         M2_back.off()
         M2_fwd.Off()
-
+send_state = False
+start = time.time()
+ser.write(b"clear\n")
 while True:
     # if ser.in_waiting > 0:
     line = ser.readline()
     print(line)
-    
+    # if send_state == False:
+    #     ser.write(b"forward\n")
+
     move("forward", 300)
