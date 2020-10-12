@@ -30,6 +30,16 @@ def move(movement, magnitude=None):
         M2_PWM.value = magnitude/1000
     elif movement == "left":
         # Motor 1
+        M1_back.on() 
+        M1_fwd.off()
+        M1_PWM.value = magnitude/1000
+
+        # Motor 2
+        M2_back.on()
+        M2_fwd.off()
+        M2_PWM.value = magnitude/1000
+    elif movement == "right":
+        # Motor 1
         M1_back.off() 
         M1_fwd.on()
         M1_PWM.value = magnitude/1000
@@ -37,16 +47,6 @@ def move(movement, magnitude=None):
         # Motor 2
         M2_back.off()
         M2_fwd.on()
-        M2_PWM.value = magnitude/1000
-    elif movement == "right":
-        # Motor 1
-        M1_back.on() 
-        M1_fwd.off()
-        M1_PWM.value = magnitude/1000
-
-        # Motor 2
-        M2_back.on()
-        M2_fwd.Off()
         M2_PWM.value = magnitude/1000
     elif movement == "stop":
         # Motor 1
