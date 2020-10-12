@@ -30,6 +30,6 @@ while True:
     M1_fwd.on()   # Sets Backward Direction pin on
     M1_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
     
-    M2_back.off() # Sets Backward Direction off
-    M2_fwd.on()   # Sets Backward Direction pin on
+    M2_back.on() # Sets Backward Direction off
+    M2_fwd.off()   # Sets Backward Direction pin on
     M2_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
