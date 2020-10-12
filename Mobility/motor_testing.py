@@ -62,4 +62,4 @@ while True:
     line = ser.readline()
     print(line)
     
-    move("forward", 300)
+    move("left", 300)
