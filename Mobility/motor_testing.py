@@ -47,7 +47,7 @@ def move(movement, magnitude=None):
         # Motor 2
         M2_back.off()
         M2_fwd.on()
-        M2_PWM.value = magnitude/1000
+        M2_PWM.value = magnitude*1.5/1000
     elif movement == "stop":
         # Motor 1
         M1_back.off() 
@@ -62,4 +62,4 @@ while True:
     line = ser.readline()
     print(line)
     
-    move("left", 300)
+    move("right", 300)
