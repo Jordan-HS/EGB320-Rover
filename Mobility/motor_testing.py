@@ -15,21 +15,51 @@ M2_back = gpiozero.OutputDevice(25) # On/Off output
 M2_fwd = gpiozero.OutputDevice(8) #On/Off output
 M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
-time.sleep(2)
+time.sleep(2) # Wait for serial to be initialised
+
+def move(movement, magnitude=None):
+    if movement == "forward":
+        # Motor 1
+        M1_back.on() 
+        M1_fwd.off()
+        M1_PWM.value = magnitude/1000
+
+        # Motor 2
+        M2_back.off()
+        M2_fwd.on()
+        M2_PWM.value = magnitude/1000
+    elif movement == "left":
+        # Motor 1
+        M1_back.off() 
+        M1_fwd.on()
+        M1_PWM.value = magnitude/1000
+
+        # Motor 2
+        M2_back.off()
+        M2_fwd.on()
+        M2_PWM.value = magnitude/1000
+    elif movement == "right":
+        # Motor 1
+        M1_back.on() 
+        M1_fwd.off()
+        M1_PWM.value = magnitude/1000
+
+        # Motor 2
+        M2_back.on()
+        M2_fwd.Off()
+        M2_PWM.value = magnitude/1000
+    elif movement == "stop":
+        # Motor 1
+        M1_back.off() 
+        M1_fwd.off()
+
+        # Motor 2
+        M2_back.off()
+        M2_fwd.Off()
 
 while True:
     # if ser.in_waiting > 0:
     line = ser.readline()
     print(line)
-    # directionFlag = input("set motor direction: ")
-    # if directionFlag == "back": # if user types "back" change direction of motor
-    #     Backward.on() # Sets Backward Direction pin on
-    #     Forward.off() # Sets Backward Direction pin on
-    # else:
-    M1_back.on() # Sets Backward Direction off
-    M1_fwd.off()   # Sets Backward Direction pin on
-    M1_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
     
-    M2_back.off() # Sets Backward Direction off
-    M2_fwd.on()   # Sets Backward Direction pin on
-    M2_PWM.value = 500/1000 # Sets the duty cycle of the PWM between 0-1
+    move("forward", 300)
