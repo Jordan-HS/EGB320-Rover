@@ -22,7 +22,7 @@ robotParameters, sceneParameters = setup.init_sim()
 if HUD:
     import os
     import sys
-    clear = lambda: os.system('clear')
+    clear = lambda: os.system('cls')
 
 if LED_out:
     redPIN = 26
@@ -390,7 +390,7 @@ class Rover:
 
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
-    lunarBotSim = VREP_RoverRobot('172.19.9.220', robotParameters, sceneParameters)
+    lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
     lunarBotSim.StartSimulator()
 
     # memory stuff

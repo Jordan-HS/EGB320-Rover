@@ -1,160 +1,79 @@
-#!/usr/bin/python
-
+import gpiozero
 import time
-import RPi.GPIO as GPIO
-import math
-from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
-import threading
-
-GPIO.setmode(GPIO.BCM)
-
-class EncoderCounter(threading.Thread):
-    def __init__(self):
-      threading.Thread.__init__(self)
-      # First encoder
-      self.pinE1A = 23
-      self.pinE1B = 24
-
-      # Second encoder
-      self.pinE2A = 25
-      self.pinE2B = 8
-
-      GPIO.setup(self.pinE1A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-      GPIO.setup(self.pinE1B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-      GPIO.setup(self.pinE2A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-      GPIO.setup(self.pinE2B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-      GPIO.add_event_detect(self.pinE1A, GPIO.BOTH, callback=self.encodercount_E1)
-      GPIO.add_event_detect(self.pinE1B, GPIO.BOTH, callback=self.encodercount_E1)
-      GPIO.add_event_detect(self.pinE2A, GPIO.BOTH, callback=self.encodercount_E2)
-      GPIO.add_event_detect(self.pinE2B, GPIO.BOTH, callback=self.encodercount_E2)
-
-      self.error = 0
-      self.count_E1 = 0
-      self.count_E2 = 0
-
-      self.Encoder_E1A, self.Encoder_E1B = GPIO.input(self.pinE1A), GPIO.input(self.pinE1B)
-      self.Encoder_E1B_old = GPIO.input(self.pinE1B)
-
-      self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
-      self.Encoder_E2B_old = GPIO.input(self.pinE2B)
+import serial
 
 
-    def encodercount_E1(term):
-        # global count_E1
-        # global Encoder_E1A
-        # global Encoder_E1B
-        # global Encoder_E1B_old
-        # global error
+ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
+ser.flush()
+#Setup pins
+M1_back = gpiozero.OutputDevice(18) # On/Off output
+M1_fwd = gpiozero.OutputDevice(23) #On/Off output
+M1_PWM = gpiozero.PWMOutputDevice(24) # set up PWM pin
 
-        self.Encoder_E1A, self.Encoder_E1B = GPIO.input(self.pinE1A), GPIO.input(self.pinE1B)
+STBY = gpiozero.OutputDevice(1)  # Standby pin
+STBY.on()
 
-        if((self.Encoder_E1A, self.Encoder_E1B_old) == (1, 0)) or ((self.Encoder_E1A, self.Encoder_E1B_old) == (0, 1)):
-            self.count_E1 += 1
-        elif ((self.Encoder_E1A, self.Encoder_E1B_old) == (1, 1)) or ((self.Encoder_E1A, self.Encoder_E1B_old) == (0, 0)):
-            self.count_E1 -= 1
-        else:
-            self.error += 1
+M2_back = gpiozero.OutputDevice(25) # On/Off output
+M2_fwd = gpiozero.OutputDevice(8) #On/Off output
+M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
-        self.Encoder_E1B_old = self.Encoder_E1B
+## Parameters to adjust
+inner_turn_ratio = 1.5
+m1_motor_bias = 1
+m2_motor_bias = 1.123
+time.sleep(2) # Wait for serial to be initialised
 
+def move(movement, magnitude=None):
+    if movement == "forward":
+        # Motor 1
+        M1_back.on() 
+        M1_fwd.off()
+        M1_PWM.value = magnitude*m1_motor_bias/1000
 
-    def encodercount_E2(term):
-        # global count_E2
-        # global Encoder_E2A
-        # global Encoder_E2B
-        # global Encoder_E2B_old
-        # global error
+        # Motor 2
+        M2_back.off()
+        M2_fwd.on()
+        M2_PWM.value = magnitude*m2_motor_bias/1000
+    elif movement == "left":
+        # Motor 1
+        M1_back.on() 
+        M1_fwd.off()
+        M1_PWM.value = magnitude*m1_motor_bias/1000
 
-        self.Encoder_E2A, self.Encoder_E2B = GPIO.input(self.pinE2A), GPIO.input(self.pinE2B)
+        # Motor 2
+        M2_back.on()
+        M2_fwd.off()
+        M2_PWM.value = magnitude*inner_turn_ratio*m2_motor_bias/1000
+    elif movement == "right":
+        # Motor 1
+        M1_back.off() 
+        M1_fwd.on()
+        M1_PWM.value = magnitude*inner_turn_ratio*m1_motor_bias/1000
 
-        if((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 0)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 1)):
-            self.count_E2 += 1
-        elif ((self.Encoder_E2A, self.Encoder_E2B_old) == (1, 1)) or ((self.Encoder_E2A, self.Encoder_E2B_old) == (0, 0)):
-            self.count_E2 -= 1
-        else:
-            self.error += 1
+        # Motor 2
+        M2_back.off()
+        M2_fwd.on()
+        M2_PWM.value = magnitude*inner_turn_ratio/1000
+    elif movement == "stop":
+        # Motor 1
+        M1_back.off() 
+        M1_fwd.off()
 
-        self.Encoder_E2B_old = self.Encoder_E2B
+        # Motor 2
+        M2_back.off()
+        M2_fwd.Off()
 
-
-
-
-
-def turnLeft(board, magnitude):
-    board.motor_movement([board.M1], board.CW, duty)
-    board.motor_movement([board.M2], board.CCW, duty)
-
-
-def turnRight(board, magnitude):
-    board.motor_movement([board.M1], board.CCW, duty)
-    board.motor_movement([board.M2], board.CW, duty)
-
-
-def forward(board, magnitude):
-    board.motor_movement([board.M1], board.CCW, duty)
-    board.motor_movement([board.M2], board.CCW, duty)
-
-
-def stop(board):
-    board.motor_stop(board.ALL)
-
-
-def board_detect(board):
-    l = board.detecte()
-    print("Board list conform:")
-    print(l)
-
-
-''' print last operate status, users can use this variable to determine the result of a function call. '''
-
-
-def print_board_status():
-    if board.last_operate_status == board.STA_OK:
-        print("board status: everything ok")
-    elif board.last_operate_status == board.STA_ERR:
-        print("board status: unexpected error")
-    elif board.last_operate_status == board.STA_ERR_DEVICE_NOT_DETECTED:
-        print("board status: device not detected")
-    elif board.last_operate_status == board.STA_ERR_PARAMETER:
-        print("board status: parameter error, last operate no effective")
-    elif board.last_operate_status == board.STA_ERR_SOFT_VERSION:
-        print("board status: unsupport board framware version")
-
-
-def motorSetup():
-    board = Board(1, 0x10)
-
-    board_detect(board)
-
-    while board.begin() != board.STA_OK:    # Board begin and check board status
-        print_board_status()
-        print("board begin faild")
-        time.sleep(2)
-    print("board begin success")
-
-    # Set selected DC motor encoder enable
-    board.set_encoder_enable(board.ALL)
-    # board.set_encoder_disable(board.ALL)              # Set selected DC motor encoder disable
-    # Set selected DC motor encoder reduction ratio, test motor reduction ratio is 43.8
-    board.set_encoder_reduction_ratio(board.ALL, 40)
-
-    # Set DC motor pwm frequency to 1000HZ
-    board.set_moter_pwm_frequency(1000)
-
-    return board
-
-enc = EncoderCounter()
-board = motorSetup()
-duty = 20
-ang = 0
-r = 0.018559
-r2 = 0.137
+def updatePosition(rover):
+    line = ser.readline()
+    return line
+send_state = False
 start = time.time()
-
-while time.time() - start < 3:
-    forward(board, duty)
-
-print("stop all motor")
-board.motor_stop(board.ALL)   # stop all DC motor
-print_board_status()
+ser.write(str(0).encode('utf-8'))
+while True:
+    # if ser.in_waiting > 0:
+    line = ser.readline()
+    print(line)
+    # if send_state == False:
+    #     ser.write(b"forward\n")
+    ser.write(str(1).encode('utf-8'))
+    move("forward", 300)
