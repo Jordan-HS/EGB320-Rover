@@ -71,16 +71,15 @@ def updatePosition(rover):
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
     dist = 0
+    x = rover.x
+    y = rover.y
+    bearing = rover.bearing
 
     if rover.last_move is None:
         rover.last_move = rover.movement
-        return rover.x, rover.y
 
     if rover.last_move != rover.movement:
-        ref_x = rover.x
-        ref_y = rover.y 
         rover.last_move = rover.movement
-        return ref_x, ref_y
 
     if rover.movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
@@ -89,9 +88,11 @@ def updatePosition(rover):
         x = round(rover.ref_x + dist*math.cos(rover.bearing), 2)
         y = round(rover.ref_x + dist*math.sin(rover.bearing), 2)
 
-        return x, y
+    elif rover.movement == "right":
+        wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
+        bearing = wheel_avg/2192 * (2*math.pi)
 
-    return rover.x, rover.y
+    return x, y, bearing
 
 def sendCommand(command):
     if command == "clear":
