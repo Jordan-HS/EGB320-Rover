@@ -22,7 +22,7 @@ M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 inner_turn_ratio = 1.5
 m1_motor_bias = 1
 m2_motor_bias = 1.15
-radius = 0.0216312
+radius = 0.020836
 time.sleep(2) # Wait for serial to be initialised
 
 def move(movement, magnitude=None):
