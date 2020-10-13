@@ -69,7 +69,7 @@ def updatePosition(rover):
     line = ser.readline().decode('utf-8')
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
-
+    dist = 0
     if rover.movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
         dist = wheel_avg/600 * 2 * math.pi * radius
