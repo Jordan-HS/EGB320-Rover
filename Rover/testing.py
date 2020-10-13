@@ -34,7 +34,7 @@ while True:
 
     if run_time < 2:
         rover.move("forward", 250)
-    elif 2 < run_time < 5:
+    elif 2 < run_time < 4:
         rover.move("left", 250)
     elif 5 < run_time < 7:
         rover.move("forward", 300)
