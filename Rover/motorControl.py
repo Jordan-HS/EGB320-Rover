@@ -21,7 +21,7 @@ M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 ## Parameters to adjust
 inner_turn_ratio = 1
 m1_motor_bias = 1
-m2_motor_bias = 1.15
+m2_motor_bias = 1
 radius = 0.020836
 time.sleep(2) # Wait for serial to be initialised
 
