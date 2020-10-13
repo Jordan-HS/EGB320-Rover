@@ -1,5 +1,6 @@
 import motorControl
 import math
+import time
 
 HUD = True
 
@@ -27,8 +28,14 @@ class Rover:
 
 rover = Rover()
 motorControl.sendCommand("clear")
+start = time.time()
 while True:
-    rover.move("right", 250)
+    run_time = time.time() - start
+
+    if run_time < 3:
+        rover.move("right", 250)
+    else:
+        rover.move("left", 250)
     motorControl.sendCommand(rover.movement)
     rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
 
