@@ -34,9 +34,9 @@ while True:
 
     if run_time < 2:
         rover.move("forward", 250)
-    elif 2 < run_time < 3:
+    elif 2 < run_time < 5:
         rover.move("left", 250)
-    elif 3 < run_time < 7:
+    elif 5 < run_time < 7:
         rover.move("forward", 300)
     motorControl.sendCommand(rover.movement)
     rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
