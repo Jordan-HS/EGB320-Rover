@@ -67,7 +67,8 @@ def move(movement, magnitude=None):
 
 
 def updatePosition(rover):
-    line = ser.readline().decode('utf-8')
+    if ser.in_waiting > 0:
+        line = ser.readline().decode('utf-8')
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
     dist = 0
