@@ -65,16 +65,36 @@ def move(movement, magnitude=None):
         M2_back.off()
         M2_fwd.Off()
 
+ref_x = 0
+ref_y = 0
+x = 0
+y = 0
+last_move = None
 def updatePosition(rover):
     line = ser.readline().decode('utf-8')
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
     dist = 0
+
+    if last_move is None:
+        last_move = rover.movement
+
+    if last_move != rover.movement:
+        ref_x = rover.x
+        ref_y = rover.y 
+        last_move = rover.movement
+        return ref_x, ref_y
+
     if rover.movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
         dist = wheel_avg/600 * 2 * math.pi * radius
 
-    return (E1_counter, E2_counter ,dist*100)
+        x = ref_x + dist*math.cos(rover.bearing)
+        y = ref_x + dist*math.sin(rover.bearing)
+
+        return x, y
+
+    # return (E1_counter, E2_counter ,dist*100)
 
 def sendCommand(command):
     if command == "clear":
