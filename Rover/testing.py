@@ -23,4 +23,4 @@ rover = Rover()
 while True:
     rover.move("forward", 300)
     print(motorControl.updatePosition(rover))
-    clear()
+    # clear()
