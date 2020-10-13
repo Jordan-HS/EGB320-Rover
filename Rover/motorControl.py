@@ -48,7 +48,7 @@ def move(movement, magnitude=None):
         M2_PWM.value = magnitude*inner_turn_ratio*m2_motor_bias/1000
     elif movement == "right":
         # Motor 1
-        M1_back.off() 
+        M1_back.on() 
         M1_fwd.off()
         M1_PWM.value = magnitude*inner_turn_ratio*m1_motor_bias/1000
 
@@ -81,7 +81,10 @@ def sendCommand(command):
         ser.write(str(0).encode('utf-8'))
     elif command == "forward":
         ser.write(str(1).encode('utf-8'))
-
+    elif command == "left":
+        ser.write(str(2).encode('utf-8'))
+    elif command == "right":
+        ser.write(str(3).encode('utf-8'))
 # send_state = False
 # start = time.time()
 # ser.write(str(0).encode('utf-8'))
