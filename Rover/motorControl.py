@@ -74,6 +74,7 @@ def updatePosition(rover):
 
     if rover.last_move is None:
         rover.last_move = rover.movement
+        return
 
     if rover.last_move != rover.movement:
         ref_x = rover.x
