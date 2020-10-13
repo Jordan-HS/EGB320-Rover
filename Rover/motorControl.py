@@ -74,7 +74,7 @@ def updatePosition(rover):
         wheel_avg = (E1_counter+E2_counter)/2
         dist = wheel_avg/600 * 2 * math.pi * radius
 
-    return dist*100
+    return (E1_counter, E2_counter ,dist*100)
 
 def sendCommand(command):
     if command == "clear":
