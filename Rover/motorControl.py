@@ -90,7 +90,7 @@ def updatePosition(rover):
         dist = wheel_avg/600 * 2 * math.pi * radius
 
         x = rover.ref_x + dist*math.cos(rover.bearing)
-        y = rover.ref_x + dist*math.sin(rover.bearing)
+        y = rover.ref_y + dist*math.sin(rover.bearing)
 
     elif rover.movement == "right":
         wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
