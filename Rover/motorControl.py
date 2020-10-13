@@ -67,15 +67,18 @@ def updatePosition(rover):
     line = ser.readline()
     return line
 
-# def sendCommand
-send_state = False
-start = time.time()
-ser.write(str(0).encode('utf-8'))
-while True:
-    # if ser.in_waiting > 0:
-    line = ser.readline()
-    print(line)
-    # if send_state == False:
-    #     ser.write(b"forward\n")
-    ser.write(str(1).encode('utf-8'))
-    move("forward", 300)
+def sendCommand(command):
+    if command == "clear":
+        ser.write(0).encode('utf-8')
+
+# send_state = False
+# start = time.time()
+# ser.write(str(0).encode('utf-8'))
+# while True:
+#     # if ser.in_waiting > 0:
+#     line = ser.readline()
+#     print(line)
+#     # if send_state == False:
+#     #     ser.write(b"forward\n")
+#     ser.write(str(1).encode('utf-8'))
+#     move("forward", 300)
