@@ -28,7 +28,5 @@ motorControl.sendCommand("clear")
 while True:
     rover.move("right", 250)
     motorControl.sendCommand(rover.movement)
-    if rover is not None:
-        x, y = motorControl.updatePosition(rover)
-        print((x, y))
+    print(motorControl.updatePosition(rover))
     # clear()
