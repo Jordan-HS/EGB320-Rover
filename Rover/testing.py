@@ -28,6 +28,6 @@ motorControl.sendCommand("clear")
 while True:
     rover.move("right", 250)
     motorControl.sendCommand(rover.movement)
-    rover.x, rover.y = motorControl.updatePosition(rover)
-    print((rover.x, rover.y))
+    x, y = motorControl.updatePosition(rover)
+    print((x, y))
     # clear()
