@@ -20,7 +20,7 @@ M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 ## Parameters to adjust
 inner_turn_ratio = 1.5
 m1_motor_bias = 1
-m2_motor_bias = 1.123
+m2_motor_bias = 1
 time.sleep(2) # Wait for serial to be initialised
 
 def move(movement, magnitude=None):
@@ -66,6 +66,8 @@ def move(movement, magnitude=None):
 def updatePosition(rover):
     line = ser.readline()
     return line
+
+# def sendCommand
 send_state = False
 start = time.time()
 ser.write(str(0).encode('utf-8'))
