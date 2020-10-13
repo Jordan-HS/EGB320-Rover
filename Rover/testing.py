@@ -1,5 +1,12 @@
 import motorControl
 
+HUD = True
+
+if HUD:
+    import os
+    import sys
+    clear = lambda: os.system('cls')
+
 class Rover:
     def __init__(self):
         self.x = 0
@@ -15,3 +22,4 @@ rover = Rover()
 while True:
     rover.move("forward", 300)
     print(motorControl.updatePosition(rover))
+    clear()
