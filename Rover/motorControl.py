@@ -69,7 +69,7 @@ def updatePosition(rover):
 
 def sendCommand(command):
     if command == "clear":
-        ser.write(str(0)).encode('utf-8')
+        ser.write(str(0).encode('utf-8'))
 
 # send_state = False
 # start = time.time()
