@@ -80,17 +80,24 @@ def updatePosition(rover):
 
     if rover.last_move != rover.movement:
         rover.last_move = rover.movement
+        rover.ref_x = rover.x
+        rover.ref_y = rover.y
+        rover.ref_bearing = rover.bearing
 
     if rover.movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
         dist = wheel_avg/600 * 2 * math.pi * radius
 
-        x = round(rover.ref_x + dist*math.cos(rover.bearing), 2)
-        y = round(rover.ref_x + dist*math.sin(rover.bearing), 2)
+        x = rover.ref_x + dist*math.cos(rover.bearing)
+        y = rover.ref_x + dist*math.sin(rover.bearing)
 
     elif rover.movement == "right":
         wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
-        bearing = -(wheel_avg/2192 * (2*math.pi))
+        bearing = rover.ref_bearing + -(wheel_avg/2192 * (2*math.pi))
+
+    elif rover.movement == "left":
+        wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
+        bearing = rover.ref_bearing + (wheel_avg/2192 * (2*math.pi))
 
     return x, y, bearing
 

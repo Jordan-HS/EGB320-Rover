@@ -15,6 +15,7 @@ class Rover:
         self.ref_x = 0
         self.ref_y = 0
         self.bearing = 0
+        self.ref_bearing = 0
         self.movement = None
         self.last_move = None
 
@@ -31,5 +32,5 @@ while True:
     motorControl.sendCommand(rover.movement)
     rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
 
-    print("x: {}    y: {}    bearing:{}".format(rover.x, rover.y, math.degrees(rover.bearing)))
+    print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
     # clear()
