@@ -48,8 +48,8 @@ def move(movement, magnitude=None):
         M2_PWM.value = magnitude*inner_turn_ratio*m2_motor_bias/1000
     elif movement == "right":
         # Motor 1
-        M1_back.on() 
-        M1_fwd.off()
+        M1_back.off() 
+        M1_fwd.on()
         M1_PWM.value = magnitude*inner_turn_ratio*m1_motor_bias/1000
 
         # Motor 2
