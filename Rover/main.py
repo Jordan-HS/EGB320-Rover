@@ -362,11 +362,11 @@ class Rover:
         return False
 
 def splitObservation(observation):
-    samplesRB = None
-    rocksRB = None
-    obstaclesRB = None
-    rocksRB = None
-    landerRB = None
+    samplesRB = []
+    rocksRB = []
+    obstaclesRB = []
+    rocksRB = []
+    landerRB = []
     for obj in observation:
         if obj[1] == "SAMP":
             samplesRB.append([obj[3], obj[2]])
