@@ -74,7 +74,7 @@ def updatePosition(rover):
 
     if rover.last_move is None:
         rover.last_move = rover.movement
-        return
+        return rover.x, rover.y
 
     if rover.last_move != rover.movement:
         ref_x = rover.x
@@ -91,7 +91,7 @@ def updatePosition(rover):
 
         return x, y
 
-    # return (E1_counter, E2_counter ,dist*100)
+    return rover.x, rover.y
 
 def sendCommand(command):
     if command == "clear":
