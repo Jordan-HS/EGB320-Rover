@@ -65,6 +65,9 @@ def move(movement, magnitude=None):
         M2_back.off()
         M2_fwd.Off()
 
+def WrapToPi(radians):
+		return ((radians + math.pi) % (2* math.pi) - math.pi)
+
 
 def updatePosition(rover):
     line = ser.readline().decode('utf-8')
@@ -100,7 +103,7 @@ def updatePosition(rover):
         wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
         bearing = rover.ref_bearing + (wheel_avg/2192 * (2*math.pi))
 
-    return x, y, bearing
+    return x, y, WrapToPi(bearing)
 
 def sendCommand(command):
     if command == "clear":
