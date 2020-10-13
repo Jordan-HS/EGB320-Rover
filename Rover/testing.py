@@ -1,4 +1,5 @@
 import motorControl
+import math
 
 HUD = True
 
@@ -28,5 +29,7 @@ motorControl.sendCommand("clear")
 while True:
     rover.move("right", 250)
     motorControl.sendCommand(rover.movement)
-    print(motorControl.updatePosition(rover))
+    rover.x, rover.y, rover.bearin = motorControl.updatePosition(rover)
+
+    print("x: {}    y: {}    bearing:{}".format(rover.x, rover.y, math.degrees(rover.bearing)))
     # clear()
