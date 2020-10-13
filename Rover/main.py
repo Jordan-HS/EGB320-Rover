@@ -49,35 +49,27 @@ class Rover:
         self.target_speed = 1
         self.x = 0
         self.y = 0
+        self.ref_x = 0
+        self.ref_y = 0
         self.bearing = 0
+        self.ref_bearing = 0
         self.current_action = ""
         self.current_movment = ""
+        self.last_movement = None
         self.initial = True
         self.save_bearing = 0
         # self.lunarBotSim = lunarBotSim
-        self.board = motorControl.motorSetup()
+        # self.board = motorControl.motorSetup()
 
     def updateCurrentPos(self):
-        self.lunarBotSim.GetObjectPositions()           #### Update current position from encoders
-        self.x = self.lunarBotSim.robotPose[0]
-        self.y = self.lunarBotSim.robotPose[1]
-        self.bearing = self.lunarBotSim.robotPose[5]
+        motorControl.sendCommand(self.movement)
+        self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
-        duty = 20
 
-        if movement == "forward":
-            motorControl.forward(self.board, duty)             #### Set motor forward
-            self.current_movment = "forward, {:.2f}".format(duty)
-        elif movement == "left":
-            motorControl.turnLeft(self.board, duty)
-            self.current_movment = "left, {:.2f}".format(duty)
-        elif movement == "right":
-            motorControl.turnRight(self.board, duty)
-            self.current_movment = "right, {:.2f}".format(magnitude)
-        elif movement == "stop":
-            motorControl.stop(self.board)
+        motorControl.move(movement, magnitude)
+        self.movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         ### Survering scene ###    
@@ -95,20 +87,20 @@ class Rover:
         ### Do this first to gather information ###
         if self.initial:
             ### Initial state - Move off lander ###
-            if not self.lunarBotSim.SampleCollected() and self.checkOnLander():
+            if not self.sampleCollected() and self.checkOnLander():
                 self.current_action = "On lander - Moving off"
                 self.move("forward", 0.5)
                 return
 
             ### Off lander - Survey scene ###
-            if (not self.lunarBotSim.SampleCollected() and not self.checkOnLander()):
+            if (not self.sampleCollected() and not self.checkOnLander()):
                 self.current_action = "Surveying landing site"
                 self.save_bearing = self.bearing - math.radians(11)
                 self.initial = False
                 return
 
         ### Holding sample - Approaching lander ramp###
-        if self.lunarBotSim.SampleCollected() and self.current_action == "Holding sample - Approaching lander ramp" and self.target_type != "lander approach":            
+        if self.sampleCollected() and self.current_action == "Holding sample - Approaching lander ramp" and self.target_type != "lander approach":            
             # Find closest lander ramp and set as target
             self.target = [0, -0.4]
             lander_ramp_pos = [[0, -0.4], [0, 0.4], [0.4, 0], [-0.4, 0]]
@@ -181,7 +173,7 @@ class Rover:
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
                 if target[0] <= 0.04:
-                    self.lunarBotSim.CollectSample()
+                    # self.lunarBotSim.CollectSample()
                     self.samples.remove(self.target)
                     self.target = None
                     self.target_type = ""
@@ -206,7 +198,7 @@ class Rover:
 
         ### Drop ball ###
         if self.target_type == "drop off" and self.distanceToObject(self.target) < 0.08:
-            self.lunarBotSim.DropSample()
+            # self.lunarBotSim.DropSample()
             self.current_action = "Continue mission - Moving to other side of lander"
             # Clear the target
             self.target = None          
@@ -366,6 +358,9 @@ class Rover:
         y_dist = vector[1] - self.y
         return math.atan2(y_dist, x_dist) + self.bearing
 
+    def sampleCollected(self):
+        return False
+
 def splitObservation(observation):
     samplesRB = None
     rocksRB = None
@@ -401,15 +396,12 @@ try:
 
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
-
-        
         # Update rover global positio
         rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        motorControl.sendCommand(rover.movement)
-        rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
+        
              
         ## Display HUD
         if HUD:
@@ -422,13 +414,13 @@ try:
                   "Unseen areas: {}".format(rover.current_action, rover.x, rover.y, math.degrees(rover.bearing), rover.samples,rover.rocks, rover.obstacles, rover.unseen))
 
         # Update Ball Position
-        lunarBotSim.UpdateObjectPositions()
+        # lunarBotSim.UpdateObjectPositions()
         # rover.lunarBotSim.UpdateVREPRobot()
         # rover.lunarBotSim.UpdateObjectPositions()
         # rover.lunarBotSim.UpdateSample()
 
 except KeyboardInterrupt as e:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
-    lunarBotSim.StopSimulator()
+    # lunarBotSim.StopSimulator()
 
 
