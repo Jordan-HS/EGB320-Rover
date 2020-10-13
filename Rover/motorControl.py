@@ -19,7 +19,7 @@ M2_fwd = gpiozero.OutputDevice(8) #On/Off output
 M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
 ## Parameters to adjust
-inner_turn_ratio = 1.2
+inner_turn_ratio = 1
 m1_motor_bias = 1
 m2_motor_bias = 1.15
 radius = 0.020836
