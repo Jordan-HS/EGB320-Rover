@@ -64,7 +64,7 @@ def move(movement, magnitude=None):
         M2_fwd.Off()
 
 def updatePosition(rover):
-    line = ser.readline()
+    line = ser.readline().decode('utf-8')
     return line
 
 def sendCommand(command):
