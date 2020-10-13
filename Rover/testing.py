@@ -5,7 +5,7 @@ HUD = True
 if HUD:
     import os
     import sys
-    clear = lambda: os.system('cls')
+    clear = lambda: os.system('clear')
 
 class Rover:
     def __init__(self):
