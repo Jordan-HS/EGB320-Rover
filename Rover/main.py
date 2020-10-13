@@ -379,7 +379,7 @@ def splitObservation(observation):
             rocksRB.append([obj[3], obj[2]])
         elif obj[1] == "SAT":
             obstaclesRB.append([obj[3], obj[2]])
-        elif obj[1] = "LAND":
+        elif obj[1] == "LAND":
             landerRB.append([obj[3], obj[2]])
     return samplesRB, landerRB, obstaclesRB, rocksRB
 
