@@ -2,6 +2,7 @@ import gpiozero
 import time
 import serial
 import re
+import math
 
 ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
 ser.flush()
@@ -21,6 +22,7 @@ M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 inner_turn_ratio = 1.5
 m1_motor_bias = 1
 m2_motor_bias = 1.15
+radius = 0.0216312
 time.sleep(2) # Wait for serial to be initialised
 
 def move(movement, magnitude=None):
@@ -68,7 +70,11 @@ def updatePosition(rover):
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
 
-    return (E1_counter, E2_counter)
+    if rover.movement == "forward":
+        wheel_avg = (E1_counter+E2_counter)/2
+        dist = wheel_avg/600 * 2 * math.pi * radius
+
+    return dist*100
 
 def sendCommand(command):
     if command == "clear":
