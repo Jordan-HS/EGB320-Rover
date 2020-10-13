@@ -1,7 +1,7 @@
 import gpiozero
 import time
 import serial
-
+import re
 
 ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
 ser.flush()
@@ -65,7 +65,10 @@ def move(movement, magnitude=None):
 
 def updatePosition(rover):
     line = ser.readline().decode('utf-8')
-    return line
+    E1_counter = re.search(r'E1: \[(.*?)\]', line).group(1)
+    E2_counter = re.search(r'E2: \[(.*?)\]', line).group(1)
+
+    return (E1_counter, E2_counter)
 
 def sendCommand(command):
     if command == "clear":
