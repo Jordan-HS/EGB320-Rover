@@ -33,7 +33,7 @@ while True:
     run_time = time.time() - start
 
     # if run_time < 2:
-    rover.move("forward", 250)
+    rover.move("forward", 150)
     # elif 2 < run_time < 5:
     #     rover.move("left", 250)
     # elif 5 < run_time < 7:
