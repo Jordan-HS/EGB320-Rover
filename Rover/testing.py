@@ -32,7 +32,7 @@ start = time.time()
 while True:
     run_time = time.time() - start
 
-    if run_time < 3:
+    if run_time % 2:
         rover.move("right", 250)
     else:
         rover.move("left", 250)
