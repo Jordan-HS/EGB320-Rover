@@ -422,5 +422,5 @@ try:
 except KeyboardInterrupt as e:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
     # lunarBotSim.StopSimulator()
-
+    print("done")
 
