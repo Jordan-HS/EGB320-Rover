@@ -18,7 +18,7 @@ class Rover:
         self.bearing = 0
         self.ref_bearing = 0
         self.movement = None
-        self.last_move = None
+        self.last_movement = None
 
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
@@ -39,7 +39,7 @@ while True:
         rover.move("left", 250)
     elif 5 < run_time < 7:
         rover.move("forward", 300)
-    motorControl.sendCommand(rover.movement)
+    motorControl.sendCommand(rover.current_movement)
     rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
 
     print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
