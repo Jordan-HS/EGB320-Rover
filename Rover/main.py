@@ -221,7 +221,7 @@ class Rover:
             accuracy = 5
             lowSpeedBoost = 1
 
-            target_mag = target_mag*200
+            target_mag = target_mag
             
             # Display potential field graph
             if self.POT:
@@ -231,21 +231,21 @@ class Rover:
             if target_mag > 2:
                 accuracy = 15
 
-            if target_mag < 0.75*200:
+            if target_mag < 0.75:
                 lowSpeedBoost = 2.5
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", target_mag*self.target_speed)
+                self.move("forward", target_mag*self.target_speed*200)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost*200)
                 elif self.bearing - target_angle > 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)   
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost*200)   
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost*200)
                 elif self.bearing - target_angle > 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost*200)   
             
             self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movement)
             return
