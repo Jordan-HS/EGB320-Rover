@@ -387,6 +387,7 @@ try:
     # memory stuff
     # time.sleep(2)
     rover = Rover()
+    motorControl.sendCommand("clear")
 
     while (True):
         # Get Detected Objects
