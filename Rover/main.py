@@ -266,6 +266,8 @@ class Rover:
                 angle = sample[1]
 
                 x, y = self.determinePos(distance, angle)
+                if x > 1 or y > 1:
+                    continue
 
                 if self.samples is None:
                     self.samples = [[x, y]]
@@ -288,6 +290,9 @@ class Rover:
 
                 x, y = self.determinePos(distance, angle)
 
+                if x > 1 or y > 1:
+                    continue
+
                 if self.rocks is None:
                     self.rocks = [[x, y]]
                     return
@@ -307,6 +312,9 @@ class Rover:
                 angle = obstacle[1]
 
                 x, y = self.determinePos(distance, angle)
+
+                if x > 1 or y > 1:
+                    continue
 
                 self.addUnseen(distance, angle)
 
