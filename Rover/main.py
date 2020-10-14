@@ -25,7 +25,7 @@ POT = False
 if HUD:
     import os
     import sys
-    clear = lambda: os.system('cls')
+    clear = lambda: os.system('clear')
 
 if LED_out:
     import RPi.GPIO as GPIO
