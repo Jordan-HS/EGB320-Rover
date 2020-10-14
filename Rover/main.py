@@ -323,7 +323,7 @@ class Rover:
                     return
                 else:
                     for index, obs_in_mem in enumerate(self.obstacles):
-                        if math.isclose(obs_in_mem[0], x, abs_tol=0.5) and math.isclose(obs_in_mem[1], y, abs_tol=0.5):
+                        if math.isclose(obs_in_mem[0], x, abs_tol=0.3) and math.isclose(obs_in_mem[1], y, abs_tol=0.3):
                             self.obstacles[index][0] = round((self.obstacles[index][0] + x)/2, 2)
                             self.obstacles[index][1] = round((self.obstacles[index][1] + y)/2, 2)
                             return
