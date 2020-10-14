@@ -389,7 +389,8 @@ try:
     # memory stuff
     # time.sleep(2)
     rover = Rover()
-    
+    observation = current_observation()
+    time.sleep(2)
 
     while (True):
         # Get Detected Objects
