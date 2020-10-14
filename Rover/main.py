@@ -77,7 +77,7 @@ class Rover:
         if self.current_action == "Surveying landing site":
             self.map(samplesRB, landerRB, obstaclesRB, rocksRB)
             if not math.isclose(self.save_bearing, self.bearing, abs_tol=math.radians(10)):
-                self.move("left", 250)
+                self.move("left", 225)
             else:
                 self.current_action = "Pick sample"
                 self.initial_bearing = 0
