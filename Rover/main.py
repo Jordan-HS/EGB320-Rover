@@ -70,6 +70,7 @@ class Rover:
 
         motorControl.move(movement, magnitude)
         self.current_movement = movement
+        motorControl.sendCommand(movement)
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         ### Survering scene ###    
