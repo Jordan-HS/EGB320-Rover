@@ -89,7 +89,7 @@ class Rover:
             ### Initial state - Move off lander ###
             if not self.sampleCollected() and self.checkOnLander():
                 self.current_action = "On lander - Moving off"
-                self.move("forward", 0.5)
+                self.move("forward", 250)
                 return
 
             ### Off lander - Survey scene ###
@@ -244,7 +244,7 @@ class Rover:
                 elif self.bearing - target_angle > 0:
                     self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
             
-            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movment)
+            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movement)
             return
 
         ### stop moving ###
