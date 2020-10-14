@@ -261,7 +261,7 @@ class Rover:
     def map(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if samplesRB is not None:
             for sample in samplesRB:
-                distance = sample[0] + 0.1  # Add 0.1 for distance to centre of rover
+                distance = sample[0]  # Add 0.1 for distance to centre of rover
                 angle = sample[1]
 
                 x, y = self.determinePos(distance, angle)
@@ -282,7 +282,7 @@ class Rover:
 
         if rocksRB is not None:
             for rock in rocksRB:
-                distance = rock[0] + 0.1
+                distance = rock[0]
                 angle = rock[1]
 
                 x, y = self.determinePos(distance, angle)
@@ -302,7 +302,7 @@ class Rover:
 
         if obstaclesRB is not None:
             for obstacle in obstaclesRB:
-                distance = obstacle[0] + 0.1
+                distance = obstacle[0]
                 angle = obstacle[1]
 
                 x, y = self.determinePos(distance, angle)
