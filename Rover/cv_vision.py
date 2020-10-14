@@ -38,7 +38,7 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 # Initialise camera setup
 camera = PiCamera()
 camera.resolution = (IMG_X, IMG_Y)
-camera.framerate = 8
+camera.framerate = 15
 # Allow time for the camera to warmup
 time.sleep(0.5)
 camera.video_stabilization = False
@@ -290,10 +290,10 @@ def current_observation():
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image) ### time: 0.04
     
-    start = time.time()
+    # start = time.time()
     # Determine distance, angle ID and type
-    obs = detect_obs(hsv_masks)
-    print("loop: {}".format(time.time()-start))
+    obs = detect_obs(hsv_masks) ### time: 0.05
+    # print("loop: {}".format(time.time()-start))
     return obs
 
 # Process frame from PiCamera
