@@ -62,7 +62,7 @@ class Rover:
         # self.board = motorControl.motorSetup()
 
     def updateCurrentPos(self):
-        motorControl.sendCommand(self.current_movment)
+        motorControl.sendCommand(self.current_movement)
         self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
