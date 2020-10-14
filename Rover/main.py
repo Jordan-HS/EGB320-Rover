@@ -390,6 +390,9 @@ try:
     # time.sleep(2)
     rover = Rover()
     observation = current_observation()
+    rover.updateCurrentPos()
+    rover.current_movement = "stop"
+    motorControl.sendCommand("stop")
     time.sleep(2)
 
     while (True):

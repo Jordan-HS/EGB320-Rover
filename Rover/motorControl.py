@@ -70,6 +70,9 @@ def WrapToPi(radians):
 
 
 def updatePosition(rover):
+    if rover.current_movement == "stop":
+        line = ser.readline().decode('utf-8')
+        return rover.x, rover.y, rover.bearing
     line = ser.readline().decode('utf-8')
     E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
     E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
@@ -114,6 +117,8 @@ def sendCommand(command):
         ser.write(str(2).encode('utf-8'))
     elif command == "right":
         ser.write(str(3).encode('utf-8'))
+    elif command == "stop":
+        ser.write(str(4).encode('utf-8'))
 # send_state = False
 # start = time.time()
 # ser.write(str(0).encode('utf-8'))
