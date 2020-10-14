@@ -231,7 +231,7 @@ class Rover:
             if target_mag > 2:
                 accuracy = 15
 
-            if target_mag < 0.75:
+            if target_mag < 0.75*200:
                 lowSpeedBoost = 2.5
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
