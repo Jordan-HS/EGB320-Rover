@@ -381,7 +381,7 @@ def splitObservation(observation):
             landerRB.append([obj[3], obj[2]])
     return samplesRB, landerRB, obstaclesRB, rocksRB
 
-
+motorControl.sendCommand("clear")
 try:
     # Create VREP RoverBot object - this will attempt to open a connection to VREP. Make sure the VREP simulator is running.
     # lunarBotSim = VREP_RoverRobot('127.0.0.1', robotParameters, sceneParameters)
@@ -390,7 +390,7 @@ try:
     # memory stuff
     # time.sleep(2)
     rover = Rover()
-    motorControl.sendCommand("clear")
+    
 
     while (True):
         # Get Detected Objects
