@@ -6,8 +6,6 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-
-### 0.78 run time
 HSV_blue = [[88, 36, 0], [117, 255, 255]]
 HSV_green = [[33, 20, 25], [75, 255, 255]]
 HSV_yellow = [[15, 20, 90], [39, 255, 255]]
@@ -50,8 +48,6 @@ camera.exposure_mode = 'sports'
 
 #camera.awb_gains = 3
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
-
-###
 
 # Image crop to decrease image processing time
 def crop_image(image):
@@ -276,25 +272,17 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
 
 def current_observation():
     # Grab frame
-    
-    camera.capture(rawCapture, format="bgr", use_video_port=True) ### time: 0.07
-    
-    image = rawCapture.array ### time: 6e-6
-    
-    rawCapture.truncate(0) ### time: 4-e-5
-    
+    camera.capture(rawCapture, format="bgr", use_video_port=True)
+    image = rawCapture.array
+    rawCapture.truncate(0)
     # Crop image
-    image = crop_image(image) ### time: 4e-5
-    
-    
+    image = crop_image(image)
+
     # Apply HSV threshold to frame
-    hsv_masks = mask_obs(image) ### time: 0.04
-    
-    # start = time.time()
+    hsv_masks = mask_obs(image)
+
     # Determine distance, angle ID and type
-    obs = detect_obs(hsv_masks) ### time: 0.05
-    # print("loop: {}".format(time.time()-start))
-    return obs
+    return detect_obs(hsv_masks)
 
 # Process frame from PiCamera
 # for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
