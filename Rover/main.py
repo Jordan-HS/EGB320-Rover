@@ -69,7 +69,7 @@ class Rover:
         ## Convert magnitude to duty
 
         motorControl.move(movement, magnitude)
-        self.movement = movement
+        self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         ### Survering scene ###    
