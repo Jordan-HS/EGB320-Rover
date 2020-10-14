@@ -220,6 +220,8 @@ class Rover:
             target_angle, target_mag = getForce(self)
             accuracy = 5
             lowSpeedBoost = 1
+
+            target_mag = target_mag*100
             
             # Display potential field graph
             if self.POT:
