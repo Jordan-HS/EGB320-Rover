@@ -3,6 +3,7 @@ from roverbot_lib import *
 import setup
 from math import radians, degrees
 from potentialField import getForce, calculateMovement, show
+import PotentialFeildsNew
 import time
 import numpy as np
 import math
@@ -14,7 +15,7 @@ LED_out = False
 HUD = True
 
 # Potential fields view
-POT = False
+POT = True
 
 # Initialise the simulation
 robotParameters, sceneParameters = setup.init_sim()
@@ -231,35 +232,42 @@ class Rover:
 
         ### Move towards target using potential fields ### 
         if self.target is not None:
-            target_angle, target_mag = getForce(self)
+            # target_angle, target_mag = getForce(self)
+            U = PotentialFeildsNew.getForce([self.x, self.y], self.target, self.obstacles)
+            target_angle = math.atan2(U[1], U[0])
             accuracy = 5
             lowSpeedBoost = 1
             
             # Display potential field graph
             if self.POT:
-                show(self)
+                PotentialFeildsNew.show(self.target, self.obstacles)
                 self.POT = False
 
-            if target_mag > 2:
-                accuracy = 15
+            # if target_mag > 2:
+            #     accuracy = 15
 
-            if target_mag < 0.75:
-                lowSpeedBoost = 2.5
+            # if target_mag < 0.75:
+            #     lowSpeedBoost = 2.5
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", target_mag*self.target_speed)
+                # self.move("forward", target_mag*self.target_speed)
+                self.move("forward", 0.2)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)
+                    # self.move("left", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("left", 1)
                 elif self.bearing - target_angle > 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)   
+                    # self.move("right", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("right", 1)      
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)
+                    # self.move("right", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("right", 1)   
                 elif self.bearing - target_angle > 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
+                    # self.move("left", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("left", 1)   
             
-            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movment)
+            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), 1, self.distanceToObject(self.target), self.target, self.current_movment)
             return
 
         ### stop moving ###
