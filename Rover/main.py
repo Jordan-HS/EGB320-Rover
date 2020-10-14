@@ -253,7 +253,7 @@ class Rover:
             self.move("stop")
 
     def checkOnLander(self):
-        if (-0.4 < self.x < 0.4) and (-0.4 < self.y < 0.4):
+        if (-0.3 < self.x < 0.3) and (-0.3 < self.y < 0.3):
             return True
         return False 
 
