@@ -62,7 +62,6 @@ class Rover:
         # self.board = motorControl.motorSetup()
 
     def updateCurrentPos(self):
-        # motorControl.sendCommand(self.current_movement)
         self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
@@ -70,7 +69,7 @@ class Rover:
 
         motorControl.move(movement, magnitude)
         self.current_movement = movement
-        motorControl.sendCommand(movement)
+        # motorControl.sendCommand(movement)
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         ### Survering scene ###    
@@ -404,6 +403,7 @@ try:
         rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        motorControl.sendCommand(rover.current_movement)
 
         
              
