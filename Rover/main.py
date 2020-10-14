@@ -14,7 +14,7 @@ from cv_vision import current_observation
 LED_out = False
 
 # HUD output
-HUD = False
+HUD = True
 
 # Potential fields view
 POT = False
@@ -395,9 +395,9 @@ try:
     while (True):
         # Get Detected Objects
         # samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
-        start = time.time()
+        # start = time.time()
         observation = current_observation()
-        print("loop time: {}".format(time.time()-start))
+        # print("loop time: {}".format(time.time()-start))
 
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
