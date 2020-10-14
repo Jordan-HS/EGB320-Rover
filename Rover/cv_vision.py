@@ -276,10 +276,11 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
 
 def current_observation():
     # Grab frame
+    
+    camera.capture(rawCapture, format="bgr", use_video_port=True) ### time: 0.07
     start = time.time()
-    camera.capture(rawCapture, format="bgr", use_video_port=True)
-    print("loop: {}".format(time.time()-start))
     image = rawCapture.array
+    print("loop: {}".format(time.time()-start))
     rawCapture.truncate(0)
     # Crop image
     image = crop_image(image)
