@@ -78,11 +78,11 @@ def updatePosition(rover):
     y = rover.y
     bearing = rover.bearing
 
-    if rover.last_move is None:
-        rover.last_move = rover.movement
+    if rover.last_movement is None:
+        rover.last_movement = rover.movement
 
-    elif rover.last_move != rover.movement:
-        rover.last_move = rover.movement
+    elif rover.last_movement != rover.movement:
+        rover.last_movement = rover.movement
         rover.ref_x = rover.x
         rover.ref_y = rover.y
         rover.ref_bearing = rover.bearing
