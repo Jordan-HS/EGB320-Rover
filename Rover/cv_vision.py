@@ -282,13 +282,14 @@ def current_observation():
     image = rawCapture.array ### time: 6e-6
     
     rawCapture.truncate(0) ### time: 4-e-5
-    start = time.time()
+    
     # Crop image
-    image = crop_image(image)
-    print("loop: {}".format(time.time()-start))
-
+    image = crop_image(image) ### time: 4e-5
+    
+    start = time.time()
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
+    print("loop: {}".format(time.time()-start))
 
     # Determine distance, angle ID and type
     return detect_obs(hsv_masks)
