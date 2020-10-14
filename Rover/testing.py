@@ -44,7 +44,7 @@ try:
         
         motorControl.sendCommand(rover.current_movement)
         rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
-        time.sleep(.5)
+        # time.sleep(.5)
 
         print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
 except KeyboardInterrupt:
