@@ -85,7 +85,7 @@ class Rover:
         if self.current_action == "Surveying landing site":
             self.map(samplesRB, landerRB, obstaclesRB, rocksRB)
             if not math.isclose(self.save_bearing, self.bearing, abs_tol=math.radians(10)):
-                self.move("left", 1)
+                self.move("left", 2.5)
             else:
                 self.current_action = "Pick sample"
                 self.initial_bearing = 0
@@ -181,9 +181,9 @@ class Rover:
                 # target_angle, target_mag = getForce(self, closeRange=target)
                 self.current_action = "Close range targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}".format(self.target_type, math.degrees(target_angle), target_mag, target[0], self.target)
 
-                if target[0] < 0.13:
-                    self.move("stop")
-                    return
+                # if target[0] < 0.13:
+                #     self.move("stop")
+                #     return
 
                 if target[0] <= 0.04:
                     self.lunarBotSim.CollectSample()
@@ -267,7 +267,7 @@ class Rover:
             self.move("stop")
 
     def checkOnLander(self):
-        if (-0.35 < self.x < 0.35) and (-0.35 < self.y < 0.35):
+        if (-0.4 < self.x < 0.4) and (-0.4 < self.y < 0.4):
             return True
         return False 
 
@@ -414,7 +414,7 @@ try:
 
         # rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        rover.decision(rocksRB, landerRB, obstaclesRB, samplesRB)
+        rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
              
         ## Display HUD
         if HUD:

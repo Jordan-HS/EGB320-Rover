@@ -235,17 +235,17 @@ class Rover:
                 lowSpeedBoost = 2.5
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", target_mag*self.target_speed*200)
+                self.move("forward", target_mag*self.target_speed)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost*200)
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)
                 elif self.bearing - target_angle > 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost*200)   
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)   
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost*200)
+                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)
                 elif self.bearing - target_angle > 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost*200)   
+                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
             
             self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movement)
             return
