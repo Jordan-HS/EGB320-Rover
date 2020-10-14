@@ -14,7 +14,7 @@ from cv_vision import current_observation
 LED_out = False
 
 # HUD output
-HUD = True
+HUD = False
 
 # Potential fields view
 POT = False
@@ -389,7 +389,7 @@ try:
     # memory stuff
     # time.sleep(2)
     rover = Rover()
-    
+    start = time.time()
 
     while (True):
         # Get Detected Objects
@@ -417,6 +417,8 @@ try:
                   "Obstacles at:{}\n"
                   "Unseen areas: {}".format(rover.current_action, rover.x, rover.y, math.degrees(rover.bearing), rover.samples,rover.rocks, rover.obstacles, rover.unseen))
 
+        print("loop time: {}".format(time.time()-start))
+        start = time.time()
         # Update Ball Position
         # lunarBotSim.UpdateObjectPositions()
         # rover.lunarBotSim.UpdateVREPRobot()
