@@ -38,7 +38,7 @@ camera = PiCamera()
 camera.resolution = (IMG_X, IMG_Y)
 camera.framerate = 8
 # Allow time for the camera to warmup
-time.sleep(0.5)
+# time.sleep(0.5)
 camera.video_stabilization = False
 camera.exposure_compensation = 0
 camera.exposure_mode = 'off'

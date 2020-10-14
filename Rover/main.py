@@ -397,8 +397,6 @@ try:
         
         observation = current_observation()
         
-
-        start = time.time()
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
         # Update rover global positio
@@ -406,7 +404,6 @@ try:
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
         motorControl.sendCommand(rover.current_movement)
-        print("loop time: {}".format(time.time()-start))
         
              
         ## Display HUD
