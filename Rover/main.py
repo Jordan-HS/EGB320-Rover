@@ -62,6 +62,7 @@ class Rover:
         # self.board = motorControl.motorSetup()
 
     def updateCurrentPos(self):
+        motorControl.sendCommand(self.current_movement)
         self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
@@ -390,10 +391,9 @@ try:
     # time.sleep(2)
     rover = Rover()
     observation = current_observation()
-    rover.updateCurrentPos()
     rover.current_movement = "stop"
-    motorControl.sendCommand("stop")
-    time.sleep(2)
+    rover.updateCurrentPos()
+    # time.sleep(2)
 
     while (True):
         # Get Detected Objects
@@ -409,7 +409,6 @@ try:
         rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
-        motorControl.sendCommand(rover.current_movement)
         
         
              
