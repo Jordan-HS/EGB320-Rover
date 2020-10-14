@@ -420,8 +420,8 @@ try:
                   "Obstacles at:{}\n"
                   "Unseen areas: {}".format(rover.current_action, rover.x, rover.y, math.degrees(rover.bearing), rover.samples,rover.rocks, rover.obstacles, rover.unseen))
 
-        print("loop time: {}".format(time.time()-start))
-        start = time.time()
+        # print("loop time: {}".format(time.time()-start))
+        # start = time.time()
         # Update Ball Position
         # lunarBotSim.UpdateObjectPositions()
         # rover.lunarBotSim.UpdateVREPRobot()
