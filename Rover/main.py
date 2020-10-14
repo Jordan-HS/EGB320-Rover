@@ -77,7 +77,7 @@ class Rover:
         if self.current_action == "Surveying landing site":
             self.map(samplesRB, landerRB, obstaclesRB, rocksRB)
             if not math.isclose(self.save_bearing, self.bearing, abs_tol=math.radians(10)):
-                self.move("left", 1)
+                self.move("left", 250)
             else:
                 self.current_action = "Pick sample"
                 self.initial_bearing = 0
@@ -90,7 +90,7 @@ class Rover:
             ### Initial state - Move off lander ###
             if not self.sampleCollected() and self.checkOnLander():
                 self.current_action = "On lander - Moving off"
-                self.move("forward", 250)
+                self.move("forward", 150)
                 return
 
             ### Off lander - Survey scene ###
@@ -155,10 +155,10 @@ class Rover:
         if self.target is not None and self.target_type == "sample" and self.distanceToObject(self.target) < 0.3:
             if samplesRB is None:
                 if self.bearingToObject(self.target) < self.bearing:
-                    self.move("left", 1)
+                    self.move("left", 250)
                     return
                 else: 
-                    self.move("right", 1)
+                    self.move("right", 250)
                     return
             else:
                 # Target closest sample
