@@ -79,27 +79,27 @@ def updatePosition(rover):
     bearing = rover.bearing
 
     if rover.last_movement is None:
-        rover.last_movement = rover.movement
+        rover.last_movement = rover.current_movement
 
-    elif rover.last_movement != rover.movement:
-        rover.last_movement = rover.movement
+    elif rover.last_movement != rover.current_movement:
+        rover.last_movement = rover.current_movement
         rover.ref_x = rover.x
         rover.ref_y = rover.y
         rover.ref_bearing = rover.bearing
         sendCommand("clear")
 
-    elif rover.movement == "forward":
+    elif rover.current_movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
         dist = wheel_avg/600 * 2 * math.pi * radius
 
         x = rover.ref_x + dist*math.cos(rover.bearing)
         y = rover.ref_y + dist*math.sin(rover.bearing)
 
-    elif rover.movement == "right":
+    elif rover.current_movement == "right":
         wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
         bearing = rover.ref_bearing + -(wheel_avg/2192 * (2*math.pi))
 
-    elif rover.movement == "left":
+    elif rover.current_movement == "left":
         wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
         bearing = rover.ref_bearing + (wheel_avg/2192 * (2*math.pi))
 
