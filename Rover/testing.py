@@ -29,6 +29,7 @@ class Rover:
 rover = Rover()
 motorControl.sendCommand("clear")
 start = time.time()
+time.sleep(5)
 while True:
     run_time = time.time() - start
 
