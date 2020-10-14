@@ -54,7 +54,7 @@ class Rover:
         self.bearing = 0
         self.ref_bearing = 0
         self.current_action = ""
-        self.current_movment = ""
+        self.current_movement = ""
         self.last_movement = None
         self.initial = True
         self.save_bearing = 0
