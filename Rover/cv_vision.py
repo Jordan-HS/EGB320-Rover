@@ -278,10 +278,11 @@ def current_observation():
     # Grab frame
     
     camera.capture(rawCapture, format="bgr", use_video_port=True) ### time: 0.07
+    
+    image = rawCapture.array ### time: 6e-6
     start = time.time()
-    image = rawCapture.array
+    rawCapture.truncate(0) 
     print("loop: {}".format(time.time()-start))
-    rawCapture.truncate(0)
     # Crop image
     image = crop_image(image)
 
