@@ -389,13 +389,14 @@ try:
     # memory stuff
     # time.sleep(2)
     rover = Rover()
-    start = time.time()
+    
 
     while (True):
         # Get Detected Objects
         # samplesRB, landerRB, obstaclesRB, rocksRB = lunarBotSim.GetDetectedObjects()
-
+        start = time.time()
         observation = current_observation()
+        print("loop time: {}".format(time.time()-start))
 
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
