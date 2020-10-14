@@ -280,11 +280,12 @@ def current_observation():
     camera.capture(rawCapture, format="bgr", use_video_port=True) ### time: 0.07
     
     image = rawCapture.array ### time: 6e-6
+    
+    rawCapture.truncate(0) ### time: 4-e-5
     start = time.time()
-    rawCapture.truncate(0) 
-    print("loop: {}".format(time.time()-start))
     # Crop image
     image = crop_image(image)
+    print("loop: {}".format(time.time()-start))
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
