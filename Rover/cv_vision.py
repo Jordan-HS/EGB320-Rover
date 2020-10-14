@@ -286,13 +286,15 @@ def current_observation():
     # Crop image
     image = crop_image(image) ### time: 4e-5
     
-    start = time.time()
+    
     # Apply HSV threshold to frame
-    hsv_masks = mask_obs(image)
-    print("loop: {}".format(time.time()-start))
-
+    hsv_masks = mask_obs(image) ### time: 0.04
+    
+    start = time.time()
     # Determine distance, angle ID and type
-    return detect_obs(hsv_masks)
+    obs = detect_obs(hsv_masks)
+    print("loop: {}".format(time.time()-start))
+    return obs
 
 # Process frame from PiCamera
 # for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
