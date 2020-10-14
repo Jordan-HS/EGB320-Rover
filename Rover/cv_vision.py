@@ -6,6 +6,7 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
+start = time.time()
 HSV_blue = [[88, 36, 0], [117, 255, 255]]
 HSV_green = [[33, 20, 25], [75, 255, 255]]
 HSV_yellow = [[15, 20, 90], [39, 255, 255]]
@@ -49,6 +50,7 @@ camera.exposure_mode = 'sports'
 #camera.awb_gains = 3
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
 
+print("loop: {}".format(time.time()-start))
 # Image crop to decrease image processing time
 def crop_image(image):
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
