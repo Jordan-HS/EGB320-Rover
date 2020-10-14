@@ -221,7 +221,7 @@ class Rover:
             accuracy = 5
             lowSpeedBoost = 1
 
-            target_mag = target_mag*100
+            target_mag = target_mag*200
             
             # Display potential field graph
             if self.POT:
