@@ -96,7 +96,7 @@ class Rover:
             ### Off lander - Survey scene ###
             if (not self.sampleCollected() and not self.checkOnLander()):
                 self.current_action = "Surveying landing site"
-                self.save_bearing = self.bearing - math.radians(11)
+                self.save_bearing = self.bearing + math.radians(11)
                 self.initial = False
                 return
 
