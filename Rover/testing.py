@@ -30,23 +30,23 @@ class Rover:
 rover = Rover()
 motorControl.sendCommand("clear")
 start = time.time()
+try:
+    while True:
+        run_time = time.time() - start
+        rover.move("forward", 250)
+        # if run_time < 2:
+        #     rover.move("forward", 250)
+        # elif 2 < run_time < 5:
+        #     rover.move("left", 250)
+        # elif 5 < run_time < 7:
+        #     rover.move("forward", 300)
 
-while True:
-    run_time = time.time() - start
-    rover.move("forward", 250)
-    # if run_time < 2:
-    #     rover.move("forward", 250)
-    # elif 2 < run_time < 5:
-    #     rover.move("left", 250)
-    # elif 5 < run_time < 7:
-    #     rover.move("forward", 300)
+        
+        motorControl.sendCommand(rover.current_movement)
+        rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
+        time.sleep(.5)
 
-    
-    motorControl.sendCommand(rover.current_movement)
-    rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
-    time.sleep(.5)
-
+        print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
+except KeyboardInterrupt:
     print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
-
-print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
     # clear()
