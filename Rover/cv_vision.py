@@ -6,7 +6,8 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-start = time.time()
+
+### 0.78 run time
 HSV_blue = [[88, 36, 0], [117, 255, 255]]
 HSV_green = [[33, 20, 25], [75, 255, 255]]
 HSV_yellow = [[15, 20, 90], [39, 255, 255]]
@@ -50,7 +51,8 @@ camera.exposure_mode = 'sports'
 #camera.awb_gains = 3
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
 
-print("loop: {}".format(time.time()-start))
+###
+
 # Image crop to decrease image processing time
 def crop_image(image):
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
@@ -274,7 +276,9 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
 
 def current_observation():
     # Grab frame
+    start = time.time()
     camera.capture(rawCapture, format="bgr", use_video_port=True)
+    print("loop: {}".format(time.time()-start))
     image = rawCapture.array
     rawCapture.truncate(0)
     # Crop image
