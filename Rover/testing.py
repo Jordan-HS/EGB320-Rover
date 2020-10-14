@@ -24,7 +24,7 @@ class Rover:
         ## Convert magnitude to duty
 
         motorControl.move(movement, magnitude)
-        self.movement = movement
+        self.current_movement = movement
 
 rover = Rover()
 motorControl.sendCommand("clear")
