@@ -152,7 +152,7 @@ class Rover:
         #     return
 
         ### Close range sample collection ###
-        if self.target is not None and self.target_type == "sample" and self.distanceToObject(self.target) < 0.3:
+        if self.target is not None and self.target_type == "sample" and self.distanceToObject(self.target) < -0.1:
             if samplesRB is None:
                 if self.bearingToObject(self.target) < self.bearing:
                     self.move("left", 250)
