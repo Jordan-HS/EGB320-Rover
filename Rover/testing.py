@@ -17,7 +17,7 @@ class Rover:
         self.ref_y = 0
         self.bearing = 0
         self.ref_bearing = 0
-        self.movement = None
+        self.current_movement = None
         self.last_movement = None
 
     def move(self, movement, magnitude=None):
