@@ -17,6 +17,7 @@ class Rover():
         self.ref_y = 0
         self.ref_bearing = 0
         self.current_movement = ""
+        self.last_movement = ""
 
     def updateCurrentPos(self):
         motorControl.sendCommand(self.current_movement)
