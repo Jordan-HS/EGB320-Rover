@@ -21,9 +21,9 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = False
+Sample_demo = True
 
-Rock_demo = True
+Rock_demo = False
 
 class Rover():
     def __init__(self):
