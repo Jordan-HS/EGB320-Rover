@@ -59,15 +59,17 @@ class Rover():
                     speed = 120
                     accuracy = 3
 
-                if self.at_target:    
+                if self.at_target:
+                    tiltdowncollection.down()
+                    time.sleep(1)    
                     closecollection.close()
                     time.sleep(1)
                     holdSample.hold()
                 else:
                     opencollection.open()
+                    holdSample.hold()
                     return
 
-                
 
                 if sample[0] < 0.113 or self.at_target:
                     self.move("forward", 0)
@@ -82,7 +84,7 @@ class Rover():
                     self.move("left", speed)
 
                 
-            return
+                return
         elif Rock_demo:
             if rocksRB is not None:
                 rock = rocksRB[0]
