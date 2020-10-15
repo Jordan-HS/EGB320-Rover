@@ -85,6 +85,7 @@ try:
     observation = current_observation()
     rover.current_movement = "stop"
     rover.updateCurrentPos()
+    time.sleep(2)
     while True:
         observation = current_observation()
         
