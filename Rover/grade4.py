@@ -44,7 +44,7 @@ class Rover():
                 speed = 120
                 accuracy = 3
 
-            if sample[0] < 0.112 or self.at_sample:
+            if sample[0] < 0.113 or self.at_sample:
                 self.move("forward", 0)
                 self.at_sample = True
                 return
