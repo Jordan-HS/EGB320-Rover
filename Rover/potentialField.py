@@ -1,200 +1,103 @@
 import math
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from numpy import arange
-
-# Forces of attraction
-alpha = 4
-sample_radius = 0.07
-
-# Forces of repulsion
-beta = 40
-obs_spread = 0.2
-obs_radius = 0.1
 
 def dist(vec1, vec2):
     x_dist = abs(vec1[0] - vec2[0])
     y_dist = abs(vec1[1] - vec2[1])
     return math.sqrt(x_dist**2 + y_dist**2)
 
-def angle(vec1, vec2):
-    x_dist = vec1[0] - vec2[0]
-    y_dist = vec1[1] - vec2[1]
-    return math.atan2(y_dist, x_dist)
+def getForce(currentPos, goal, obstacles, avoidLander=True):
+    
+    ## Calculate attractive force ##
+    dstar = 0.1
+    att_control = 1
+    goal_dist = dist(currentPos, goal)
 
-def getForce(rover):
-    goal = rover.target
-    rocks = rover.rocks
-    obstacles = rover.obstacles
-    lander = rover.lander
-    delta_x = 0
-    delta_y = 0
+    if goal_dist <= dstar:
+        # calculate Uatt
+        Uatt = (att_control * goal_dist**2)/2
 
-    if rover.target_type == "lander approach" or rover.target_type == "drop off":
-        distance = dist([rover.x, rover.y], goal)
-        bearing = angle(goal, [rover.x, rover.y])
-
-        delta_x += (alpha * (distance - sample_radius)*math.cos(bearing))
-        delta_y += (alpha * (distance - sample_radius)*math.sin(bearing))
+        # Calculate delta Uatt
+        dx_Uatt = att_control * (currentPos[0] - goal[0])
+        dy_Uatt = att_control * (currentPos[1] - goal[1])
     else:
-        distance = dist([rover.x, rover.y], lander)
-        bearing = angle(lander, [rover.x, rover.y])
-        lander_size = 0.4
-        lander_strength = 10
-        lander_spread = 0.1
+        # calculate Uatt
+        Uatt = ( dstar * att_control * goal_dist ) - ( 1/2 * att_control * goal_dist**2 )
 
-        if distance < lander_size:
-            delta_x = 0
-            delta_y = 0
-        elif lander_size <= distance <= lander_spread+lander_size:
-            delta_x += (-lander_strength * (lander_spread + lander_size - distance)*math.cos(bearing))
-            delta_y += (-lander_strength * (lander_spread + lander_size - distance)*math.sin(bearing))
-        elif distance > lander_spread + lander_size:
-            delta_x += (alpha * lander_spread * math.cos(bearing))
-            delta_y += (alpha * lander_spread * math.cos(bearing))
+        # Calculate delta Uatt
+        dx_Uatt = ( dstar * att_control * (currentPos[0] - goal[0]) ) / ( goal_dist )
+        dy_Uatt = ( dstar * att_control * (currentPos[1] - goal[1]) ) / ( goal_dist )
 
-        # goal 
-        distance = dist([rover.x, rover.y], goal)
-        bearing = angle(goal, [rover.x, rover.y])
+        
 
-        delta_x += (alpha * (distance - sample_radius)*math.cos(bearing))
-        delta_y += (alpha * (distance - sample_radius)*math.sin(bearing))
-
-    if rocks is not None:
-        for rock in rocks:
-            distance = dist([rover.x, rover.y], rock)
+    ## Calculate repulsive forces ##
+    qstar = 0.5
+    rep_control = 0.01
+    repulsivesForces = []
     if obstacles is not None:
         for obstacle in obstacles:
-            distance = dist([rover.x, rover.y], obstacle)
-            bearing = angle(obstacle, [rover.x, rover.y])
-            
-            if distance <= (obs_spread + obs_radius)/2:
-                delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
-            elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
-                delta_x += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                delta_y += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.sin(bearing))
-            elif distance > obs_spread + obs_radius:
-                delta_x += 0
-                delta_y += 0
+            rep_dist = dist(currentPos, obstacle)
 
-    
+            if rep_dist <= qstar:
+                # Calculate Urep
+                Urep = 1/2 * rep_control * ( 1/rep_dist - 1/qstar )**2
+
+                # Calculate delta Urep
+                dx_Urep = rep_control * ( 1/qstar - 1/rep_dist ) * 1/(rep_dist**2) * (currentPos[0] - obstacle[0])
+                dy_Urep = rep_control * ( 1/qstar - 1/rep_dist ) * 1/(rep_dist**2) * (currentPos[1] - obstacle[1])
+
+                repulsivesForces.append([Urep, dx_Urep, dy_Urep])
+ 
+
+    ## Add wall avoidance ##
+    wall_padding = 0.1
+    if currentPos[0] > 1-wall_padding:
+        wall_dist = 1 - currentPos[0]
+        repulsivesForces.append([0, wall_padding-wall_dist, 0])
+    elif currentPos[0] < -1+wall_padding:
+        wall_dist = 1 + currentPos[0]
+        repulsivesForces.append([0, -(wall_padding-wall_dist), 0])
+    if currentPos[1] > 1-wall_padding:
+        wall_dist = 1 - currentPos[1]
+        repulsivesForces.append([0, 0, wall_padding-wall_dist])
+    elif currentPos[1] < -1+wall_padding:
+        wall_dist = 1 + currentPos[1]
+        repulsivesForces.append([0, 0, -(wall_padding-wall_dist)])
+
+    ## Avoid lander if needed ##
 
 
-    target_angle = math.atan2(delta_y, delta_x)
-    target_mag = math.sqrt(delta_x**2 + delta_y**2)/2
+    ## sum the forces ##
+    U = [0, 0]
 
-    return target_angle, target_mag
+    # Add attractive force
+    U[0] = -dx_Uatt
+    U[1] = -dy_Uatt
 
-def show(rover):
-    goal = rover.target
-    rocks = rover.rocks
-    obstacles = rover.obstacles
-    lander = rover.lander
-    
-    points = 50
+    # Add repulsive forces
+    if len(repulsivesForces) > 0:
+        for rep in repulsivesForces:
+            U[0] += -rep[1]
+            U[1] += -rep[2]
 
+    return U
+
+
+
+def show(goal, obstacles, avoidLander=True):
+    points = 100
     ax = plt.axes()
 
     for x in arange(-1,1,2/points):
         for y in arange(-1,1,2/points):
-            delta_x = 0
-            delta_y = 0
+            U = getForce([x, y], goal, obstacles)
 
-            distance = dist([x, y], lander)
-            bearing = angle(lander, [x, y])
-            lander_size = 0.4
-            lander_strength = 10
-            lander_spread = 0.2
-            if distance < lander_size:
-                delta_x = 0
-                delta_y = 0
-            elif lander_size <= distance <= lander_spread+lander_size:
-                delta_x += (-lander_strength * (lander_spread + lander_size - distance)*math.cos(bearing))
-                delta_y += (-lander_strength * (lander_spread + lander_size - distance)*math.sin(bearing))
-            elif distance > lander_spread + lander_size:
-                delta_x += (alpha * lander_spread * math.cos(bearing))
-                delta_y += (alpha * lander_spread * math.cos(bearing))
+            if -1 < U[0]+x < 1 and -1 < U[1]+y < 1:
+                plt.arrow(x*100, y*100, U[0]*10, U[1]*10, head_width=1)
 
-            # goal 
-            distance = dist([x, y], goal)
-            bearing = angle(goal, [x, y])
-
-            delta_x += (alpha * (distance - sample_radius)*math.cos(bearing))
-            delta_y += (alpha * (distance - sample_radius)*math.sin(bearing))
-
-            if rocks is not None:
-                for rock in rocks:
-                    distance = dist([x, y], rock)
-            if obstacles is not None:
-                for obstacle in obstacles:
-                    distance = dist([x, y], obstacle)
-                    bearing = angle(obstacle, [x, y])
-                    
-                    if distance <= (obs_spread + obs_radius)/2:
-                        delta_x += (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                        delta_y += (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
-                    elif (obs_spread + obs_radius)/2 < distance <= obs_spread + obs_radius:
-                        delta_x += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.cos(bearing))
-                        delta_y += (-beta/1.5 * (obs_spread + obs_radius - distance)*math.sin(bearing))
-                    elif distance > obs_spread + obs_radius:
-                        delta_x += 0
-                        delta_y += 0
-
-
-            plt.arrow(x*100, y*100, delta_x, delta_y, head_width=1)
-    
     plt.show()
-    # if object_type == "sample":
-    #     if distance < sample_radius:
-    #         delta_x = 0
-    #         delta_y = 0
-    #     elif sample_radius <= distance <= sample_spread+sample_radius:
-    #         delta_x = (alpha * (distance - sample_radius)*math.cos(bearing))
-    #         delta_y = (alpha * (distance - sample_radius)*math.sin(bearing))
-    #     elif distance > sample_spread + sample_radius:
-    #         delta_x = (alpha * sample_spread * math.cos(bearing))
-    #         delta_y = (alpha * sample_spread * math.cos(bearing))
-    # elif object_type == "lander":
-    #     if distance < sample_radius:
-    #         delta_x = 0
-    #         delta_y = 0
-    #     elif sample_radius <= distance <= sample_spread+sample_radius:
-    #         delta_x = (alpha * (distance - sample_radius)*math.cos(bearing))
-    #         delta_y = (alpha * (distance - sample_radius)*math.sin(bearing))
-    #     elif distance > sample_spread + sample_radius:
-    #         delta_x = (alpha * sample_spread * math.cos(bearing))
-    #         delta_y = (alpha * sample_spread * math.cos(bearing))
-    # elif object_type == "obstacle":
-    #     if distance <= obs_spread + obs_radius:
-    #         delta_x = (-beta * (obs_spread + obs_radius - distance)*math.cos(bearing))
-    #         delta_y = (-beta * (obs_spread + obs_radius - distance)*math.sin(bearing))
-    #     elif distance > obs_spread + obs_radius:
-    #         delta_x = 0
-    #         delta_y = 0
-    # elif object_type == "rock":
-    #     if distance < sample_radius:
-    #         delta_x = 0
-    #         delta_y = 0
-    #     elif sample_radius <= distance <= sample_spread+sample_radius:
-    #         delta_x = (alpha * (distance - sample_radius)*math.cos(bearing))
-    #         delta_y = (alpha * (distance - sample_radius)*math.sin(bearing))
-    #     elif distance > sample_spread + sample_radius:
-    #         delta_x = (alpha * sample_spread * math.cos(bearing))
-    #         delta_y = (alpha * sample_spread * math.cos(bearing))
 
-    # if force is None:
-    #     return delta_x, delta_y
-    # else:
-    #     return (delta_x + force[0]), (delta_y + force[1])
-
-def calculateMovement(delta_x, delta_y, bearing):
-    radial_dir = math.atan2(delta_y, delta_x)
-    forward_mag = math.sqrt(delta_x**2 + delta_y**2)/2
-
-    if math.isclose(radial_dir, bearing, abs_tol=math.radians(5)):
-        return "forward", 1
-    elif radial_dir < bearing:
-        return "right", 1
-    elif radial_dir > bearing:
-        return "left", 1
-
+# goal = [-0.75, -0.75]
+# obstacles = [[-0.6, -0.6]]
+# show(goal, obstacles)

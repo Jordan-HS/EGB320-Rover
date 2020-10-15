@@ -2,13 +2,14 @@
 # from roverbot_lib import *
 # import setup
 from math import radians, degrees
-from potentialField import getForce, calculateMovement, show
+import potentialField
 import time
 import numpy as np
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
 import motorControl
 import math
 from cv_vision import current_observation
+import RPi.GPIO as GPIO
 
 # GPIO LED output
 LED_out = False
@@ -28,7 +29,6 @@ if HUD:
     clear = lambda: os.system('clear')
 
 if LED_out:
-    import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(26, GPIO.OUT) # RED
@@ -84,6 +84,19 @@ class Rover:
                 self.target = None
                 self.target_type = ""
             return
+
+        ### Overwrite function to test specific things ###
+        overwrite = True
+        if overwrite:
+            if samplesRB is not None:
+                sample = samplesRB[0]
+                if math.radians(-5) < sample[1] < math.radians(5):
+                    self.move("forward", 200)
+                elif sample[1] < -5:
+                    self.move("right", 200)
+                elif sample[1] > -5:
+                    self.move("left", 200)
+                
 
         ### Do this first to gather information ###
         if self.initial:
@@ -217,37 +230,39 @@ class Rover:
 
         ### Move towards target using potential fields ### 
         if self.target is not None:
-            target_angle, target_mag = getForce(self)
+            U = potentialField.getForce([self.x, self.y], self.target, self.obstacles)
+            target_angle = math.atan2(U[1], U[0])
+            # target_angle, target_mag = getForce(self)
             accuracy = 5
-            lowSpeedBoost = 1
+            # lowSpeedBoost = 1
 
-            target_mag = target_mag
+            # target_mag = target_mag
             
             # Display potential field graph
             if self.POT:
-                show(self)
+                potentialField.show(self.target, self.obstacles)
                 self.POT = False
 
-            if target_mag > 2:
-                accuracy = 15
+            # if target_mag > 2:
+            #     accuracy = 15
 
-            if target_mag < 0.75:
-                lowSpeedBoost = 2.5
+            # if target_mag < 0.75:
+            #     lowSpeedBoost = 2.5
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", target_mag*self.target_speed)
+                self.move("forward", 250)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("left", 250)
                 elif self.bearing - target_angle > 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)   
+                    self.move("right", 250)   
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", target_mag*self.target_speed*lowSpeedBoost)
+                    self.move("right", 250)
                 elif self.bearing - target_angle > 0:
-                    self.move("left", target_mag*self.target_speed*lowSpeedBoost)   
+                    self.move("left", 250)   
             
-            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), target_mag, self.distanceToObject(self.target), self.target, self.current_movement)
+            self.current_action = "Targeting {} \nAngle:{:.2f} \tMag:{:.2f} \tDistance:{:.2f}\nGlobal pos:{}\t Movement: {}".format(self.target_type, math.degrees(target_angle), 250, self.distanceToObject(self.target), self.target, self.current_movement)
             return
 
         ### stop moving ###
@@ -387,6 +402,16 @@ def splitObservation(observation):
             obstaclesRB.append([obj[3], obj[2]])
         elif obj[1] == "LAND":
             landerRB.append([obj[3], obj[2]])
+
+    # If empty make None
+    if len(samplesRB) < 1:
+        samplesRB = None
+    if len(rocksRB) < 1:
+        rocksRB = None
+    if len(obstaclesRB) < 1:
+        obstaclesRB = None
+    if len(landerRB) < 1:
+        landerRB = None
     return samplesRB, landerRB, obstaclesRB, rocksRB
 
 motorControl.sendCommand("clear")
@@ -441,5 +466,6 @@ try:
 except KeyboardInterrupt:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
     # lunarBotSim.StopSimulator()
+    GPIO.cleanup()
     print("done")
 
