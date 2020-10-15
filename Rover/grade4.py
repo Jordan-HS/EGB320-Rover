@@ -36,12 +36,13 @@ class Rover():
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if samplesRB is not None:
             sample = samplesRB[0]
-            accuracy = 10
             
             if sample[0] > 0.15:
                 speed = 200
+                accuracy = 10
             else:
                 speed = 100
+                accuracy = 5
 
             if sample[0] < 0.114 or self.at_sample:
                 self.move("forward", 0)
