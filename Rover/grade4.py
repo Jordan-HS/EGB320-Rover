@@ -84,7 +84,8 @@ class Rover():
                 elif sample[1] > math.radians(accuracy):
                     self.move("left", speed)
 
-                
+            else:
+                self.move("right", speed)
                 return
         elif Rock_demo:
             if rocksRB is not None:
