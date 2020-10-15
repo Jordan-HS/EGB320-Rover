@@ -39,6 +39,7 @@ class Rover():
         self.last_movement = ""
         self.at_target = False
         self.done = False
+        self.memory = None
 
     def updateCurrentPos(self):
         motorControl.sendCommand(self.current_movement)
@@ -121,8 +122,9 @@ class Rover():
                 rock_x, rock_y = self.determinePos(rock[0], rock[1])
 
                 U = potentialField.getForce([self.x, self.y], [0.5, 0], [[rock_x, rock_y]])
-            else:
-                U = potentialField.getForce([self.x, self.y], [0.5, 0], None)
+                self.memory = [rock_x, rock_y]
+            elif self.memory is not None:
+                U = potentialField.getForce([self.x, self.y], [0.5, 0], [self.memory])
             target_angle = math.atan2(U[1], U[0])
             # target_angle, target_mag = getForce(self)
             accuracy = 5
