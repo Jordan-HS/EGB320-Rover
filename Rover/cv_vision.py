@@ -317,7 +317,7 @@ def disp_image(image, obstacle_array):
         # Draw area of obstacle from camera
         #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
         #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-    cv2.imshow("Frame", obs_image)
+    return obs_image
 
 def current_observation():
     # Grab frame
@@ -332,7 +332,7 @@ def current_observation():
 
     obstacle_array = detect_obs(hsv_masks)
 
-    disp_image(image, obstacle_array)
+    return_im = disp_image(image, obstacle_array)
     # Determine distance, angle ID and type
-    return obstacle_array
+    return obstacle_array, return_im
 
