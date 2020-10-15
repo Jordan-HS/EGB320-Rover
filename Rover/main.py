@@ -91,7 +91,7 @@ class Rover:
             self.current_action = "Overwrite testing"
             if samplesRB is not None:
                 sample = samplesRB[0]
-                accuracy = 2*sample[0]
+                accuracy = 5
                 if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
                     self.move("forward", 200)
                 elif sample[1] < math.radians(-accuracy):
