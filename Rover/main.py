@@ -97,6 +97,7 @@ class Rover:
                 elif sample[1] > -5:
                     self.move("left", 200)
                 
+            return
 
         ### Do this first to gather information ###
         if self.initial:
