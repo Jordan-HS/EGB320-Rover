@@ -127,18 +127,18 @@ class Rover():
             # target_angle, target_mag = getForce(self)
             accuracy = 5
 
-            if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", 250)
-            elif abs(self.bearing - target_angle) < math.pi:
-                if self.bearing - target_angle < 0:
-                    self.move("left", 250)
-                elif self.bearing - target_angle > 0:
-                    self.move("right", 250)   
-            elif abs(self.bearing - target_angle) > math.pi:
-                if self.bearing - target_angle < 0:
-                    self.move("right", 250)
-                elif self.bearing - target_angle > 0:
-                    self.move("left", 250)   
+            # if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
+            #     self.move("forward", 250)
+            # elif abs(self.bearing - target_angle) < math.pi:
+            #     if self.bearing - target_angle < 0:
+            #         self.move("left", 250)
+            #     elif self.bearing - target_angle > 0:
+            #         self.move("right", 250)   
+            # elif abs(self.bearing - target_angle) > math.pi:
+            #     if self.bearing - target_angle < 0:
+            #         self.move("right", 250)
+            #     elif self.bearing - target_angle > 0:
+            #         self.move("left", 250)   
 
     def determinePos(self, distance, angle):
         theta = self.bearing + angle
