@@ -85,7 +85,7 @@ class Rover():
                     self.move("left", speed)
 
             else:
-                self.move("right", speed)
+                self.move("right", 200)
                 return
         elif Rock_demo:
             if rocksRB is not None:
