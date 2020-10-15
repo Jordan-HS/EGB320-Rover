@@ -36,6 +36,10 @@ class Rover():
         if samplesRB is not None:
             sample = samplesRB[0]
             accuracy = 10
+
+            if sample[1] < 0.12:
+                self.move("stop")
+
             if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
                 self.move("forward", 200)
             elif sample[1] < math.radians(-accuracy):
