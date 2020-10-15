@@ -29,7 +29,7 @@ class Rover:
 
 rover = Rover()
 motorControl.sendCommand("clear")
-start = time.time()
+# start = time.time()
 try:
     while True:
         rover.move("forward", 250)
@@ -45,9 +45,9 @@ try:
         rover.x, rover.y, rover.bearing = motorControl.updatePosition(rover)
         # time.sleep(.5)
 
-        # print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
-        print("loop time: {}".format(time.time()-start))
-        start = time.time()
+        print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
+        # print("loop time: {}".format(time.time()-start))
+        # start = time.time()
 except KeyboardInterrupt:
     print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
     # clear()
