@@ -21,9 +21,9 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = True
+Sample_demo = False
 
-Rock_demo = False
+Rock_demo = True
 
 class Rover():
     def __init__(self):
@@ -118,7 +118,8 @@ class Rover():
                     self.move("right", speed)
                 elif rock[1] > math.radians(accuracy):
                     self.move("left", speed)
-        
+            else:
+                self.move("right", 200)
             return
 
 def splitObservation(observation):
@@ -162,7 +163,7 @@ try:
 
         if Sample_demo and samplesRB is not None:
             print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], math.degrees(samplesRB[0][1]), rover.at_target))
-        elif Rock_demo:
+        elif Rock_demo and rocksRB is not None:
             print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], math.degrees(rocksRB[0][1]), rover.at_target))
         # clear()
 
