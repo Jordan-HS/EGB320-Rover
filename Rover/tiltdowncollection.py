@@ -22,4 +22,4 @@ servo_centre = round(CENTREus/INCREus)
 
 def down():
     pwm.set_pwm(11, 0, int(servo_centre))
-    time.sleep(1)
+    # time.sleep(1)

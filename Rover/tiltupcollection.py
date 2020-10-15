@@ -21,4 +21,4 @@ servo_centre = round(CENTREus/INCREus)
 
 def up():
     pwm.set_pwm(11, 0, int(servo_min))
-    time.sleep(1)
+    # time.sleep(1)
