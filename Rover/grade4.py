@@ -90,7 +90,7 @@ try:
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
-        print("Range: {}   Bearing: {}".format(samplesRB[0][0], samplesRB[0][1]))
+        print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], samplesRB[0][1], rover.at_sample))
         # clear()
 
         # Update rover global positio
