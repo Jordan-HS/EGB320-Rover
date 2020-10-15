@@ -12,6 +12,8 @@ import sys
 import cv2
 clear = lambda: os.system('clear')
 
+display = False
+
 class Rover():
     def __init__(self):
         self.x = 0
@@ -106,8 +108,9 @@ try:
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        cv2.imshow("View", img)
-        cv2.waitKey(0)
+        if display:
+            cv2.imshow("View", img)
+            cv2.waitKey(0)
 
 except KeyboardInterrupt:
     motorControl.closePins()
