@@ -94,7 +94,7 @@ try:
     rover.updateCurrentPos()
     time.sleep(2)
     while True:
-        observation,img = current_observation()
+        observation, img = current_observation()
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
@@ -106,7 +106,7 @@ try:
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        cv2.imshow("View", img)
+        cv2.imshow("View", [0 0])
 
 except KeyboardInterrupt:
     motorControl.closePins()
