@@ -88,13 +88,14 @@ class Rover:
         ### Overwrite function to test specific things ###
         overwrite = True
         if overwrite:
+            self.current_action = "Overwrite testing"
             if samplesRB is not None:
                 sample = samplesRB[0]
                 if math.radians(-5) < sample[1] < math.radians(5):
                     self.move("forward", 200)
-                elif sample[1] < -5:
+                elif sample[1] < math.radians(-5):
                     self.move("right", 200)
-                elif sample[1] > -5:
+                elif sample[1] > math.radians(5):
                     self.move("left", 200)
                 
             return
