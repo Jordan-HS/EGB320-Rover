@@ -76,9 +76,9 @@ class Rover():
 
                 if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
                     self.move("forward", speed)
-                elif sample[1] < math.radians(-accuracy):
+                elif rock[1] < math.radians(-accuracy):
                     self.move("right", speed)
-                elif sample[1] > math.radians(accuracy):
+                elif rock[1] > math.radians(accuracy):
                     self.move("left", speed)
 
                 
