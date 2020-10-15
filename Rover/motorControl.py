@@ -118,6 +118,17 @@ def sendCommand(command):
         ser.write(str(3).encode('utf-8'))
     elif command == "stop":
         ser.write(str(4).encode('utf-8'))
+
+def closePins():
+    M1_back.close()
+    M1_fwd.close()
+    M1_PWM.close()
+
+    M2_PWM.close()
+    M2_fwd.close()
+    M2_back.close()
+
+    STBY.close()
 # send_state = False
 # start = time.time()
 # ser.write(str(0).encode('utf-8'))

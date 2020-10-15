@@ -468,6 +468,6 @@ try:
 except KeyboardInterrupt:
     # attempt to stop simulator so it restarts and don't have to manually press the Stop button in VREP 
     # lunarBotSim.StopSimulator()
-    GPIO.cleanup()
+    motorControl.closePins()
     print("done")
 
