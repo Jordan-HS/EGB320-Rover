@@ -43,7 +43,7 @@ class Rover():
             else:
                 speed = 100
 
-            if sample[0] < 0.115 or self.at_sample:
+            if sample[0] < 0.114 or self.at_sample:
                 self.move("forward", 0)
                 self.at_sample = True
                 return
