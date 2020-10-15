@@ -106,7 +106,7 @@ try:
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
-        cv2.imshow("View", [0 0])
+        cv2.imshow("View", [0, 0])
 
 except KeyboardInterrupt:
     motorControl.closePins()
