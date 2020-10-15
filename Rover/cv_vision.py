@@ -326,7 +326,7 @@ def current_observation():
     rawCapture.truncate(0)
     # Crop image
     image = crop_image(image)
-
+    cv2.imshow('frame', image)
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
 
