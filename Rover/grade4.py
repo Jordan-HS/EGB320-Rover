@@ -9,6 +9,7 @@ from cv_vision import current_observation
 import RPi.GPIO as GPIO
 import os
 import sys
+import cv2
 clear = lambda: os.system('clear')
 
 class Rover():
@@ -93,7 +94,7 @@ try:
     rover.updateCurrentPos()
     time.sleep(2)
     while True:
-        observation = current_observation()
+        observation,img = current_observation()
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
@@ -104,6 +105,8 @@ try:
         rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+
+        cv2.imshow("View", img)
 
 except KeyboardInterrupt:
     motorControl.closePins()
