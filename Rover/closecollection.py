@@ -19,6 +19,6 @@ servo_min = round(MINus/INCREus)  # Min pulse length out of 4096
 servo_max = round(MAXus/INCREus)  # Max pulse length out of 4096
 servo_centre = round(CENTREus/INCREus)
 
-while True:
+def close():
     pwm.set_pwm(10, 0, int(servo_max))
     time.sleep(1)

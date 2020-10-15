@@ -55,14 +55,8 @@ class Rover():
                 accuracy = 3
 
             if self.at_sample:    
-                opencollection()
-                time.sleep(1)
-                tiltdowncollection()
-                time.sleep(1)
-                closecollection()
-                time.sleep(1)
-                holdSample()
-                
+                closecollection.close()
+
             if sample[0] < 0.113 or self.at_sample:
                 self.move("forward", 0)
                 self.at_sample = True
