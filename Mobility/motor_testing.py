@@ -26,13 +26,13 @@ time.sleep(2) # Wait for serial to be initialised
 def move(movement, magnitude=None):
     if movement == "forward":
         # Motor 1
-        M1_back.on() 
+        M1_back.off() 
         M1_fwd.off()
         M1_PWM.value = magnitude*m1_motor_bias/1000
 
         # Motor 2
         M2_back.off()
-        M2_fwd.off()
+        M2_fwd.on()
         M2_PWM.value = magnitude*m2_motor_bias/1000
     elif movement == "left":
         # Motor 1
