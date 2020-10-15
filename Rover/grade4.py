@@ -23,7 +23,9 @@ display = False
 
 Sample_demo = False
 
-Rock_demo = True
+Rock_demo = False
+
+obstacle_avoidance = True
 
 class Rover():
     def __init__(self):
@@ -95,17 +97,7 @@ class Rover():
                     accuracy = 10
                 else:
                     speed = 120
-                    accuracy = 3
-
-                # if self.at_sample:    
-                #     closecollection.close()
-                #     time.sleep(1)
-                #     holdSample.hold()
-                # else:
-                #     opencollection.open()
-                #     return
-
-                
+                    accuracy = 3                
 
                 if rock[0] < 0.18 or self.at_target:
                     self.move("forward", 0)
@@ -121,6 +113,43 @@ class Rover():
             else:
                 self.move("right", 200)
             return
+
+        elif obstacle_avoidance:
+            if rocksRB is not None:
+                rock = rocksRB[0]
+
+                rock_x, rock_y = self.determinePos(rock[0], rock[1])
+
+                U = potentialField.getForce([self.x, self.y], [0.5, 0], [[rock_x, rock_y]])
+            else:
+                U = potentialField.getForce([self.x, self.y], [0.5, 0], None)
+            target_angle = math.atan2(U[1], U[0])
+            # target_angle, target_mag = getForce(self)
+            accuracy = 5
+
+            if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
+                self.move("forward", 250)
+            elif abs(self.bearing - target_angle) < math.pi:
+                if self.bearing - target_angle < 0:
+                    self.move("left", 250)
+                elif self.bearing - target_angle > 0:
+                    self.move("right", 250)   
+            elif abs(self.bearing - target_angle) > math.pi:
+                if self.bearing - target_angle < 0:
+                    self.move("right", 250)
+                elif self.bearing - target_angle > 0:
+                    self.move("left", 250)   
+
+    def determinePos(self, distance, angle):
+        theta = self.bearing + angle
+
+        x_dist = distance * math.cos(theta)
+        y_dist = distance * math.sin(theta)
+
+        x = round(self.x + x_dist, 2)
+        y = round(self.y + y_dist, 2)
+
+        return x, y
 
 def splitObservation(observation):
     samplesRB = []
