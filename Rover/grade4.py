@@ -7,6 +7,9 @@ import motorControl
 import math
 from cv_vision import current_observation
 import RPi.GPIO as GPIO
+import os
+import sys
+clear = lambda: os.system('clear')
 
 class Rover():
     def __init__(self):
@@ -32,13 +35,15 @@ class Rover():
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if samplesRB is not None:
             sample = samplesRB[0]
-            accuracy = 5
+            accuracy = 10
             if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
                 self.move("forward", 200)
             elif sample[1] < math.radians(-accuracy):
                 self.move("right", 200)
             elif sample[1] > math.radians(accuracy):
                 self.move("left", 200)
+
+            
         return
 
 def splitObservation(observation):
@@ -77,6 +82,8 @@ try:
         observation = current_observation()
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
+
+        print("Range: {}   Bearing: {}".format(samplesRB[0][0], samplesRB[0][1]))
 
         # Update rover global positio
         rover.updateCurrentPos()
