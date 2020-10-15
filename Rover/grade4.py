@@ -58,9 +58,11 @@ class Rover():
                 closecollection.close()
                 time.sleep(1)
                 holdSample.hold()
+            else:
+                opencollection.open()
                 return
 
-            opencollection.open()
+            
 
             if sample[0] < 0.113 or self.at_sample:
                 self.move("forward", 0)
