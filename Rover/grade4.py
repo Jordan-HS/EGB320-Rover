@@ -10,6 +10,13 @@ import RPi.GPIO as GPIO
 import os
 import sys
 import cv2
+import collectionControl
+import closecollection
+import opencollection
+import tiltdowncollection
+import tiltupcollection
+import holdSample
+
 clear = lambda: os.system('clear')
 
 display = False
@@ -47,6 +54,15 @@ class Rover():
                 speed = 120
                 accuracy = 3
 
+            if self.at_sample:    
+                opencollection()
+                time.sleep(1)
+                tiltdowncollection()
+                time.sleep(1)
+                closecollection()
+                time.sleep(1)
+                holdSample()
+                
             if sample[0] < 0.113 or self.at_sample:
                 self.move("forward", 0)
                 self.at_sample = True
