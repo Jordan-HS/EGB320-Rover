@@ -135,7 +135,7 @@ class Rover():
                 self.move("forward", 150)
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", 200)
+                    self.move("left", 250)
                 elif self.bearing - target_angle > 0:
                     self.move("right", 200)   
             elif abs(self.bearing - target_angle) > math.pi:
