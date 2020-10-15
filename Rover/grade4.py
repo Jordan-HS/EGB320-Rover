@@ -129,7 +129,7 @@ class Rover():
             # target_angle, target_mag = getForce(self)
             accuracy = 5
 
-            print("target angle: {}   current angle: {}".format(target_angle, self.bearing))
+            print("target angle: {:.2f}   current angle: {:.2f}   x: {}  y: {}".format(target_angle, self.bearing, self.x, self.y))
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
                 self.move("forward", 150)
