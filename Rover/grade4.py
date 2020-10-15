@@ -36,6 +36,7 @@ class Rover():
         self.current_movement = ""
         self.last_movement = ""
         self.at_target = False
+        self.done = False
 
     def updateCurrentPos(self):
         motorControl.sendCommand(self.current_movement)
@@ -65,6 +66,7 @@ class Rover():
                     closecollection.close()
                     time.sleep(1)
                     holdSample.hold()
+                    self.done = True
                 else:
                     opencollection.open()
                     holdSample.hold()
@@ -151,7 +153,7 @@ try:
     rover.current_movement = "stop"
     rover.updateCurrentPos()
     time.sleep(2)
-    while True:
+    while not rover.done:
         observation, img = current_observation()
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
