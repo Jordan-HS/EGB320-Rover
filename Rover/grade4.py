@@ -21,6 +21,7 @@ class Rover():
         self.ref_bearing = 0
         self.current_movement = ""
         self.last_movement = ""
+        self.at_sample = False
 
     def updateCurrentPos(self):
         motorControl.sendCommand(self.current_movement)
@@ -37,8 +38,9 @@ class Rover():
             sample = samplesRB[0]
             accuracy = 10
 
-            if sample[0] < 0.115:
+            if sample[0] < 0.115 or self.at_sample:
                 self.move("forward", 0)
+                self.at_sample = True
                 return
 
             if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
