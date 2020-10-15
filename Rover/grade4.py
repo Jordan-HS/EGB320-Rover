@@ -155,7 +155,11 @@ try:
         
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
-        print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], samplesRB[0][1], rover.at_sample))
+
+        if Sample_demo:
+            print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], samplesRB[0][1], rover.at_target))
+        elif Rock_demo:
+            print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], rocksRB[0][1], rover.at_target))
         # clear()
 
         # Update rover global positio
