@@ -326,13 +326,14 @@ def current_observation():
     rawCapture.truncate(0)
     # Crop image
     image = crop_image(image)
-    cv2.imshow('frame', image)
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
 
+    # Determine distance, angle ID and type
     obstacle_array = detect_obs(hsv_masks)
 
+    # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
-    # Determine distance, angle ID and type
+
     return obstacle_array, return_im
 
