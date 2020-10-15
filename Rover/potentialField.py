@@ -1,5 +1,5 @@
 import math
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from numpy import arange
 
 def dist(vec1, vec2):
@@ -85,18 +85,18 @@ def getForce(currentPos, goal, obstacles, avoidLander=True):
 
 
 
-def show(goal, obstacles, avoidLander=True):
-    points = 100
-    ax = plt.axes()
+# def show(goal, obstacles, avoidLander=True):
+#     points = 100
+#     ax = plt.axes()
 
-    for x in arange(-1,1,2/points):
-        for y in arange(-1,1,2/points):
-            U = getForce([x, y], goal, obstacles)
+#     for x in arange(-1,1,2/points):
+#         for y in arange(-1,1,2/points):
+#             U = getForce([x, y], goal, obstacles)
 
-            if -1 < U[0]+x < 1 and -1 < U[1]+y < 1:
-                plt.arrow(x*100, y*100, U[0]*10, U[1]*10, head_width=1)
+#             if -1 < U[0]+x < 1 and -1 < U[1]+y < 1:
+#                 plt.arrow(x*100, y*100, U[0]*10, U[1]*10, head_width=1)
 
-    plt.show()
+#     plt.show()
 
 # goal = [-0.75, -0.75]
 # obstacles = [[-0.6, -0.6]]
