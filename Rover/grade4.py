@@ -21,6 +21,10 @@ clear = lambda: os.system('clear')
 
 display = False
 
+Sample_demo = False
+
+Rock_demo = True
+
 class Rover():
     def __init__(self):
         self.x = 0
@@ -31,7 +35,7 @@ class Rover():
         self.ref_bearing = 0
         self.current_movement = ""
         self.last_movement = ""
-        self.at_sample = False
+        self.at_target = False
 
     def updateCurrentPos(self):
         motorControl.sendCommand(self.current_movement)
@@ -44,40 +48,74 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
-        if samplesRB is not None:
-            sample = samplesRB[0]
-            
-            if sample[0] > 0.15:
-                speed = 200
-                accuracy = 10
-            else:
-                speed = 120
-                accuracy = 3
+        if Sample_demo:
+            if samplesRB is not None:
+                sample = samplesRB[0]
+                
+                if sample[0] > 0.15:
+                    speed = 200
+                    accuracy = 10
+                else:
+                    speed = 120
+                    accuracy = 3
 
-            if self.at_sample:    
-                closecollection.close()
-                time.sleep(1)
-                holdSample.hold()
-            else:
-                opencollection.open()
-                return
+                if self.at_target:    
+                    closecollection.close()
+                    time.sleep(1)
+                    holdSample.hold()
+                else:
+                    opencollection.open()
+                    return
 
-            
+                
 
-            if sample[0] < 0.113 or self.at_sample:
-                self.move("forward", 0)
-                self.at_sample = True
-                return
+                if sample[0] < 0.113 or self.at_target:
+                    self.move("forward", 0)
+                    self.at_target = True
+                    return
 
-            if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
-                self.move("forward", speed)
-            elif sample[1] < math.radians(-accuracy):
-                self.move("right", speed)
-            elif sample[1] > math.radians(accuracy):
-                self.move("left", speed)
+                if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
+                    self.move("forward", speed)
+                elif sample[1] < math.radians(-accuracy):
+                    self.move("right", speed)
+                elif sample[1] > math.radians(accuracy):
+                    self.move("left", speed)
 
-            
-        return
+                
+            return
+        elif Rock_demo:
+            if rocksRB is not None:
+                rock = rocksRB[0]
+                if rock[0] > 0.15:
+                    speed = 200
+                    accuracy = 10
+                else:
+                    speed = 120
+                    accuracy = 3
+
+                # if self.at_sample:    
+                #     closecollection.close()
+                #     time.sleep(1)
+                #     holdSample.hold()
+                # else:
+                #     opencollection.open()
+                #     return
+
+                
+
+                if rock[0] < 0.2 or self.at_target:
+                    self.move("forward", 0)
+                    self.at_target = True
+                    return
+
+                if math.radians(-accuracy) < sample[1] < math.radians(accuracy):
+                    self.move("forward", speed)
+                elif sample[1] < math.radians(-accuracy):
+                    self.move("right", speed)
+                elif sample[1] > math.radians(accuracy):
+                    self.move("left", speed)
+        
+            return
 
 def splitObservation(observation):
     samplesRB = []
