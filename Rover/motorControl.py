@@ -92,7 +92,7 @@ def updatePosition(rover):
 
     elif rover.current_movement == "forward":
         wheel_avg = (E1_counter+E2_counter)/2
-        dist = wheel_avg/300 * 2 * math.pi * radius
+        dist = wheel_avg/600 * 2 * math.pi * radius
 
         x = rover.ref_x + dist*math.cos(rover.bearing)
         y = rover.ref_y + dist*math.sin(rover.bearing)
