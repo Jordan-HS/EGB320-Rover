@@ -207,13 +207,13 @@ try:
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
 
-        if Sample_demo and samplesRB is not None:
-            print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], math.degrees(samplesRB[0][1]), rover.at_target))
-        elif Rock_demo and rocksRB is not None:
-            print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], math.degrees(rocksRB[0][1]), rover.at_target))
-        elif obstacle_avoidance:
-            # ob_x, ob_y = rover.determinePos(rocksRB[0][0], rocksRB[0][1])
-            print("x: {}  y:{}  obs at: [{}, {}]".format(rover.x, rover.y, 0, 0))
+        # if Sample_demo and samplesRB is not None:
+        #     print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], math.degrees(samplesRB[0][1]), rover.at_target))
+        # elif Rock_demo and rocksRB is not None:
+        #     print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], math.degrees(rocksRB[0][1]), rover.at_target))
+        # elif obstacle_avoidance:
+        #     # ob_x, ob_y = rover.determinePos(rocksRB[0][0], rocksRB[0][1])
+        #     print("x: {}  y:{}  obs at: [{}, {}]".format(rover.x, rover.y, 0, 0))
         # clear()
 
         # Update rover global positio
