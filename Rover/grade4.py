@@ -183,13 +183,13 @@ def splitObservation(observation):
         landerRB = None
     return samplesRB, landerRB, obstaclesRB, rocksRB
 
+print("here")
 try:
     rover = Rover()
     observation = current_observation()
     rover.current_movement = "stop"
     rover.updateCurrentPos()
     time.sleep(2)
-    print("here")
     while not rover.done:
         observation, img = current_observation()
         

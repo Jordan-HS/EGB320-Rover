@@ -21,4 +21,4 @@ servo_centre = round(CENTREus/INCREus)
 
 while True:
     pwm.set_pwm(3, 0, int(servo_centre)) # was pin 11 now 3
-    time.sleep(1)
+    # time.sleep(1)
