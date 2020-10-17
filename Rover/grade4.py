@@ -97,7 +97,7 @@ class Rover():
                 rock = rocksRB[0]
                 if rock[0] > 0.25:
                     speed = 200
-                    accuracy = 10
+                    accuracy = 10 
                 else:
                     speed = 120
                     accuracy = 3        
