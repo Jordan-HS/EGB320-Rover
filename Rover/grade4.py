@@ -109,6 +109,7 @@ class Rover():
                     self.done = True
                 else:
                     closecollection.close()
+                    tiltdowncollection.down()
                     holdSample.hold()        
 
                 if rock[0] < 0.18 or self.at_target:
