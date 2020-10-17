@@ -15,7 +15,7 @@ STBY.on()
 
 M2_back = gpiozero.OutputDevice(25) # On/Off output
 M2_fwd = gpiozero.OutputDevice(8) #On/Off output
-M2_PWM = ghhpiozero.PWMOutputDevice(7) # set up PWM pin
+M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
 ## Parameters to adjust
 inner_turn_ratio = 1.5
