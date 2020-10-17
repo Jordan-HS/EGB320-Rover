@@ -21,9 +21,9 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = True
+Sample_demo = False
 
-Rock_demo = False
+Rock_demo = True
 
 obstacle_avoidance = False
 
