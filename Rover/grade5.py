@@ -100,7 +100,7 @@ class Rover():
                 self.move("forward", speed)
             elif lander[1] < math.radians(-accuracy):
                 self.move("right", speed)
-            elif lasnder[1] > math.radians(accuracy):
+            elif lander[1] > math.radians(accuracy):
                 self.move("left", speed)
 
 
