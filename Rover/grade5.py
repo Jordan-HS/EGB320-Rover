@@ -51,6 +51,7 @@ class Rover():
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if self.on_lander:
+            holdSample.hold()
             self.move("forward", 200)
 
             if time.time() - self.start_time > 4:
