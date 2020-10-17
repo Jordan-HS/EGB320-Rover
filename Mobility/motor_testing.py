@@ -15,7 +15,7 @@ STBY.on()
 
 M2_back = gpiozero.OutputDevice(25) # On/Off output
 M2_fwd = gpiozero.OutputDevice(8) #On/Off output
-M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
+M2_PWM = ghhpiozero.PWMOutputDevice(7) # set up PWM pin
 
 ## Parameters to adjust
 inner_turn_ratio = 1.5
@@ -27,7 +27,7 @@ def move(movement, magnitude=None):
     if movement == "forward":
         # Motor 1
         M1_back.off() 
-        M1_fwd.off()
+        M1_fwd.on()
         M1_PWM.value = magnitude*m1_motor_bias/1000
 
         # Motor 2
