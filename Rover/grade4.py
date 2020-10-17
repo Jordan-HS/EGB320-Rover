@@ -188,8 +188,8 @@ try:
     rover = Rover()
     observation = current_observation()
     rover.current_movement = "stop"
-    print("here")
     rover.updateCurrentPos()
+    print("here")
     time.sleep(2)
     while not rover.done:
         observation, img = current_observation()
