@@ -11,11 +11,11 @@ M1_back = gpiozero.OutputDevice(18) # On/Off output
 M1_fwd = gpiozero.OutputDevice(23) #On/Off output
 M1_PWM = gpiozero.PWMOutputDevice(24) # set up PWM pin
 
-STBY = gpiozero.OutputDevice(1)  # Standby pin
+STBY = gpiozero.OutputDevice(8)  # Standby pin
 STBY.on()
 
 M2_back = gpiozero.OutputDevice(25) # On/Off output
-M2_fwd = gpiozero.OutputDevice(8) #On/Off output
+M2_fwd = gpiozero.OutputDevice(12) #On/Off output
 M2_PWM = gpiozero.PWMOutputDevice(7) # set up PWM pin
 
 ## Parameters to adjust
