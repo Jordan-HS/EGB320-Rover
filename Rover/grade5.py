@@ -96,6 +96,9 @@ class Rover():
             speed = 200
             accuracy = 10
 
+            closecollection.close()
+            holdSample.hold()
+
             if math.radians(-accuracy) < lander[1] < math.radians(accuracy):
                 self.move("forward", speed)
             elif lander[1] < math.radians(-accuracy):
