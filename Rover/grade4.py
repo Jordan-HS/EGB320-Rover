@@ -57,7 +57,7 @@ class Rover():
             if samplesRB is not None:
                 sample = samplesRB[0]
                 
-                if sample[0] > 0.15:
+                if sample[0] > 0.25:
                     speed = 200
                     accuracy = 10
                 else:
