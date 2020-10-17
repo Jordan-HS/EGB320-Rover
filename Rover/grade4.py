@@ -185,8 +185,8 @@ def splitObservation(observation):
 
 
 try:
-    print("here")
     rover = Rover()
+    print("here")
     observation = current_observation()
     rover.current_movement = "stop"
     rover.updateCurrentPos()
