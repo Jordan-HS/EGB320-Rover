@@ -52,8 +52,9 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
+        print("here")
         if Sample_demo:
-            print("here")
+            
             if samplesRB is not None:
                 sample = samplesRB[0]
                 
