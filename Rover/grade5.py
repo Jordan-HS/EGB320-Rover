@@ -57,7 +57,7 @@ class Rover():
                 self.on_lander = False
                 self.start_time = time.time()
 
-        elif samplesRB is not None and not self.on_lander:
+        elif samplesRB is not None and not self.on_lander and not self.has_ball:
             sample = samplesRB[0]
             
             if sample[0] > 0.25:
@@ -108,7 +108,7 @@ class Rover():
 
 
         else:
-            self.move("right", 200)
+            self.move("right", 250)
             return
          
 
