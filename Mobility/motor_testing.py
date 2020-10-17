@@ -72,4 +72,4 @@ while True:
     # if send_state == False:
     #     ser.write(b"forward\n")
     ser.write(str(1).encode('utf-8'))
-    move("forward", 300)
+    move("right", 200)
