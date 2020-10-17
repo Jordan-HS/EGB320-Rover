@@ -95,7 +95,7 @@ class Rover():
         elif Rock_demo:
             if rocksRB is not None:
                 rock = rocksRB[0]
-                if rock[0] > 0.15:
+                if rock[0] > 0.25:
                     speed = 200
                     accuracy = 10
                 else:
