@@ -9,7 +9,7 @@ pwm = Adafruit_PCA9685.PCA9685()
 
 MAXus = 2400
 MINus = 600
-CENTREus = 800
+value = 1200
 INCREus = 4
 
 pwm.set_pwm_freq(60)
@@ -18,9 +18,9 @@ pwm.set_pwm_freq(60)
 # Configure min and max servo pulse lengths
 servo_min = round(MINus/INCREus)  # Min pulse length out of 4096
 servo_max = round(MAXus/INCREus)  # Max pulse length out of 4096
-servo_centre = round(CENTREus/INCREus)
+servo_centre = round(value/INCREus)
 
 while True:
-    pwm.set_pwm(0, 0, int(servo_max)) # was pin 10 now 0
+    pwm.set_pwm(0, 0, int(servo_centre)) # was pin 10 now 0
     time.sleep(1)
     
