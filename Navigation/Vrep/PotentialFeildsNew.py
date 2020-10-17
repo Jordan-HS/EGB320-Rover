@@ -86,7 +86,7 @@ def getForce(currentPos, goal, obstacles, avoidLander=True):
 
 
 def show(goal, obstacles, avoidLander=True):
-    points = 100
+    points = 50
     ax = plt.axes()
 
     for x in arange(-1,1,2/points):
@@ -98,6 +98,6 @@ def show(goal, obstacles, avoidLander=True):
 
     plt.show()
 
-# goal = [-0.75, -0.75]
-# obstacles = [[-0.6, -0.6]]
-# show(goal, obstacles)
+goal = [-0.75, -0.75]
+obstacles = [[-0.6, -0.6]]
+show(goal, obstacles)
