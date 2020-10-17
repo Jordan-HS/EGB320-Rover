@@ -211,9 +211,9 @@ try:
             print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], math.degrees(samplesRB[0][1]), rover.at_target))
         elif Rock_demo and rocksRB is not None:
             print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], math.degrees(rocksRB[0][1]), rover.at_target))
-        # elif obstacle_avoidance and rocksRB is not None:
-            # ob_x, ob_y = rover.determinePos(rocksRB[0][0], rocksRB[0][1])
-            # print("x: {}  y:{}  obs at: [{}, {}]".format(rover.x, rover.y, ob_x, ob_y))
+        elif obstacle_avoidance and rocksRB is not None:
+            ob_x, ob_y = rover.determinePos(rocksRB[0][0], rocksRB[0][1])
+            print("x: {}  y:{}  obs at: [{}, {}]".format(rover.x, rover.y, ob_x, ob_y))
         # clear()
 
         # Update rover global positio
