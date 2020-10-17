@@ -16,6 +16,7 @@ import opencollection
 import tiltdowncollection
 import tiltupcollection
 import holdSample
+import liftrock
 
 clear = lambda: os.system('clear')
 
@@ -99,7 +100,16 @@ class Rover():
                     accuracy = 10
                 else:
                     speed = 120
-                    accuracy = 3                
+                    accuracy = 3        
+
+                if self.at_target:
+                    tiltdowncollection.down()
+                    time.sleep(1)    
+                    liftrock.lift()
+                    self.done = True
+                else:
+                    closecollection.close()
+                    holdSample.hold()        
 
                 if rock[0] < 0.18 or self.at_target:
                     self.move("forward", 0)
