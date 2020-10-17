@@ -20,5 +20,5 @@ servo_max = round(MAXus/INCREus)  # Max pulse length out of 4096
 servo_centre = round(CENTREus/INCREus)
 
 while True:
-    pwm.set_pwm(1, 0, int(servo_centre)) # was pin 11 now 1
+    pwm.set_pwm(3, 0, int(servo_centre)) # was pin 11 now 3
     time.sleep(1)
