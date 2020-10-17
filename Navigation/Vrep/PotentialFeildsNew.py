@@ -32,7 +32,7 @@ def getForce(currentPos, goal, obstacles, avoidLander=True):
         
 
     ## Calculate repulsive forces ##
-    qstar = 0.5
+    qstar = 0.35
     rep_control = 0.01
     repulsivesForces = []
     if obstacles is not None:
@@ -98,6 +98,6 @@ def show(goal, obstacles, avoidLander=True):
 
     plt.show()
 
-goal = [-0.75, -0.75]
-obstacles = [[-0.6, -0.6]]
+goal = [0.75, 0]
+obstacles = [[0.2,0]]
 show(goal, obstacles)
