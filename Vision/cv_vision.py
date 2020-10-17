@@ -307,13 +307,13 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     # Crop image
     image = crop_image(image)
-    cv2.imshow("Original Frame", image)
+    # cv2.imshow("Original Frame", image)
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     # Output mask for checking
-    for indx,mask in enumerate(hsv_masks):
-        cv2.imshow(OBS_type[indx], mask)
+    # for indx,mask in enumerate(hsv_masks):
+        # cv2.imshow(OBS_type[indx], mask)
 
     # Determine distance, angle ID and type
     new_obs = detect_obs(hsv_masks)
@@ -345,7 +345,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             # Draw area of obstacle from camera
             #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-        cv2.imshow("Frame", obs_image)
+        # cv2.imshow("Frame", obs_image)
         image_cnt = 0
 
     key = cv2.waitKey(1) & 0xFF
