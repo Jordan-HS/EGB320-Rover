@@ -52,7 +52,6 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
-        print("here")
         if Sample_demo:
             
             if samplesRB is not None:
@@ -190,6 +189,7 @@ try:
     rover.current_movement = "stop"
     rover.updateCurrentPos()
     time.sleep(2)
+    print("here")
     while not rover.done:
         observation, img = current_observation()
         
