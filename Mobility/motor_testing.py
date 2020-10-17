@@ -65,10 +65,8 @@ def move(movement, magnitude=None):
 send_state = False
 
 ser.write(str(0).encode('utf-8'))
-
-time.sleep(2)
 start = time.time()
-while time.time()-start < 2:
+while True:
     # if ser.in_waiting > 0:
     line = ser.readline()
     print(line)
