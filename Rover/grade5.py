@@ -34,6 +34,7 @@ class Rover():
         self.last_movement = ""
         self.at_target = False
         self.done = False
+        self.has_ball = False
         self.memory = None
         self.on_lander = True
         self.start_time = 0
@@ -72,7 +73,7 @@ class Rover():
                 closecollection.close()
                 time.sleep(1)
                 holdSample.hold()
-                self.done = True
+                self.has_ball = True
             else:
                 opencollection.open()
                 holdSample.hold()
@@ -89,6 +90,19 @@ class Rover():
                 self.move("right", speed)
             elif sample[1] > math.radians(accuracy):
                 self.move("left", speed)
+
+        elif self.has_ball and landerRB is not None:
+            lander = landerRB[0]
+            speed = 200
+            accuracy = 10
+
+            if math.radians(-accuracy) < lander[1] < math.radians(accuracy):
+                self.move("forward", speed)
+            elif lander[1] < math.radians(-accuracy):
+                self.move("right", speed)
+            elif lasnder[1] > math.radians(accuracy):
+                self.move("left", speed)
+
 
         else:
             self.move("right", 200)
