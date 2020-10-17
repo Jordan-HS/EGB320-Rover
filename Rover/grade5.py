@@ -63,7 +63,7 @@ class Rover():
                 speed = 200
                 accuracy = 10
             else:
-                speed = 120
+                speed = 200
                 accuracy = 3
 
             if self.at_target:
