@@ -9,7 +9,7 @@ pwm = Adafruit_PCA9685.PCA9685()
 
 MAXus = 2400
 MINus = 600
-value = 1200
+value = 1000
 INCREus = 4
 
 pwm.set_pwm_freq(60)
