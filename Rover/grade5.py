@@ -52,7 +52,7 @@ class Rover():
         if self.on_lander:
             self.move("forward", 200)
 
-            if time.time() - self.start_time > 3:
+            if time.time() - self.start_time > 4:
                 self.on_lander = False
                 self.start_time = time.time()
 
