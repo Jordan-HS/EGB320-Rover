@@ -97,8 +97,9 @@ class Rover():
             speed = 200
             accuracy = 10
 
-            if lander[0] < 0.15:
+            if lander[0] < 0.25:
                 opencollection.open()
+                self.done = True
             else:
                 closecollection.close()
                 holdSample.hold()
