@@ -53,6 +53,7 @@ class Rover():
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if Sample_demo:
+            print("here")
             if samplesRB is not None:
                 sample = samplesRB[0]
                 
@@ -194,7 +195,7 @@ try:
         samplesRB, landerRB, obstaclesRB, rocksRB = splitObservation(observation)
 
 
-        if Sample_demo:
+        if Sample_demo and samplesRB is not None:
             print("Range: {}   Bearing: {} {}".format(samplesRB[0][0], math.degrees(samplesRB[0][1]), rover.at_target))
         elif Rock_demo and rocksRB is not None:
             print("Range: {}   Bearing: {} {}".format(rocksRB[0][0], math.degrees(rocksRB[0][1]), rover.at_target))
