@@ -54,6 +54,54 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
+        if obstaclesRB is not None:
+            for obstacle in obstaclesRB:
+                if obstacle[0] < 0.5:
+                    opencollection.open()
+                    tiltupcollection.up()
+                    angle_scale = 1
+                    if obstaclesRB is not None:
+                        obstacle = obstaclesRB[0]
+
+                        if obstacle[0] < 0.2:
+                            angle_scale = 2.5 
+                        obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
+                        # print("seem")
+
+                        U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
+                        # print(obs)
+                        self.memory = [obs_x, obs_y]
+                        self.start_timer = time.time()
+                    elif self.memory is not None and time.time() - self.start_timer < 1:
+                        obs_x, obs_y = self.determinePos(self.memory[0], self.memory[1])
+                        # print("Going off memory")
+                        U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
+
+                    else:
+                        U = [0.1, 0]
+                        obs_x, obs_y = self.determinePos(U[0], U[1])
+                    target_angle = motorControl.WrapToPi(math.atan2(U[1], U[0]) * angle_scale)
+                    # target_angle, target_mag = getForce(self)
+                    accuracy = 5
+
+                    # print("target angle: {:.2f}   current angle: {:.2f}   x: {:.2f}  y: {:.2f}".format(target_angle, self.bearing, self.x, self.y))
+                    
+
+                    if abs(math.atan2(obs_y, obs_x)) > 90:
+                        self.move("back", "normal")
+                    elif math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
+                        self.move("forward", "normal")
+                    elif abs(self.bearing - target_angle) < math.pi:
+                        if self.bearing - target_angle < 0:
+                            self.move("left", "normal")
+                        elif self.bearing - target_angle > 0:
+                            self.move("right", "normal")   
+                    elif abs(self.bearing - target_angle) > math.pi:
+                        if self.bearing - target_angle < 0:
+                            self.move("right", "normal")
+                        elif self.bearing - target_angle > 0:
+                            self.move("left", "normal")   
+
         if self.on_lander:
             opencollection.open()
             tiltupcollection.up()
