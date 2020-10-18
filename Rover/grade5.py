@@ -137,7 +137,7 @@ class Rover():
                 closecollection.close()
                 tiltdowncollection.down()      
 
-            if rock[0] < 0.135 or self.at_target:
+            if rock[0] < 0.25 or self.at_target:
                 self.move("stop", "stop")
                 self.at_target = True
                 return
