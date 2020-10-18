@@ -107,6 +107,7 @@ class Rover():
                 opencollection.open()
                 self.at_target = False
                 self.sample_collected = True
+                time.sleep(2)
             else:
                 closecollection.close()
                 holdSample.hold()
@@ -120,6 +121,8 @@ class Rover():
 
         elif self.sample_collected and rocksRB is not None:
             # Look for a rock to flip
+            holdSample.hold()
+            opencollection.open()
             rock = rocksRB[0]
             if rock[0] > 0.25:
                 speed = "normal"
@@ -137,7 +140,7 @@ class Rover():
                 closecollection.close()
                 tiltdowncollection.down()      
 
-            if rock[0] < 0.25 or self.at_target:
+            if rock[0] < 0.145 or self.at_target:
                 self.move("stop", "stop")
                 self.at_target = True
                 return
