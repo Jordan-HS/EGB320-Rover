@@ -81,6 +81,7 @@ if __name__ == '__main__':
         if np.array_equal(lower_hsv, save_lower_hsv) and np.array_equal(upper_hsv, save_upper_hsv):
             pass
         else:
+            print(cam.camera.exposure_mode)
             print('HSV lower: ', lower_hsv)
             print('HSV upper: ', upper_hsv)
             save_lower_hsv = lower_hsv
