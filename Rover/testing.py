@@ -24,7 +24,7 @@ class Rover:
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
 
-        motorControl.move(movement, magnitude)
+        motorControlNew.move(movement, magnitude)
         self.current_movement = movement
         
 
