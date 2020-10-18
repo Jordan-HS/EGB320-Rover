@@ -19,7 +19,7 @@ try:
     setup()
 
     while True:
-        move("forward", 400)
+        move("forward", 480)
         time.sleep(0.005)
 
 except KeyboardInterrupt:
