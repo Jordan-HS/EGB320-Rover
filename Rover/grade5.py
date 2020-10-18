@@ -202,6 +202,7 @@ class Rover():
             if self.at_target:
                 tiltdowncollection.down()
                 closecollection.close()
+                self.move("forward", "slow")
                 time.sleep(1)    
                 liftrock.lift()
                 self.at_target = False
