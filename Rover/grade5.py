@@ -56,11 +56,11 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
-        if obstaclesRB is not None:
+        if obstaclesRB is not None and not self.at_target:
             for obstacle in obstaclesRB:
                 if obstacle[0] < 0.5:
-                    opencollection.open()
-                    tiltupcollection.up()
+                    # opencollection.open()
+                    # tiltupcollection.up()
                     angle_scale = 1
                     if obstaclesRB is not None:
                         obstacle = obstaclesRB[0]
@@ -214,8 +214,7 @@ class Rover():
                 self.move("stop", "stop")
                 self.at_target = True
                 return
-
-            if math.radians(-accuracy) < rock[1] < math.radians(accuracy):
+            elif math.radians(-accuracy) < rock[1] < math.radians(accuracy):
                 self.move("forward", speed)
             elif rock[1] < math.radians(-accuracy):
                 self.move("right", speed)
