@@ -6,10 +6,10 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-HSV_blue = [[88, 36, 0], [117, 255, 255]]
-HSV_green = [[33, 20, 25], [75, 255, 255]]
-HSV_yellow = [[15, 20, 90], [39, 255, 255]]
-HSV_orange = [[103, 30, 55], [125, 255, 255]]
+HSV_blue = [[76, 92, 44], [113, 255, 255]]
+HSV_green = [[33, 77, 26], [74, 255, 255]]
+HSV_yellow = [[15, 26, 27], [40, 255, 255]]
+HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_orange])
 
 # Set morphology kernel size for image filtering
@@ -38,13 +38,11 @@ camera = PiCamera()
 camera.resolution = (IMG_X, IMG_Y)
 camera.framerate = 8
 # Allow time for the camera to warmup
-time.sleep(0.5)
+time.sleep(2.0)
 camera.video_stabilization = False
-camera.exposure_compensation = 0
 camera.exposure_mode = 'off'
 camera.awb_mode = 'off'
-camera.awb_mode = 'horizon'
-camera.exposure_mode = 'sports'
+camera.awb_gains = 2.0
 
 #camera.awb_gains = 3
 rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
