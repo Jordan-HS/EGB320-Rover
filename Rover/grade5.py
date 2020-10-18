@@ -192,7 +192,7 @@ class Rover():
             tiltdowncollection.down()
             closecollection.close()
 
-            if rock[0] > 0.25:
+            if rock[0] > 0.35:
                 speed = "normal"
                 accuracy = 10 
             else:
