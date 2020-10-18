@@ -19,8 +19,8 @@ def io_init():
   wiringpi.pwmSetRange(MAX_SPEED)
   wiringpi.pwmSetClock(2)
 
-  wiringpi.pinMode(5, wiringpi.GPIO.OUTPUT)
-  wiringpi.pinMode(6, wiringpi.GPIO.OUTPUT)
+  wiringpi.pinMode(23, wiringpi.GPIO.OUTPUT)
+  wiringpi.pinMode(24, wiringpi.GPIO.OUTPUT)
 
   io_initialized = True
 
@@ -49,8 +49,8 @@ class Motors(object):
     MAX_SPEED = _max_speed
 
     def __init__(self):
-        self.motor1 = Motor(12, 5)
-        self.motor2 = Motor(13, 6)
+        self.motor1 = Motor(12, 23)
+        self.motor2 = Motor(13, 24)
 
     def setSpeeds(self, m1_speed, m2_speed):
         self.motor1.setSpeed(m1_speed)
