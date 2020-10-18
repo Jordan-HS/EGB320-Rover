@@ -205,6 +205,7 @@ class Rover():
                 self.move("forward", "slow")
                 time.sleep(1)    
                 liftrock.lift()
+                time.sleep(1)
                 self.at_target = False
                 self.has_ball = False
                 self.on_lander = False 
