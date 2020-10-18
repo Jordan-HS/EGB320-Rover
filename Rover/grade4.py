@@ -113,7 +113,7 @@ class Rover():
                     closecollection.close()
                     tiltdowncollection.down()      
 
-                if rock[0] < 0.135 or self.at_target:
+                if rock[0] < 0.13 or self.at_target:
                     self.move("forward", 0)
                     self.at_target = True
                     return
@@ -228,5 +228,5 @@ try:
             cv2.waitKey(0)
 
 except KeyboardInterrupt:
-    motorControl.closePins()
+    # motorControl.closePins()
     print("done")
