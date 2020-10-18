@@ -9,14 +9,14 @@ ser.flush()
 #Setup pins
 M1_back = gpiozero.OutputDevice(18) # On/Off output
 M1_fwd = gpiozero.OutputDevice(23) #On/Off output
-M1_PWM = gpiozero.PWMOutputDevice(24, True, 0, 1000) # set up PWM pin
+M1_PWM = gpiozero.PWMOutputDevice(24, True, 0, 2000) # set up PWM pin
 
 STBY = gpiozero.OutputDevice(8)  # Standby pin
 STBY.on()
 
 M2_back = gpiozero.OutputDevice(25) # On/Off output
 M2_fwd = gpiozero.OutputDevice(12) #On/Off output
-M2_PWM = gpiozero.PWMOutputDevice(7, True, 0, 1000) # set up PWM pin
+M2_PWM = gpiozero.PWMOutputDevice(7, True, 0, 2000) # set up PWM pin
 
 ## Parameters to adjust
 inner_turn_ratio = 1
