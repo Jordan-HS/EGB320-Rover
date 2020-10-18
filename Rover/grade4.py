@@ -115,7 +115,7 @@ class Rover():
 
                 print(rock[0])
 
-                if rock[0] < 0.145 or self.at_target:
+                if rock[0] < 0.14 or self.at_target:
                     self.move("forward", "stop")
                     self.at_target = True
                     return
