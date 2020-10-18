@@ -137,8 +137,8 @@ class Rover():
             if obstaclesRB is not None:
                 obstacle = obstaclesRB[0]
 
-                if obstacle[0] < 0.15:
-                    angle_scale = 2    
+                if obstacle[0] < 0.2:
+                    angle_scale = 2.5 
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
                 # print("seem")
 
