@@ -24,9 +24,9 @@ display = False
 
 Sample_demo = False
 
-Rock_demo = True
+Rock_demo = Falses
 
-obstacle_avoidance = False
+obstacle_avoidance = true
 
 class Rover():
     def __init__(self):
@@ -132,15 +132,15 @@ class Rover():
             return
 
         elif obstacle_avoidance:
-            if rocksRB is not None:
-                rock = rocksRB[0]
+            if obstaclesRB is not None:
+                obstacle = obstaclesRB[0]
 
-                rock_x, rock_y = self.determinePos(rock[0], rock[1])
+                obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
 
-                U = potentialField.getForce([self.x, self.y], [0.75, 0], [[rock_x, rock_y]])
-                self.memory = [rock_x, rock_y]
+                U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
+                self.memory = [obs_x, obs_y]
             elif self.memory is not None:
-                U = potentialField.getForce([self.x, self.y], [0.75, 0], [self.memory])
+                U = potentialField.getForce([0, 0], [0.5, 0], [self.memory])
             target_angle = math.atan2(U[1], U[0])
             # target_angle, target_mag = getForce(self)
             accuracy = 5
@@ -148,17 +148,17 @@ class Rover():
             # print("target angle: {:.2f}   current angle: {:.2f}   x: {:.2f}  y: {:.2f}".format(target_angle, self.bearing, self.x, self.y))
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", 150)
+                self.move("forward", "slow")
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("left", 250)
+                    self.move("left", "normal")
                 elif self.bearing - target_angle > 0:
-                    self.move("right", 200)   
+                    self.move("right", "normal")   
             elif abs(self.bearing - target_angle) > math.pi:
                 if self.bearing - target_angle < 0:
-                    self.move("right", 200)
+                    self.move("right", "normal")
                 elif self.bearing - target_angle > 0:
-                    self.move("left", 200)   
+                    self.move("left", "normal")   
 
     def determinePos(self, distance, angle):
         theta = self.bearing + angle
