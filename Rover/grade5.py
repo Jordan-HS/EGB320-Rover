@@ -80,6 +80,7 @@ class Rover():
                     else:
                         U = [0.1, 0]
                         obs_x, obs_y = self.determinePos(U[0], U[1])
+                        self.memory = None
                     target_angle = motorControl.WrapToPi(math.atan2(U[1], U[0]) * angle_scale)
                     # target_angle, target_mag = getForce(self)
                     accuracy = 5
@@ -102,7 +103,7 @@ class Rover():
                         elif self.bearing - target_angle > 0:
                             self.move("left", "normal")   
 
-        elif self.on_lander:
+        if self.on_lander:
             opencollection.open()
             tiltupcollection.up()
             holdSample.hold()
