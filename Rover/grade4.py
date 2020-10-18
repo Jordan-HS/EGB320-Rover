@@ -3,7 +3,7 @@ import potentialField
 import time
 import numpy as np
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
-import motorControlNew
+import motorControl
 import math
 from cv_vision import current_observation
 import RPi.GPIO as GPIO
@@ -24,7 +24,7 @@ display = False
 
 Sample_demo = False
 
-Rock_demo = Falses
+Rock_demo = False
 
 obstacle_avoidance = true
 
@@ -49,7 +49,7 @@ class Rover():
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
 
-        motorControlNew.move(movement, magnitude)
+        motorControl.move(movement, magnitude)
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
