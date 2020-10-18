@@ -50,5 +50,6 @@ try:
         # print("loop time: {}".format(time.time()-start))
         # start = time.time()
 except KeyboardInterrupt:
+    motorControl.close()
     print("x: {:.2f}    y: {:.2f}    bearing:{:.2f}".format(rover.x, rover.y, math.degrees(rover.bearing)))
     # clear()
