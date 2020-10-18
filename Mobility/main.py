@@ -25,7 +25,7 @@ try:
     setup()
 
     while True:
-        move("right", 200)
+        move("right", 300)
         time.sleep(0.005)
 
 except KeyboardInterrupt:
