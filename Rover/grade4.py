@@ -20,13 +20,13 @@ import liftrock
 
 clear = lambda: os.system('clear')
 
-display = True
+display = False
 
-Sample_demo = False
+Sample_demo = True
 
 Rock_demo = False
 
-obstacle_avoidance = True
+obstacle_avoidance = False
 
 class Rover():
     def __init__(self):
