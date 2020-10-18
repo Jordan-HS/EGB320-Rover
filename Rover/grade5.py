@@ -187,10 +187,10 @@ class Rover():
             # Look for a rock to flip
             
             rock = rocksRB[0]
-            if rock[0] < 0.5:
+            if rock[0] < 0.7:
                 tiltdowncollection.down()
                 closecollection.close()
-            elif rock[0] > 0.6:
+            elif rock[0] > 0.8:
                 opencollection.open()
                 tiltupcollection.up()
 
@@ -207,9 +207,8 @@ class Rover():
                 time.sleep(1)    
                 liftrock.lift()
                 self.at_target = False
-            else:
-                opencollection.open()
-                tiltupcollection.up()     
+                self.has_ball = False
+                self.on_lander = False  
 
             if rock[0] < 0.145 or self.at_target:
                 self.move("stop", "stop")
