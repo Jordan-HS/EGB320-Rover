@@ -1,5 +1,5 @@
 import time
-from pololu_drv8835_rpi import motors, MAX_SPEED
+from pololu_drv8835 import motors, MAX_SPEED
 
 def setup():
     motors.setSpeeds(0, 0)
