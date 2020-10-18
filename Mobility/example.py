@@ -1,5 +1,5 @@
 import time
-from pololu_drv8835_rpi import motors, MAX_SPEED
+from pololu_drv8835 import motors, MAX_SPEED
 
 # Set up sequences of motor speeds.
 test_forward_speeds = list(range(0, MAX_SPEED, 1)) + \
