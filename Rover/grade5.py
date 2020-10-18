@@ -189,12 +189,8 @@ class Rover():
             # Look for a rock to flip
             
             rock = rocksRB[0]
-            if rock[0] < 0.4:
-                tiltdowncollection.down()
-                closecollection.close()
-            elif rock[0] > 0.5:
-                opencollection.open()
-                tiltupcollection.up()
+            tiltdowncollection.down()
+            closecollection.close()
 
             if rock[0] > 0.25:
                 speed = "normal"
