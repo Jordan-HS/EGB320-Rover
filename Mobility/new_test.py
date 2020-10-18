@@ -1,41 +1,14 @@
-import RPi.GPIO as io
-io.setmode(io.BCM)
- 
-in1_pin = 24
-in2_pin = 25
- 
-io.setup(in1_pin, io.OUT)
-io.setup(in2_pin, io.OUT)
- 
-def set(property, value):
-    try:
-        f = open("/sys/class/rpi-pwm/pwm0/" + property, 'w')
-        f.write(value)
-        f.close()	
-    except:
-        print("Error writing to: " + property + " value: " + value)
- 
-set("delayed", "0")
-set("mode", "pwm")
-set("frequency", "500")
-set("active", "1")
- 
-def clockwise():
-    io.output(in1_pin, True)    
-    io.output(in2_pin, False)
- 
-def counter_clockwise():
-    io.output(in1_pin, False)
-    io.output(in2_pin, True)
- 
-clockwise()
- 
+import RPi.GPIO as GPIO
+from time import sleep
+
+ledpin = 18				# PWM pin connected to LED
+GPIO.setwarnings(False)			#disable warnings
+GPIO.setmode(GPIO.BOARD)		#set pin numbering system
+GPIO.setup(ledpin,GPIO.OUT)
+pi_pwm = GPIO.PWM(ledpin,1000)		#create PWM instance with frequency
+pi_pwm.start(0)				#start PWM of required Duty Cycle 
 while True:
-    cmd = raw_input("Command, f/r 0..9, E.g. f5 :")
-    direction = cmd[0]
-    if direction == "f":
-        clockwise()
-    else: 
-        counter_clockwise()
-    speed = int(cmd[1]) * 11
-    set("duty", str(speed))
+    for duty in range(0,101,1):
+        pi_pwm.ChangeDutyCycle(duty) #provide duty cycle in the range 0-100
+        sleep(0.01)
+    sleep(0.5)
