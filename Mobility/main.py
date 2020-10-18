@@ -40,7 +40,7 @@ try:
     setup()
 
     while True:
-        move("left", "normal")
+        move("right", "normal")
 
 except KeyboardInterrupt:
     close()
