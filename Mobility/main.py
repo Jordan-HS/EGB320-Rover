@@ -33,8 +33,8 @@ def move(direction, speed):
             motors.motor1.setSpeed(-300)
             motors.motor2.setSpeed(350)
         elif speed == "slow":
-            motors.motor1.setSpeed(-250)
-            motors.motor2.setSpeed(300)
+            motors.motor1.setSpeed(-275)
+            motors.motor2.setSpeed(330)
 
 try:
     setup()
