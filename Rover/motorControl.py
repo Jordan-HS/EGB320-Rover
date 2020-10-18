@@ -29,11 +29,11 @@ def move(movement, magnitude=None):
     if movement == "forward":
         # Motor 1
         M1_back.on() 
-        M1_fwd.off()
+        M1_fwd.on()
         M1_PWM.value = 0.5
 
         # Motor 2
-        M2_back.on()
+        M2_back.off()
         M2_fwd.on()
         M2_PWM.value = 0.5
     elif movement == "left":
