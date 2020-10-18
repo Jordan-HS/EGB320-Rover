@@ -123,6 +123,7 @@ def detect_obs(hsv_masks):
                     # Boundary (x,y,w,h) box of contour
                     boundary = cv2.boundingRect(cnt)
                     # Check for error if boundaries outside of expected
+                    error = 0
                     if indx == 1:
                         if boundary[1] >= 3:
                             if ((boundary[3]/boundary[2])<0.6):
@@ -197,7 +198,7 @@ def detect_obs(hsv_masks):
             # Boundary (x,y,w,h) box of contour
             boundary = cv2.boundingRect(cnt)
             # Error if boundaries outside of norm
-            error = 0 # Lander completely visable
+            error = 0 # 
             centre, radius = cv2.minEnclosingCircle(cnt)
             # Width of contour in pixels
             pix_width = boundary[2]
@@ -352,7 +353,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     image_cnt += 1
     if image_cnt == 10:
         # Combine masks and apply to frame
-        mask = hsv_masks[0]|hsv_masks[1]|hsv_masks[2]|hsv_masks[3]
+        mask = hsv_masks[0]|hsv_masks[1]|hsv_masks[2]|hsv_masks[3]|hsv_masks[4]
         obs_image = cv2.bitwise_and(image, image, mask=mask)
         for i, obs in enumerate(new_obs):
             # Draw rectangle
