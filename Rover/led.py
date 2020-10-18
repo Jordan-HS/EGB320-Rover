@@ -10,7 +10,7 @@ GPIO.setup(21, GPIO.OUT) # Green
 # Initial state for LEDs:
 print("Testing RF out, Press CTRL+C to exit")
 
-def (collection_stage)
+def led_state(collection_stage):
    if collection_stage == "searching":
       print("STATE: Searching")
       GPIO.output(16, GPIO.HIGH)
