@@ -16,14 +16,14 @@ class pi_cam_setup:
         self.camera.resolution = (X_img, Y_img)
         # Allow time for the camera to warmup
         time.sleep(2.0)
-        camera.video_stabilization = False
-        camera.exposure_mode = 'off'
-        camera.awb_mode = 'off'
-        camera.awb_gains = 2.0
+        self.camera.video_stabilization = False
+        self.camera.exposure_mode = 'off'
+        self.camera.awb_mode = 'off'
+        self.camera.awb_gains = 2.0
 
         self.camera.framerate = 8
         self.rawCapture = PiRGBArray(self.camera, size=(X_img, Y_img))
-        time.sleep(0.1)
+
 
     def capture_frame(self):
         self.stream = PiRGBArray(self.camera) 
