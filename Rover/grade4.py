@@ -133,6 +133,8 @@ class Rover():
             return
 
         elif obstacle_avoidance:
+            opencollection.open()
+            tiltupcollection.up()
             angle_scale = 1
             if obstaclesRB is not None:
                 obstacle = obstaclesRB[0]
