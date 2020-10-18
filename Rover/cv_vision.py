@@ -206,7 +206,6 @@ def detect_obs(hsv_masks):
             obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
             # Distance from camera in cm
             obs_dist = boundary[1]-boundary[3]
-            print(obs_dist)
             if obs_dist > 15:
                 error = 2
             # Create list of values
