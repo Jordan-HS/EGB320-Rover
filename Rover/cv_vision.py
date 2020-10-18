@@ -9,8 +9,9 @@ import cv2
 HSV_blue = [[76, 92, 44], [113, 255, 255]]
 HSV_green = [[33, 77, 26], [74, 255, 255]]
 HSV_yellow = [[15, 26, 27], [40, 255, 255]]
+HSV_wall = [[0, 0, 0], [170, 28, 255]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
-HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_orange])
+HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 
 # Set morphology kernel size for image filtering
 kernel = np.ones((5, 5))
@@ -19,9 +20,9 @@ kernel = np.ones((5, 5))
 image_cnt = 0
 
 # Define obstacle size, label, and colour
-OBS_size = [0.075, 0.151, 0.56, 0.044]   # size of obstacles in m
-OBS_type = ["ROC", "SAT", "LAND", "SAMP"] # labels
-OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [0, 127, 255]] # box colours
+OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
+OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
+OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255]] # box colours
 # Set camera image frame
 #IMG_X = 640
 #IMG_Y = 480
@@ -62,7 +63,7 @@ def mask_obs(image):
     # Apply mask for HSV range
     for indx, thresh in enumerate(HSV_thresh):
         # Blue Green and Yellow threshold and filter
-        if indx < 3:
+        if indx < 4:
             HSV_tempmask = cv2.inRange(HSV_bgy, thresh[0], thresh[1])
             HSV_sum = np.sum(HSV_tempmask)
             if HSV_sum == 0:
@@ -183,6 +184,31 @@ def detect_obs(hsv_masks):
             obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
             # Distance from camera in cm
             obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+            # Create list of values
+            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+        # Check for Wall
+        elif indx == 3:
+            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            cnt = np.concatenate(contours)
+            #boundary_area = cv2.findNonZero(mask)
+            # obstacle type index
+            obs_indx = indx
+            # Obstacle label
+            id_type = OBS_type[indx]
+            # Boundary (x,y,w,h) box of contour
+            boundary = cv2.boundingRect(cnt)
+            # Error if boundaries outside of norm
+            error = 0 # 
+            centre, radius = cv2.minEnclosingCircle(cnt)
+            # Width of contour in pixels
+            pix_width = boundary[2]
+            # Angle from centre of screen in radians
+            obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+            # Distance from camera in cm
+            obs_dist = boundary[1]-boundary[3]
+            print(obs_dist)
+            if obs_dist > 15:
+                error = 2
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for samples
