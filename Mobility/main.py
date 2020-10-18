@@ -21,8 +21,8 @@ def move(direction, speed):
     elif direction == "left":
 
         if speed == "normal":
-            motors.motor1.setSpeed(400)
-            motors.motor2.setSpeed(-200)
+            motors.motor1.setSpeed(300)
+            motors.motor2.setSpeed(-300)
         elif speed == "slow":
             motors.motor1.setSpeed(100)
             motors.motor2.setSpeed(-400)
