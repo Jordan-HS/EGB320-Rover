@@ -3,7 +3,7 @@ import potentialField
 import time
 import numpy as np
 from DFRobot_RaspberryPi_DC_Motor import DFRobot_DC_Motor_IIC as Board
-import motorControl
+import motorControlNew
 import math
 from cv_vision import current_observation
 import RPi.GPIO as GPIO
@@ -22,11 +22,11 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = False
+Sample_demo = True
 
 Rock_demo = False
 
-obstacle_avoidance = True
+obstacle_avoidance = False
 
 class Rover():
     def __init__(self):
@@ -42,14 +42,14 @@ class Rover():
         self.done = False
         self.memory = None
 
-    def updateCurrentPos(self):
-        motorControl.sendCommand(self.current_movement)
-        self.x, self.y, self.bearing = motorControl.updatePosition(self)
+    # def updateCurrentPos(self):
+    #     motorControl.sendCommand(self.current_movement)
+    #     self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
 
-        motorControl.move(movement, magnitude)
+        motorControlNew.move(movement, magnitude)
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
@@ -59,10 +59,10 @@ class Rover():
                 sample = samplesRB[0]
                 
                 if sample[0] > 0.25:
-                    speed = 200
+                    speed = "normal"
                     accuracy = 10
                 else:
-                    speed = 120
+                    speed = "slow"
                     accuracy = 3
 
                 if self.at_target:
@@ -78,7 +78,7 @@ class Rover():
                     
 
                 if sample[0] < 0.114 or self.at_target:
-                    self.move("forward", 0)
+                    self.move("forward", "stop")
                     self.at_target = True
                     return
 
@@ -90,7 +90,7 @@ class Rover():
                     self.move("left", speed)
 
             else:
-                self.move("right", 200)
+                self.move("right", "normal")
                 return
         elif Rock_demo:
             if rocksRB is not None:
@@ -197,8 +197,8 @@ def splitObservation(observation):
 try:
     rover = Rover()
     observation = current_observation()
-    rover.current_movement = "stop"
-    rover.updateCurrentPos()
+    # rover.current_movement = "stop"
+    # rover.updateCurrentPos()
     print("here")
     time.sleep(2)
     while not rover.done:
@@ -217,7 +217,7 @@ try:
         # clear()
 
         # Update rover global positio
-        rover.updateCurrentPos()
+        # rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
 
