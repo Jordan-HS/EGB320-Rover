@@ -24,7 +24,7 @@ try:
         time.sleep(0.005)
 
     while True:
-        move("forward", 100)
+        move("forward", 480)
         time.sleep(0.005)
 
 except KeyboardInterrupt:
