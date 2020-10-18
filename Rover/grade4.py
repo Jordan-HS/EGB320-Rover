@@ -20,7 +20,7 @@ import liftrock
 
 clear = lambda: os.system('clear')
 
-display = False
+display = True
 
 Sample_demo = False
 
@@ -241,10 +241,10 @@ try:
         # rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
-
         if display:
-            cv2.imshow("View", img)
-            cv2.waitKey(0)
+            if count_disp == 10:
+                cv2.imshow("View", img)
+                cv2.waitKey(0)
 
 except KeyboardInterrupt:
     motorControl.close()
