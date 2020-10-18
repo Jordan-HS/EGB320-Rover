@@ -138,9 +138,10 @@ class Rover():
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
 
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
-                print(obs)
+                # print(obs)
                 self.memory = [obs_x, obs_y]
             elif self.memory is not None:
+                print("Going off memory")
                 U = potentialField.getForce([0, 0], [0.5, 0], [self.memory])
             target_angle = math.atan2(U[1], U[0])
             # target_angle, target_mag = getForce(self)
