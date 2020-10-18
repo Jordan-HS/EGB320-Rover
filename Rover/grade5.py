@@ -105,6 +105,7 @@ class Rover():
             if lander[0] < 0.5:
                 time.sleep(2)
                 opencollection.open()
+                self.at_target = False
                 self.sample_collected = True
             else:
                 closecollection.close()
