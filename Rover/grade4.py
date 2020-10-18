@@ -135,6 +135,7 @@ class Rover():
         elif obstacle_avoidance:
             if obstaclesRB is not None:
                 obstacle = obstaclesRB[0]
+                print(obstacle[0])
 
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
                 # print("seem")
@@ -156,7 +157,7 @@ class Rover():
             accuracy = 5
 
             # print("target angle: {:.2f}   current angle: {:.2f}   x: {:.2f}  y: {:.2f}".format(target_angle, self.bearing, self.x, self.y))
-            print(obstacle[0])
+            
 
             if abs(math.atan2(obs_y, obs_x)) > 90:
                 self.move("back", "normal")
