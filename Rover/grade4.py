@@ -242,6 +242,7 @@ try:
         # rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
+        count_disp += 1
         if display:
             if count_disp == 10:
                 cv2.imshow("View", img)
