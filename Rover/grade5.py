@@ -122,7 +122,7 @@ class Rover():
         elif self.sample_collected and rocksRB is not None:
             # Look for a rock to flip
             holdSample.hold()
-            opencollection.open()
+            closecollection.close()
             rock = rocksRB[0]
             if rock[0] > 0.25:
                 speed = "normal"
