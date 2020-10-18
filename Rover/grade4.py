@@ -138,6 +138,7 @@ class Rover():
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
 
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
+                print(obs)
                 self.memory = [obs_x, obs_y]
             elif self.memory is not None:
                 U = potentialField.getForce([0, 0], [0.5, 0], [self.memory])
@@ -147,7 +148,10 @@ class Rover():
 
             # print("target angle: {:.2f}   current angle: {:.2f}   x: {:.2f}  y: {:.2f}".format(target_angle, self.bearing, self.x, self.y))
 
-            if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
+
+            if abs(math.atan2(obs_y, obs_x)) > 90:
+                self.move("back", "normal")
+            elif math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
                 self.move("forward", "normal")
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:

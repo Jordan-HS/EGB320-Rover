@@ -49,6 +49,10 @@ def move(direction, speed):
             motors.motor1.setSpeed(-350)
             motors.motor2.setSpeed(325)
 
+    elif direction == "back":
+        motors.motor1.setSpeed(300)
+        motors.motor2.setSpeed(300)
+
 
 def WrapToPi(radians):
 		return ((radians + math.pi) % (2* math.pi) - math.pi)
