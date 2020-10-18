@@ -7,6 +7,9 @@ import math
 ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
 ser.flush()
 
+radius = 0.020836
+time.sleep(2) # Wait for serial to be initialised
+
 def setup():
     motors.setSpeeds(0, 0)
 
