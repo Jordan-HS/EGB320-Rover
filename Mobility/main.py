@@ -18,13 +18,8 @@ def move(direction, magnitude):
 try:
     setup()
 
-    for s in test_forward_speeds:
-        motors.motor1.setSpeed(s)
-        print(s)
-        time.sleep(0.005)
-
     while True:
-        move("forward", 200)
+        move("forward", 300)
         time.sleep(0.005)
 
 except KeyboardInterrupt:
