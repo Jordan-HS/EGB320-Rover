@@ -231,5 +231,5 @@ try:
             cv2.waitKey(0)
 
 except KeyboardInterrupt:
-    motorControlNew.close()
+    motorControl.close()
     print("done")
