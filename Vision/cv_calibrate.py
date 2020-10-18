@@ -20,7 +20,7 @@ class pi_cam_setup:
         self.camera.exposure_mode = 'off'
         self.camera.awb_mode = 'off'
         self.camera.awb_gains = 2.0
-
+        print(self.camera.exposure_speed)
         self.camera.framerate = 8
         self.rawCapture = PiRGBArray(self.camera, size=(X_img, Y_img))
 
@@ -81,7 +81,6 @@ if __name__ == '__main__':
         if np.array_equal(lower_hsv, save_lower_hsv) and np.array_equal(upper_hsv, save_upper_hsv):
             pass
         else:
-            print(cam.camera.exposure_mode)
             print('HSV lower: ', lower_hsv)
             print('HSV upper: ', upper_hsv)
             save_lower_hsv = lower_hsv
