@@ -35,6 +35,7 @@ class Rover():
         self.at_target = False
         self.done = False
         self.has_ball = False
+        self.sample_collected = False
         self.memory = None
         self.on_lander = True
         self.start_time = 0
@@ -92,7 +93,7 @@ class Rover():
             elif sample[1] > math.radians(accuracy):
                 self.move("left", speed)
 
-        elif self.has_ball and landerRB is not None:
+        elif self.has_ball and landerRB is not None and not self.sample_collected:
             lander = landerRB[0]
             speed = 200
             accuracy = 10
@@ -100,12 +101,10 @@ class Rover():
             if lander[0] < 0.5:
                 time.sleep(2)
                 opencollection.open()
-                self.done = True
+                self.sample_collected = True
             else:
                 closecollection.close()
                 holdSample.hold()
-
-            
 
             if math.radians(-accuracy) < lander[1] < math.radians(accuracy):
                 self.move("forward", speed)
@@ -114,7 +113,36 @@ class Rover():
             elif lander[1] > math.radians(accuracy):
                 self.move("left", speed)
 
+        elif self.sample_collected and rocksRB is not None:
+            # Look for a rock to flip
+            rock = rocksRB[0]
+            if rock[0] > 0.25:
+                speed = 200
+                accuracy = 10 
+            else:
+                speed = 120
+                accuracy = 3        
 
+            if self.at_target:
+                tiltdowncollection.down()
+                time.sleep(1)    
+                liftrock.lift()
+                self.done = True
+            else:
+                closecollection.close()
+                tiltdowncollection.down()      
+
+            if rock[0] < 0.135 or self.at_target:
+                self.move("forward", 0)
+                self.at_target = True
+                return
+
+            if math.radians(-accuracy) < rock[1] < math.radians(accuracy):
+                self.move("forward", speed)
+            elif rock[1] < math.radians(-accuracy):
+                self.move("right", speed)
+            elif rock[1] > math.radians(accuracy):
+                self.move("left", speed)
         else:
             self.move("right", 300)
             return
