@@ -45,8 +45,7 @@ class Rover():
         self.on_lander = True
         self.sample_collected = False
         self.has_ball = False
-        self.search_timer = 0
-        self.nothing_seen = False
+        self.search_timer = False
 
 
     def move(self, movement, magnitude=None):
@@ -56,9 +55,6 @@ class Rover():
         self.current_movement = movement
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
-        if samplesRB is not None or landerRB is not None or obstaclesRB is not None or rocksRB is not none:
-            self.nothing_seen = False
-
         if obstaclesRB is not None:
             for obstacle in obstaclesRB:
                 if obstacle[0] < 0.5:
@@ -191,10 +187,10 @@ class Rover():
             # Look for a rock to flip
             
             rock = rocksRB[0]
-            if rock[0] < 0.35:
+            if rock[0] < 0.5:
                 tiltdowncollection.down()
                 closecollection.close()
-            else:
+            elif rock[0] > 0.6:
                 opencollection.open()
                 tiltupcollection.up()
 
@@ -227,13 +223,7 @@ class Rover():
             elif rock[1] > math.radians(accuracy):
                 self.move("left", speed)
         else:
-            if self.nothing_seen == False:
-                self.search_timer = time.time()
-                self.nothing_seen = True
-            if self.nothing_seen and time.time() - self.search_timer < 4:
-                self.move("right", "normal")
-            elif self.nothing_seen:
-                self.move("left", "normal")
+            self.move("right", "normal")
             return
 
     def determinePos(self, distance, angle):
