@@ -148,7 +148,7 @@ class Rover():
             # print("target angle: {:.2f}   current angle: {:.2f}   x: {:.2f}  y: {:.2f}".format(target_angle, self.bearing, self.x, self.y))
 
             if math.isclose(self.bearing, target_angle, abs_tol=math.radians(accuracy)):
-                self.move("forward", "slow")
+                self.move("forward", "normal")
             elif abs(self.bearing - target_angle) < math.pi:
                 if self.bearing - target_angle < 0:
                     self.move("left", "normal")
