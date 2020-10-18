@@ -41,6 +41,7 @@ class Rover():
         self.at_target = False
         self.done = False
         self.memory = None
+        self.start_timer = 0
 
     # def updateCurrentPos(self):
     #     motorControl.sendCommand(self.current_movement)
@@ -141,10 +142,14 @@ class Rover():
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
                 # print(obs)
                 self.memory = [obs_x, obs_y]
-            elif self.memory is not None:
+                self.start_timer = time.time()
+            elif self.memory is not None and time.time() - self.start_timer < 0.5:
                 obs_x, obs_y = self.determinePos(self.memory[0], self.memory[1])
                 print("Going off memory")
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
+
+            else:
+                U = [0.1, 0]
             target_angle = math.atan2(U[1], U[0])
             # target_angle, target_mag = getForce(self)
             accuracy = 5
