@@ -107,6 +107,7 @@ class Rover():
             if lander[0] < 0.5:
                 self.move("forward", "normal")
                 time.sleep(2)
+                self.move("stop", "stop")
                 tiltdowncollection.down()
                 time.sleep(1)
                 opencollection.open()
