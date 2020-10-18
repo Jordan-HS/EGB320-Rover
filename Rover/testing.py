@@ -32,7 +32,7 @@ motorControl.sendCommand("clear")
 # start = time.time()
 try:
     while True:
-        rover.move("forward", 250)
+        rover.move("forward", "normal")
         # if run_time < 2:
         #     rover.move("forward", 250)
         # elif 2 < run_time < 5:
