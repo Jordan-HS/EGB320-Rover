@@ -197,6 +197,7 @@ try:
     # rover.updateCurrentPos()
     print("Booted")
     time.sleep(2)
+    rover.start_timer = time.time()
     while not rover.done:
         observation, img = current_observation()
         
