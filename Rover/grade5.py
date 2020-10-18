@@ -58,7 +58,7 @@ class Rover():
             holdSample.hold()
             self.move("forward", "normal")
 
-            if time.time() - self.start_timer > 3:
+            if time.time() - self.start_timer > 2.5:
                 self.on_lander = False
                 self.start_time = time.time()
 
@@ -85,7 +85,7 @@ class Rover():
                 
             print(sample[0])
 
-            if sample[0] < 0.115 or self.at_target:
+            if sample[0] < 0.14 or self.at_target:
                 self.move("stop", "stop")
                 self.at_target = True
                 return
