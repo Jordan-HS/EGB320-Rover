@@ -9,17 +9,17 @@ def close():
 
 
 def move(direction, magnitude):
-    turn_scale = 1
+    turn_scale = 1.5
 
     if direction == "forward":
         motors.motor1.setSpeed(magnitude)
         motors.motor2.setSpeed(magnitude)
     elif direction == "left":
-        motors.motor1.setSpeed(magnitude*1.5)
+        motors.motor1.setSpeed(magnitude*turn_scale)
         motors.motor2.setSpeed(-magnitude)
     elif direction == "right":
         motors.motor1.setSpeed(-magnitude)
-        motors.motor2.setSpeed(magnitude)
+        motors.motor2.setSpeed(magnitude*turn_scale)
 
 try:
     setup()
