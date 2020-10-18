@@ -1,4 +1,4 @@
-import motorControlNew
+import motorControl
 import math
 import time
 from pololu_drv8835 import motors, MAX_SPEED
