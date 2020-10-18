@@ -121,11 +121,14 @@ def sendCommand(command):
 send_state = False
 start = time.time()
 ser.write(str(0).encode('utf-8'))
-while True:
-    # if ser.in_waiting > 0:
-    line = ser.readline()
-    print(line)
-    # if send_state == False:
-    #     ser.write(b"forward\n")
-    ser.write(str(1).encode('utf-8'))
-    move("forward", "normal")
+try:
+    while True:
+        # if ser.in_waiting > 0:
+        line = ser.readline()
+        print(line)
+        # if send_state == False:
+        #     ser.write(b"forward\n")
+        ser.write(str(1).encode('utf-8'))
+        move("forward", "normal")
+except KeyboardInterrupt:
+    close()
