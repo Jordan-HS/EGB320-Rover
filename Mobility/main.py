@@ -8,24 +8,39 @@ def close():
     motors.setSpeeds(0, 0)
 
 
-def move(direction, magnitude):
-    turn_scale = 2
-
+def move(direction, speed):
     if direction == "forward":
-        motors.motor1.setSpeed(magnitude)
-        motors.motor2.setSpeed(magnitude)
+
+        if speed == "normal":
+            motors.motor1.setSpeed(250)
+            motors.motor2.setSpeed(250)
+        elif speed == "slow":
+            motors.motor1.setSpeed(150)
+            motors.motor2.setSpeed(150)
+
     elif direction == "left":
-        motors.motor1.setSpeed(int(magnitude*turn_scale))
-        motors.motor2.setSpeed(-magnitude)
+
+        if speed == "normal":
+            motors.motor1.setSpeed(200)
+            motors.motor2.setSpeed(-200)
+        elif speed == "slow":
+            motors.motor1.setSpeed(100)
+            motors.motor2.setSpeed(-400)
+
     elif direction == "right":
-        motors.motor1.setSpeed(-magnitude)
-        motors.motor2.setSpeed(int(magnitude*turn_scale))
+
+        if speed == "normal":
+            motors.motor1.setSpeed(-200)
+            motors.motor2.setSpeed(200)
+        elif speed == "slow":
+            motors.motor1.setSpeed(-400)
+            motors.motor2.setSpeed(100)
 
 try:
     setup()
 
     while True:
-        move("left", 200)
+        move("left", "normal")
 
 except KeyboardInterrupt:
     close()
