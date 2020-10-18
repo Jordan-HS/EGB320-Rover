@@ -22,7 +22,7 @@ image_cnt = 0
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
-OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255,255,255], [0, 127, 255]] # box colours
+OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255]] # box colours
 # Set camera image frame
 #IMG_X = 640
 #IMG_Y = 480
@@ -204,7 +204,10 @@ def detect_obs(hsv_masks):
             # Angle from centre of screen in radians
             obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
             # Distance from camera in cm
-            obs_dist = boundary[1]
+            obs_dist = boundary[1]-boundary[3]
+            print(obs_dist)
+            if obs_dist < 20:
+                error = 2
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
         # Check for samples
