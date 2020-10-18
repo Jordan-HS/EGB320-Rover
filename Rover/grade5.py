@@ -116,7 +116,7 @@ class Rover():
 
 
         else:
-            self.move("right", 250)
+            self.move("right", 300)
             return
          
 
