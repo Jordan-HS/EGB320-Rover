@@ -40,6 +40,61 @@ def move(direction, speed):
             motors.motor1.setSpeed(-350)
             motors.motor2.setSpeed(325)
 
+
+def WrapToPi(radians):
+		return ((radians + math.pi) % (2* math.pi) - math.pi)
+
+
+def updatePosition(rover):
+    line = ser.readline().decode('utf-8')
+    if rover.current_movement == "stop":
+        return rover.x, rover.y, rover.bearing
+    E1_counter = int(re.search(r'E1: \[(.*?)\]', line).group(1))
+    E2_counter = int(re.search(r'E2: \[(.*?)\]', line).group(1))
+    dist = 0
+    x = rover.x
+    y = rover.y
+    bearing = rover.bearing
+
+    if rover.last_movement is None:
+        rover.last_movement = rover.current_movement
+
+    elif rover.last_movement != rover.current_movement:
+        rover.last_movement = rover.current_movement
+        rover.ref_x = rover.x
+        rover.ref_y = rover.y
+        rover.ref_bearing = rover.bearing
+        sendCommand("clear")
+
+    elif rover.current_movement == "forward":
+        wheel_avg = (E1_counter+E2_counter)/2
+        dist = wheel_avg/600 * 2 * math.pi * radius
+
+        x = rover.ref_x + dist*math.cos(rover.bearing)
+        y = rover.ref_y + dist*math.sin(rover.bearing)
+
+    elif rover.current_movement == "right":
+        wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
+        bearing = rover.ref_bearing + -(wheel_avg/2352 * (2*math.pi))
+
+    elif rover.current_movement == "left":
+        wheel_avg = (abs(E1_counter)+abs(E2_counter))/2
+        bearing = rover.ref_bearing + (wheel_avg/2352 * (2*math.pi))
+
+    return x, y, WrapToPi(bearing)
+
+def sendCommand(command):
+    if command == "clear":
+        ser.write(str(0).encode('utf-8'))
+    elif command == "forward":
+        ser.write(str(1).encode('utf-8'))
+    elif command == "left":
+        ser.write(str(2).encode('utf-8'))
+    elif command == "right":
+        ser.write(str(3).encode('utf-8'))
+    elif command == "stop":
+        ser.write(str(4).encode('utf-8'))
+
 # try:
 #     setup()
 
