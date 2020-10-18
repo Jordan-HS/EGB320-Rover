@@ -20,6 +20,7 @@ try:
 
     for s in test_forward_speeds:
         motors.motor1.setSpeed(s)
+        print(s)
         time.sleep(0.005)
 
     while True:
