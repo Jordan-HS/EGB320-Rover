@@ -6,9 +6,13 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-HSV_blue = [[76, 92, 44], [113, 255, 255]]
-HSV_green = [[33, 77, 26], [74, 255, 255]]
-HSV_yellow = [[15, 26, 27], [40, 255, 255]]
+
+HSV_blue = [[76, 88, 22], [113, 255, 255]]
+HSV_green = [[33, 77, 23], [74, 255, 255]]
+HSV_yellow = [[15, 73, 40], [40, 255, 255]]
+# HSV_blue = [[76, 92, 44], [113, 255, 255]]
+# HSV_green = [[33, 77, 26], [74, 255, 255]]
+# HSV_yellow = [[15, 26, 27], [40, 255, 255]]
 HSV_wall = [[0, 0, 0], [170, 28, 255]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
