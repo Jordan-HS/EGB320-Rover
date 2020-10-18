@@ -110,6 +110,7 @@ class Rover():
                 opencollection.open()
                 self.at_target = False
                 self.sample_collected = True
+                self.has_ball = False
                 time.sleep(2)
             else:
                 closecollection.close()
