@@ -1,8 +1,8 @@
 import RPi.GPIO as io
 io.setmode(io.BCM)
  
-in1_pin = 18
-in2_pin = 23
+in1_pin = 24
+in2_pin = 25
  
 io.setup(in1_pin, io.OUT)
 io.setup(in2_pin, io.OUT)
