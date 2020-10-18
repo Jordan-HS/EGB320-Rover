@@ -133,10 +133,12 @@ class Rover():
             return
 
         elif obstacle_avoidance:
+            angle_scale = 1
             if obstaclesRB is not None:
                 obstacle = obstaclesRB[0]
-                print(obstacle[0])
 
+                if obstacle[0] < 0.15:
+                    angle_scale = 2    
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
                 # print("seem")
 
@@ -152,7 +154,7 @@ class Rover():
             else:
                 U = [0.1, 0]
                 obs_x, obs_y = self.determinePos(U[0], U[1])
-            target_angle = math.atan2(U[1], U[0])
+            target_angle = math.atan2(U[1], U[0]) * angle_scale
             # target_angle, target_mag = getForce(self)
             accuracy = 5
 
