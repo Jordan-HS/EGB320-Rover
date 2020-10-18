@@ -129,13 +129,16 @@ class Rover():
 
         elif rocksRB is not None and samplesRB is None and not self.has_ball:
             # Look for a rock to flip
-            opencollection.open()
-            tiltupcollection.up()
+            
             rock = rocksRB[0]
             if rock[0] > 0.25:
                 speed = "normal"
                 accuracy = 10 
+                opencollection.open()
+                tiltupcollection.up()
             else:
+                tiltdowncollection.down()
+                closecollection.close()
                 speed = "slow"
                 accuracy = 3        
 
