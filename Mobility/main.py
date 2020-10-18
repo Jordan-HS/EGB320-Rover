@@ -7,19 +7,19 @@ def setup():
 def close():
     motors.setSpeeds(0, 0)
 
-test_forward_speeds = list(range(0, MAX_SPEED, 1)) + \
-  [MAX_SPEED] * 200 + list(range(MAX_SPEED, 0, -1)) + [0]  
 
 def move(direction, magnitude):
+    turn_scale = 1
+
     if direction == "forward":
         motors.motor1.setSpeed(magnitude)
         motors.motor2.setSpeed(magnitude)
     elif direction == "left":
-        motors.motor1.setSpeed(-magnitude)
-        motors.motor2.setSpeed(magnitude)
-    elif direction == "right":
         motors.motor1.setSpeed(magnitude)
         motors.motor2.setSpeed(-magnitude)
+    elif direction == "right":
+        motors.motor1.setSpeed(-magnitude)
+        motors.motor2.setSpeed(magnitude)
 
 try:
     setup()
