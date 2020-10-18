@@ -84,7 +84,7 @@ class Rover():
                 holdSample.hold()
                 
 
-            if sample[0] < 0.114 or self.at_target:
+            if sample[0] < 0.115 or self.at_target:
                 self.move("stop", "stop")
                 self.at_target = True
                 return
