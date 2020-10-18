@@ -98,10 +98,10 @@ class Rover():
             if rocksRB is not None:
                 rock = rocksRB[0]
                 if rock[0] > 0.25:
-                    speed = 200
+                    speed = "normal"
                     accuracy = 10 
                 else:
-                    speed = 120
+                    speed = "slow"
                     accuracy = 3        
 
                 if self.at_target:
@@ -125,7 +125,7 @@ class Rover():
                 elif rock[1] > math.radians(accuracy):
                     self.move("left", speed)
             else:
-                self.move("right", 200)
+                self.move("right", "normal")
             return
 
         elif obstacle_avoidance:
