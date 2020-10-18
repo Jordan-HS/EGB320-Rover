@@ -40,11 +40,11 @@ def move(direction, speed):
             motors.motor1.setSpeed(-300)
             motors.motor2.setSpeed(350)
 
-try:
-    setup()
+# try:
+#     setup()
 
-    while True:
-        move("forward", "normal")
+#     while True:
+#         move("forward", "normal")
 
-except KeyboardInterrupt:
-    close()
+# except KeyboardInterrupt:
+#     close()
