@@ -155,7 +155,7 @@ class Rover():
             print(lander[0])
             if lander[0] < 0.5:
                 self.move("forward", "normal")
-                time.sleep(2)
+                time.sleep(3)
                 self.move("stop", "stop")
                 tiltdowncollection.down()
                 time.sleep(1)
@@ -163,8 +163,10 @@ class Rover():
                 self.at_target = False
                 self.on_lander = True
                 self.has_ball = False
-                time.sleep(3)
+                time.sleep(2)
                 tiltupcollection.up()
+                self.move("forward", "normal")
+                time.sleep(3)
             else:
                 closecollection.close()
                 holdSample.hold()
