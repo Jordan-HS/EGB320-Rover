@@ -12,8 +12,8 @@ def move(direction, speed):
     if direction == "forward":
 
         if speed == "normal":
-            motors.motor1.setSpeed(-100)
-            motors.motor2.setSpeed(-100)
+            motors.motor1.setSpeed(-200)
+            motors.motor2.setSpeed(-200)
         elif speed == "slow":
             motors.motor1.setSpeed(-375)
             motors.motor2.setSpeed(-375)
@@ -40,7 +40,7 @@ try:
     setup()
 
     while True:
-        move("forward", "noraml")
+        move("forward", "normal")
 
 except KeyboardInterrupt:
     close()
