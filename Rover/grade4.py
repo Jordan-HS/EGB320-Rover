@@ -26,7 +26,7 @@ Sample_demo = False
 
 Rock_demo = False
 
-obstacle_avoidance = true
+obstacle_avoidance = True
 
 class Rover():
     def __init__(self):
