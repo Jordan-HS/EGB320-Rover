@@ -124,6 +124,7 @@ def detect_obs(hsv_masks):
                     # Boundary (x,y,w,h) box of contour
                     boundary = cv2.boundingRect(cnt)
                     # Check for error if boundaries outside of expected
+                    error = 0   # No obstacle overlap
                     if indx == 0:
                         if boundary[1] >= 3:
                             if ((boundary[3]/boundary[2])<0.6):
