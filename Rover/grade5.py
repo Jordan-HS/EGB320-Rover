@@ -99,7 +99,7 @@ class Rover():
             elif sample[1] > math.radians(accuracy):
                 self.move("left", speed)
 
-        elif self.has_ball and landerRB is not None and not self.sample_collected:
+        elif self.has_ball and landerRB is not None:
             lander = landerRB[0]
             speed = "normal"
             accuracy = 10
@@ -107,11 +107,14 @@ class Rover():
             if lander[0] < 0.5:
                 self.move("forward", "normal")
                 time.sleep(2)
+                tiltdowncollection.down()
+                time.sleep(1)
                 opencollection.open()
                 self.at_target = False
-                self.sample_collected = True
+                self.on_lander = True
                 self.has_ball = False
-                time.sleep(2)
+                time.sleep(3)
+                tiltupcollection.up()
             else:
                 closecollection.close()
                 holdSample.hold()
@@ -123,7 +126,7 @@ class Rover():
             elif lander[1] > math.radians(accuracy):
                 self.move("left", speed)
 
-        elif self.sample_collected and rocksRB is not None:
+        elif rocksRB is not None and samplesRB is None and not self.has_ball:
             # Look for a rock to flip
             opencollection.open()
             tiltupcollection.up()
@@ -137,12 +140,13 @@ class Rover():
 
             if self.at_target:
                 tiltdowncollection.down()
+                closecollection.close()
                 time.sleep(1)    
                 liftrock.lift()
-                self.done = True
+                self.at_target = False
             else:
-                closecollection.close()
-                tiltdowncollection.down()      
+                opencollection.open()
+                tiltupcollection.up()     
 
             if rock[0] < 0.145 or self.at_target:
                 self.move("stop", "stop")
