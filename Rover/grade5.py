@@ -102,7 +102,7 @@ class Rover():
                         elif self.bearing - target_angle > 0:
                             self.move("left", "normal")   
 
-        if self.on_lander:
+        elif self.on_lander:
             opencollection.open()
             tiltupcollection.up()
             holdSample.hold()
@@ -175,6 +175,10 @@ class Rover():
             elif lander[1] > math.radians(accuracy):
                 self.move("left", speed)
 
+        elif self.has_ball and landerRB is None:
+            closecollection.close()
+            holdSample.hold()
+            self.move("right", "normal")
         elif rocksRB is not None and samplesRB is None and not self.has_ball:
             # Look for a rock to flip
             
