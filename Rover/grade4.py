@@ -216,6 +216,7 @@ def splitObservation(observation):
 
 
 try:
+    count_disp = 0
     rover = Rover()
     observation = current_observation()
     # rover.current_movement = "stop"
