@@ -15,7 +15,7 @@ def move(direction, magnitude):
         motors.motor1.setSpeed(magnitude)
         motors.motor2.setSpeed(magnitude)
     elif direction == "left":
-        motors.motor1.setSpeed(magnitude)
+        motors.motor1.setSpeed(magnitude*1.5)
         motors.motor2.setSpeed(-magnitude)
     elif direction == "right":
         motors.motor1.setSpeed(-magnitude)
