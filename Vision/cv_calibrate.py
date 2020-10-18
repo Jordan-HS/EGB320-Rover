@@ -14,12 +14,12 @@ class pi_cam_setup:
         # initialize the camera
         self.camera = PiCamera()
         self.camera.resolution = (X_img, Y_img)
-        time.sleep(0.1)
-        self.camera.awb_mode = 'off'
-        self.camera.exposure_mode = 'off'
-        self.camera.awb_mode = 'horizon'
-        self.camera.exposure_mode = 'sports'
-        self.camera.awb_gains = 4
+        # Allow time for the camera to warmup
+        time.sleep(2.0)
+        camera.video_stabilization = False
+        camera.exposure_mode = 'off'
+        camera.awb_mode = 'off'
+        camera.awb_gains = 2.0
 
         self.camera.framerate = 8
         self.rawCapture = PiRGBArray(self.camera, size=(X_img, Y_img))
