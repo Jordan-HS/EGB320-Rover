@@ -85,7 +85,7 @@ class Rover():
                 
 
             if sample[0] < 0.114 or self.at_target:
-                self.move("forward", 0)
+                self.move("stop", 0)
                 self.at_target = True
                 return
 
@@ -136,7 +136,7 @@ class Rover():
                 tiltdowncollection.down()      
 
             if rock[0] < 0.135 or self.at_target:
-                self.move("forward", 0)
+                self.move("stop", 0)
                 self.at_target = True
                 return
 
