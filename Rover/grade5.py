@@ -209,6 +209,7 @@ class Rover():
                 self.has_ball = False
                 self.on_lander = False 
                 self.ingore_rocks = True 
+                opencollection.open()
 
             if rock[0] < 0.145 or self.at_target:
                 self.move("stop", "stop")
