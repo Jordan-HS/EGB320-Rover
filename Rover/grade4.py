@@ -65,7 +65,7 @@ class Rover():
                     speed = "slow"
                     accuracy = 3
 
-                print(speed)
+                # print(speed)
 
                 if self.at_target:
                     tiltdowncollection.down()
