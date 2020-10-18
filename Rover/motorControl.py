@@ -7,63 +7,55 @@ import math
 ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
 ser.flush()
 #Setup pins
-M1_back = gpiozero.OutputDevice(18) # On/Off output
-M1_fwd = gpiozero.OutputDevice(23) #On/Off output
-M1_PWM = gpiozero.PWMOutputDevice(24, True, 0, 1000) # set up PWM pin
+# M1_back = gpiozero.OutputDevice(18) # On/Off output
+# M1_fwd = gpiozero.OutputDevice(23) #On/Off output
+# M1_PWM = gpiozero.PWMOutputDevice(24, True, 0, 1000) # set up PWM pin
 
-STBY = gpiozero.OutputDevice(8)  # Standby pin
-STBY.on()
+# STBY = gpiozero.OutputDevice(8)  # Standby pin
+# STBY.on()
 
-M2_back = gpiozero.OutputDevice(25) # On/Off output
-M2_fwd = gpiozero.OutputDevice(12) #On/Off output
-M2_PWM = gpiozero.PWMOutputDevice(7, True, 0, 1000) # set up PWM pin
+# M2_back = gpiozero.OutputDevice(25) # On/Off output
+# M2_fwd = gpiozero.OutputDevice(12) #On/Off output
+# M2_PWM = gpiozero.PWMOutputDevice(7, True, 0, 1000) # set up PWM pin
 
 ## Parameters to adjust
-inner_turn_ratio = 1
-m1_motor_bias = 1
-m2_motor_bias = 1
+# inner_turn_ratio = 1
+# m1_motor_bias = 1
+# m2_motor_bias = 1
 radius = 0.020836
 time.sleep(2) # Wait for serial to be initialised
 
-def move(movement, magnitude=None):
-    if movement == "forward":
-        # Motor 1
-        M1_back.off()
-        M1_fwd.on()
-        M1_PWM.value = 0.5
+def move(direction, speed):
+    if speed == "stop":
+        motors.motor1.setSpeed(0)
+        motors.motor2.setSpeed(0)
 
-        # Motor 2
-        M2_back.off()
-        M2_fwd.on()
-        M2_PWM.value = 0.5
-    elif movement == "left":
-        # Motor 1
-        M1_back.on() 
-        M1_fwd.off()
-        M1_PWM.value = magnitude*m1_motor_bias/1000
+    elif direction == "forward":
 
-        # Motor 2
-        M2_back.on()
-        M2_fwd.off()
-        M2_PWM.value = magnitude*inner_turn_ratio*m2_motor_bias/1000
-    elif movement == "right":
-        # Motor 1
-        M1_back.off() 
-        M1_fwd.on()
-        M1_PWM.value = magnitude*inner_turn_ratio*m1_motor_bias/1000
+        if speed == "normal":
+            motors.motor1.setSpeed(-300)
+            motors.motor2.setSpeed(-300)
+        elif speed == "slow":
+            motors.motor1.setSpeed(-375)
+            motors.motor2.setSpeed(-375)
 
-        # Motor 2
-        M2_back.off()
-        M2_fwd.on()
-        M2_PWM.value = magnitude*inner_turn_ratio/1000
-    elif movement == "stop":
-        # Motor 1
-        M1_back.off() 
-        M1_fwd.off()
+    elif direction == "left":
 
-        # Motor 2
-        M2_back.off()
-        M2_fwd.Off()
+        if speed == "normal":
+            motors.motor1.setSpeed(350)
+            motors.motor2.setSpeed(-275)
+        elif speed == "slow":
+            motors.motor1.setSpeed(325)
+            motors.motor2.setSpeed(-350)
+
+    elif direction == "right":
+
+        if speed == "normal":
+            motors.motor1.setSpeed(-275)
+            motors.motor2.setSpeed(350)
+        elif speed == "slow":
+            motors.motor1.setSpeed(-350)
+            motors.motor2.setSpeed(325)
 
 def WrapToPi(radians):
 		return ((radians + math.pi) % (2* math.pi) - math.pi)
