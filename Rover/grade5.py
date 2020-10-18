@@ -103,6 +103,7 @@ class Rover():
             accuracy = 10
             print(lander[0])
             if lander[0] < 0.5:
+                self.move("forward", "normal")
                 time.sleep(2)
                 opencollection.open()
                 self.at_target = False
