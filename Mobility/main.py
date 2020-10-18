@@ -9,7 +9,7 @@ def close():
 
 
 def move(direction, magnitude):
-    turn_scale = 1.5
+    turn_scale = 1.6
 
     if direction == "forward":
         motors.motor1.setSpeed(magnitude)
