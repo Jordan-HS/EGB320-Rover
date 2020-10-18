@@ -22,12 +22,6 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = False
-
-Rock_demo = False
-
-obstacle_avoidance = True
-
 class Rover():
     def __init__(self):
         self.x = 0
@@ -40,12 +34,15 @@ class Rover():
         self.last_movement = ""
         self.at_target = False
         self.done = False
-        self.memory = None
-        self.start_timer = 0
-        self.on_lander = True
-        self.sample_collected = False
         self.has_ball = False
+        self.sample_collected = False
+        self.memory = None
+        self.on_lander = True
+        self.start_time = 0
 
+    def updateCurrentPos(self):
+        motorControl.sendCommand(self.current_movement)
+        self.x, self.y, self.bearing = motorControl.updatePosition(self)
 
     def move(self, movement, magnitude=None):
         ## Convert magnitude to duty
@@ -56,9 +53,9 @@ class Rover():
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if self.on_lander:
             holdSample.hold()
-            self.move("forward", "normal")
+            self.move("forward", 200)
 
-            if time.time() - self.start_timer > 4:
+            if time.time() - self.start_time > 4:
                 self.on_lander = False
                 self.start_time = time.time()
 
@@ -66,10 +63,10 @@ class Rover():
             sample = samplesRB[0]
             
             if sample[0] > 0.25:
-                speed = "normal"
+                speed = 200
                 accuracy = 10
             else:
-                speed = "slow"
+                speed = 200
                 accuracy = 3
 
             if self.at_target:
@@ -98,7 +95,7 @@ class Rover():
 
         elif self.has_ball and landerRB is not None and not self.sample_collected:
             lander = landerRB[0]
-            speed = "normal"
+            speed = 200
             accuracy = 10
             print(lander[0])
             if lander[0] < 0.5:
@@ -120,10 +117,10 @@ class Rover():
             # Look for a rock to flip
             rock = rocksRB[0]
             if rock[0] > 0.25:
-                speed = "normal"
+                speed = 200
                 accuracy = 10 
             else:
-                speed = "slow"
+                speed = 120
                 accuracy = 3        
 
             if self.at_target:
@@ -147,8 +144,9 @@ class Rover():
             elif rock[1] > math.radians(accuracy):
                 self.move("left", speed)
         else:
-            self.move("right", "normal")
+            self.move("right", 300)
             return
+         
 
     def determinePos(self, distance, angle):
         theta = self.bearing + angle
@@ -190,13 +188,13 @@ def splitObservation(observation):
 
 
 try:
-    count_disp = 0
     rover = Rover()
     observation = current_observation()
-    # rover.current_movement = "stop"
-    # rover.updateCurrentPos()
-    print("Booted")
+    rover.current_movement = "stop"
+    rover.updateCurrentPos()
+    print("here")
     time.sleep(2)
+    rover.start_time = time.time()
     while not rover.done:
         observation, img = current_observation()
         
@@ -213,16 +211,14 @@ try:
         # clear()
 
         # Update rover global positio
-        # rover.updateCurrentPos()
+        rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
-        # count_disp += 1
-        # if display:
-        #     if count_disp == 10:
-        #         cv2.imshow("View", img)
-        #         count_disp = 0
-        #         cv2.waitKey(0)
+
+        if display:
+            cv2.imshow("View", img)
+            cv2.waitKey(0)
 
 except KeyboardInterrupt:
-    motorControl.close()
+    motorControl.closePins()
     print("done")
