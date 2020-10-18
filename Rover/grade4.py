@@ -79,7 +79,7 @@ class Rover():
                     holdSample.hold()
                     
 
-                if sample[0] < 0.114 or self.at_target:
+                if sample[0] < 0.113 or self.at_target:
                     self.move("forward", "stop")
                     self.at_target = True
                     return
@@ -201,7 +201,7 @@ try:
     observation = current_observation()
     # rover.current_movement = "stop"
     # rover.updateCurrentPos()
-    print("here")
+    print("Booted")
     time.sleep(2)
     while not rover.done:
         observation, img = current_observation()
