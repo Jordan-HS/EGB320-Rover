@@ -55,6 +55,8 @@ class Rover():
 
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if self.on_lander:
+            opencollection.open()
+            tiltupcollection.up()
             holdSample.hold()
             self.move("forward", "normal")
 
@@ -122,8 +124,8 @@ class Rover():
 
         elif self.sample_collected and rocksRB is not None:
             # Look for a rock to flip
-            holdSample.hold()
-            closecollection.close()
+            opencollection.open()
+            tiltupcollection.up()
             rock = rocksRB[0]
             if rock[0] > 0.25:
                 speed = "normal"
