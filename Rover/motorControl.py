@@ -4,6 +4,9 @@ import serial
 import re
 import math
 
+ser = serial.Serial('/dev/ttyS0', 9600, 8, 'N', 1, timeout=5)
+ser.flush()
+
 def setup():
     motors.setSpeeds(0, 0)
 
