@@ -124,29 +124,31 @@ def detect_obs(hsv_masks):
                     # Boundary (x,y,w,h) box of contour
                     boundary = cv2.boundingRect(cnt)
                     # Check for error if boundaries outside of expected
-                    if ((boundary[3]/boundary[2])<0.6):
-                        error = 1   # Obstacle overlapping
-                        # Creates boundary for two obstacles with error noted
-                        obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
-                        # Appends two obstacles to array
-                        for obs in obs_array_overlap:
-                            obs_array.append(obs)
-                        # Exit loop
-                        continue
-                    elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
-                        error = 1   # Obstacle on boundary
-                        obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
-                        obs_array.append(obs_array_boundary)
-                        # Exit loop
-                        continue
-                    elif ((boundary[3]/boundary[2]) > 1.4):
-                        error = 1   # Obstacle on boundary
-                        obs_array_hidden = hidden_obs(cnt, obs_indx, id_type, boundary, error)
-                        obs_array.append(obs_array_hidden)
-                        # Exit loop
-                        continue
-                    else:
-                        error = 0   # No obstacle overlap
+                    if indx == 1:
+                        if boundary[1] >= 3:
+                            if ((boundary[3]/boundary[2])<0.6):
+                                error = 1   # Obstacle overlapping
+                                # Creates boundary for two obstacles with error noted
+                                obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
+                                # Appends two obstacles to array
+                                for obs in obs_array_overlap:
+                                    obs_array.append(obs)
+                                # Exit loop
+                                continue
+                            elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
+                                error = 1   # Obstacle on boundary
+                                obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
+                                obs_array.append(obs_array_boundary)
+                                # Exit loop
+                                continue
+                            elif ((boundary[3]/boundary[2]) > 1.4):
+                                error = 1   # Obstacle on boundary
+                                obs_array_hidden = hidden_obs(cnt, obs_indx, id_type, boundary, error)
+                                obs_array.append(obs_array_hidden)
+                                # Exit loop
+                                continue
+                            else:
+                                error = 0   # No obstacle overlap
                     # Find centre of enclosing circle
                     centre, radius = cv2.minEnclosingCircle(cnt)
                     # Width of contour in pixels
