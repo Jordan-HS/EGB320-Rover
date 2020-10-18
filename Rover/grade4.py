@@ -146,7 +146,7 @@ class Rover():
                 # print(obs)
                 self.memory = [obs_x, obs_y]
                 self.start_timer = time.time()
-            elif self.memory is not None and time.time() - self.start_timer < 0.5:
+            elif self.memory is not None and time.time() - self.start_timer < 1:
                 obs_x, obs_y = self.determinePos(self.memory[0], self.memory[1])
                 # print("Going off memory")
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
