@@ -136,6 +136,7 @@ class Rover():
                 obstacle = obstaclesRB[0]
 
                 obs_x, obs_y = self.determinePos(obstacle[0], obstacle[1])
+                print("seem")
 
                 U = potentialField.getForce([0, 0], [0.5, 0], [[obs_x, obs_y]])
                 # print(obs)
