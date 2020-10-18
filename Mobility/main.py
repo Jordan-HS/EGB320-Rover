@@ -25,7 +25,7 @@ try:
     setup()
 
     while True:
-        move("left", 0)
+        move("left", 100)
 
 except KeyboardInterrupt:
     close()
