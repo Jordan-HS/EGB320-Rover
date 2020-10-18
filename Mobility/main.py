@@ -17,6 +17,7 @@ try:
 
     while True:
         move("forward", 100)
+        time.sleep(0.005)
 
 except KeyboardInterrupt:
     close()
