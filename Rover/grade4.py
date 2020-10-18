@@ -242,11 +242,12 @@ try:
         # rover.updateCurrentPos()
 
         rover.decision(samplesRB, landerRB, obstaclesRB, rocksRB)
-        count_disp += 1
-        if display:
-            if count_disp == 10:
-                cv2.imshow("View", img)
-                cv2.waitKey(0)
+        # count_disp += 1
+        # if display:
+        #     if count_disp == 10:
+        #         cv2.imshow("View", img)
+        #         count_disp = 0
+        #         cv2.waitKey(0)
 
 except KeyboardInterrupt:
     motorControl.close()
