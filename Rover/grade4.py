@@ -23,9 +23,9 @@ clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = True
+Sample_demo = False
 
-Rock_demo = False
+Rock_demo = True
 
 obstacle_avoidance = False
 
@@ -77,6 +77,7 @@ class Rover():
                     time.sleep(1)
                     holdSample.hold()
                     self.done = True
+                    led.led_state("SampleReturn")
                 else:
                     opencollection.open()
                     holdSample.hold()
