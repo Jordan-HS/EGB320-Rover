@@ -214,6 +214,8 @@ class Rover():
                 opencollection.open()
 
             if rock[0] < 0.145 or self.at_target:
+                self.move("forward", "slow")
+                time.sleep(0.5)
                 self.move("stop", "stop")
                 self.at_target = True
                 return
