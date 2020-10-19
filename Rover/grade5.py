@@ -17,6 +17,7 @@ import tiltdowncollection
 import tiltupcollection
 import holdSample
 import liftrock
+import led
 
 clear = lambda: os.system('clear')
 
@@ -117,6 +118,7 @@ class Rover():
                 self.start_time = time.time()
 
         elif samplesRB is not None and not self.on_lander and not self.has_ball:
+            led.led_state("collecting")
             sample = samplesRB[0]
             
             if sample[0] > 0.25:
@@ -153,6 +155,7 @@ class Rover():
                 self.move("left", speed)
 
         elif self.has_ball and landerRB is not None:
+            led.led_state("SampleReturn")
             lander = landerRB[0]
             speed = "normal"
             accuracy = 10
@@ -184,12 +187,13 @@ class Rover():
                 self.move("left", speed)
 
         elif self.has_ball and landerRB is None:
+            led.led_state("SampleReturn")
             closecollection.close()
             holdSample.hold()
             self.move("right", "normal")
         elif rocksRB is not None and samplesRB is None and not self.has_ball and not self.ingore_rocks or self.at_rock:
             # Look for a rock to flip
-            
+            led.led_state("searching")
             rock = rocksRB[0]
             tiltdowncollection.down()
             closecollection.close()
@@ -231,6 +235,7 @@ class Rover():
             elif rock[1] > math.radians(accuracy):
                 self.move("left", speed)
         else:
+            led.led_state("searching")
             self.move("right", "normal")
             return
 
@@ -312,4 +317,5 @@ try:
 
 except KeyboardInterrupt:
     motorControl.close()
+    led.close()
     print("done")
