@@ -26,13 +26,16 @@ def led_state(collection_stage):
       GPIO.output(16, GPIO.LOW)
       GPIO.output(20, GPIO.LOW)
       GPIO.output(21, GPIO.HIGH)
+
+def close():
+   GPIO.cleanup()
                
-except KeyboardInterrupt: # If CTRL+C is pressed, exit cleanly:
-   print("Keyboard interrupt")
+# except KeyboardInterrupt: # If CTRL+C is pressed, exit cleanly:
+#    print("Keyboard interrupt")
 
-except:
-   print("some error") 
+# except:
+#    print("some error") 
 
-finally:
-   print("clean up") 
-   GPIO.cleanup() # cleanup all GPIO 
+# finally:
+#    print("clean up") 
+#    GPIO.cleanup() # cleanup all GPIO 

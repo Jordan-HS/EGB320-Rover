@@ -256,4 +256,5 @@ try:
 
 except KeyboardInterrupt:
     motorControl.close()
+    led.close()
     print("done")
