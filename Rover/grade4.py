@@ -17,16 +17,17 @@ import tiltdowncollection
 import tiltupcollection
 import holdSample
 import liftrock
+import led
 
 clear = lambda: os.system('clear')
 
 display = False
 
-Sample_demo = False
+Sample_demo = True
 
 Rock_demo = False
 
-obstacle_avoidance = True
+obstacle_avoidance = False
 
 class Rover():
     def __init__(self):
@@ -57,6 +58,7 @@ class Rover():
         if Sample_demo:
             
             if samplesRB is not None:
+                led.led_state("collecting")
                 sample = samplesRB[0]
                 
                 if sample[0] > 0.25:
@@ -93,6 +95,7 @@ class Rover():
                     self.move("left", speed)
 
             else:
+                led.led_state("searching")
                 self.move("right", "normal")
                 return
         elif Rock_demo:
