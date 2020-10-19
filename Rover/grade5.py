@@ -126,6 +126,7 @@ class Rover():
                 accuracy = 3
 
             if self.at_target:
+                self.move("stop","stop")
                 tiltdowncollection.down()
                 time.sleep(1)    
                 closecollection.close()
