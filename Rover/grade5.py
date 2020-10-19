@@ -115,7 +115,7 @@ class Rover():
                 self.on_lander = False
                 self.start_time = time.time()
 
-        if samplesRB is not None and not self.on_lander and not self.has_ball:
+        elif samplesRB is not None and not self.on_lander and not self.has_ball:
             sample = samplesRB[0]
             
             if sample[0] > 0.25:
@@ -212,6 +212,8 @@ class Rover():
                 self.on_lander = False 
                 self.ingore_rocks = True 
                 opencollection.open()
+                self.move("back", "slow")
+                time.sleep(1)
 
             if rock[0] < 0.145 or self.at_target:
                 self.move("forward", "slow")
