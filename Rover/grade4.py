@@ -135,6 +135,8 @@ class Rover():
             else:
                 self.move("right", "normal")
             return
+        else: 
+            opencollection.open()
 
         elif obstacle_avoidance:
             opencollection.open()
