@@ -47,6 +47,7 @@ class Rover():
         self.has_ball = False
         self.search_timer = False
         self.ingore_rocks = False
+        self.at_rock = False
 
 
     def move(self, movement, magnitude=None):
@@ -186,7 +187,7 @@ class Rover():
             closecollection.close()
             holdSample.hold()
             self.move("right", "normal")
-        elif rocksRB is not None and samplesRB is None and not self.has_ball and not self.ingore_rocks:
+        elif rocksRB is not None and samplesRB is None and not self.has_ball and not self.ingore_rocks and self.at_rock:
             # Look for a rock to flip
             
             rock = rocksRB[0]
@@ -197,6 +198,7 @@ class Rover():
                 speed = "normal"
                 accuracy = 10 
             else:
+                self.at_rock
                 speed = "slow"
                 accuracy = 3        
 
@@ -211,6 +213,7 @@ class Rover():
                 self.has_ball = False
                 self.on_lander = False 
                 self.ingore_rocks = True 
+                self.at_rock = False
                 opencollection.open()
                 self.move("back", "slow")
                 time.sleep(2)
