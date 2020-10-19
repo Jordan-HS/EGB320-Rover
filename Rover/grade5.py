@@ -168,7 +168,7 @@ class Rover():
                 self.has_ball = False
                 self.ingore_rocks = False
                 time.sleep(2)
-                tiltupcollection.up()
+                holdSample.hold()
                 self.move("forward", "normal")
                 time.sleep(3)
             else:
