@@ -213,7 +213,7 @@ class Rover():
                 self.ingore_rocks = True 
                 opencollection.open()
                 self.move("back", "slow")
-                time.sleep(1)
+                time.sleep(2)
 
             if rock[0] < 0.145 or self.at_target:
                 self.move("forward", "slow")
