@@ -133,10 +133,10 @@ class Rover():
                 elif rock[1] > math.radians(accuracy):
                     self.move("left", speed)
             else:
+                opencollection.open()
                 self.move("right", "normal")
             return
-        else: 
-            opencollection.open()
+                
 
         elif obstacle_avoidance:
             opencollection.open()
