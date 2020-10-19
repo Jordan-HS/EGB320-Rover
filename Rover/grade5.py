@@ -105,17 +105,17 @@ class Rover():
                         elif self.bearing - target_angle > 0:
                             self.move("left", "normal")   
 
-        if self.on_lander:
-            opencollection.open()
-            tiltupcollection.up()
-            holdSample.hold()
-            self.move("forward", "normal")
+        # if self.on_lander:
+        #     opencollection.open()
+        #     tiltupcollection.up()
+        #     holdSample.hold()
+        #     self.move("forward", "normal")
 
-            if time.time() - self.start_timer > 2.5:
-                self.on_lander = False
-                self.start_time = time.time()
+        #     if time.time() - self.start_timer > 2.5:
+        #         self.on_lander = False
+        #         self.start_time = time.time()
 
-        elif samplesRB is not None and not self.on_lander and not self.has_ball:
+        if samplesRB is not None and not self.on_lander and not self.has_ball:
             sample = samplesRB[0]
             
             if sample[0] > 0.25:
