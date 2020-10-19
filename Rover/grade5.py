@@ -187,7 +187,7 @@ class Rover():
             closecollection.close()
             holdSample.hold()
             self.move("right", "normal")
-        elif rocksRB is not None and samplesRB is None and not self.has_ball and not self.ingore_rocks and self.at_rock:
+        elif rocksRB is not None and samplesRB is None and not self.has_ball and not self.ingore_rocks or self.at_rock:
             # Look for a rock to flip
             
             rock = rocksRB[0]
