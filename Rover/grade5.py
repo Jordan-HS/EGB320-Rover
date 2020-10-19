@@ -140,7 +140,7 @@ class Rover():
                 opencollection.open()
                 holdSample.hold()
                 
-            print(sample[0])
+            # print(sample[0])
 
             if sample[0] < 0.135 or self.at_target:
                 self.move("stop", "stop")
@@ -159,7 +159,7 @@ class Rover():
             lander = landerRB[0]
             speed = "normal"
             accuracy = 10
-            print(lander[0])
+            # print(lander[0])
             if lander[0] < 0.5:
                 self.move("forward", "normal")
                 time.sleep(2.8)
