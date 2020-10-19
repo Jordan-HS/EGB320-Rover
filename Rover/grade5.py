@@ -58,7 +58,7 @@ class Rover():
     def decision(self, samplesRB, landerRB, obstaclesRB, rocksRB):
         if obstaclesRB is not None and not self.at_target:
             for obstacle in obstaclesRB:
-                if obstacle[0] < 0.5:
+                if obstacle[0] < 0.35:
                     # opencollection.open()
                     # tiltupcollection.up()
                     angle_scale = 1
