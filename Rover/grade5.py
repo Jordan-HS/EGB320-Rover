@@ -170,7 +170,7 @@ class Rover():
                 self.ingore_rocks = False
                 time.sleep(2)
                 holdSample.hold()
-                self.move("forward", "normal")
+                self.move("back", "normal")
                 time.sleep(2)
             else:
                 closecollection.close()
