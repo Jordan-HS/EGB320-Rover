@@ -274,6 +274,7 @@ try:
     print("Booted")
     time.sleep(2)
     rover.start_timer = time.time()
+    input("Press Enter to continue...")
     while not rover.done:
         observation, img = current_observation()
         
