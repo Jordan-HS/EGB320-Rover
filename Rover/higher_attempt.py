@@ -157,7 +157,7 @@ class Rover():
             target_angle += sample[1]
 
             # avoid rocks too when moving to sample
-            if rocksRB is not None:
+            # if rocksRB is not None:
                 
 
             if accuracy == 3:
