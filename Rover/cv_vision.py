@@ -7,9 +7,9 @@ import cv2
 # Initialse variables
 # HSV colour thresholds
 
-HSV_blue = [[76, 88, 22], [113, 255, 255]]
-HSV_green = [[33, 77, 23], [74, 255, 255]]
-HSV_yellow = [[15, 73, 40], [40, 255, 255]]
+HSV_blue = [[76, 88, 18], [113, 255, 255]]
+HSV_green = [[33, 77, 18], [74, 255, 255]]
+HSV_yellow = [[15, 77, 40], [36, 255, 255]]
 # HSV_blue = [[76, 92, 44], [113, 255, 255]]
 # HSV_green = [[33, 77, 26], [74, 255, 255]]
 # HSV_yellow = [[15, 26, 27], [40, 255, 255]]
