@@ -359,22 +359,25 @@ def current_observation():
     # Determine distance, angle ID and type
     obstacle_array = detect_obs(hsv_masks)
     # Draw from and boundary
-    return_im = disp_image(image, obstacle_array)
-    return obstacle_array, return_im
+    #return_im = disp_image(image, obstacle_array)
+    #return obstacle_array, return_im
+    return obstacle_array
 
 try:
-    observation, img = current_observation()
+    observation = current_observation()
+    #observation, img = current_observation()
     print("Booted")
     time.sleep(2)
     input("Press Enter to continue...")
     time.sleep(2)
     while True:
         now = time.time()
-        observation, img = current_observation()
+        observation = current_observation()
+        #observation, img = current_observation()
         elapsed = time.time() - now
         rate = 1.0 / elapsed
         print("Processing Rate:{}.".format(rate))
-        cv2.imshow("View", img)
+        #cv2.imshow("View", img)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
