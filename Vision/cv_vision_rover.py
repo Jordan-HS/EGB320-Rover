@@ -368,12 +368,20 @@ try:
     time.sleep(2)
     input("Press Enter to continue...")
     time.sleep(2)
+    av_process = 0
+    av_count = 0
+    rate = 0
     while True:
         now = time.time()
         observation, img = current_observation()
         elapsed = time.time() - now
         rate = 1.0 / elapsed
-        print("Processing Rate:{}.".format(rate))
+        av_process += rate
+        av_count += 1
+        if av_count == 15:
+            av_rate = av_process/15
+            print("Average processing rate:{}.".format(av_rate))
+            av_count = 0
         cv2.imshow("View", img)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
