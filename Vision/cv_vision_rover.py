@@ -26,10 +26,10 @@ OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
 OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255]] # box colours
 # Set camera image frame
-#IMG_X = 640
-#IMG_Y = 480
-IMG_X = 320
-IMG_Y = 240
+IMG_X = 640
+IMG_Y = 480
+#IMG_X = 320
+#IMG_Y = 240
 # Calculate pixel focal width
 KNOWN_PIXEL_WIDTH = 92  # Pixels
 KNOWN_DIST = 0.20         # m
