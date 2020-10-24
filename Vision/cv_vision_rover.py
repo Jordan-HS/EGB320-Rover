@@ -373,6 +373,7 @@ if __name__ == '__main__':
         observation, img = current_observation()
         cv2.imshow("View", img)
         cv2.waitKey(0)
+        rawCapture.truncate(0)
         if key == ord("q"):
             break
         # Save image output by pressing 's'
