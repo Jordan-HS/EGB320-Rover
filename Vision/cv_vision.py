@@ -6,9 +6,10 @@ import cv2
 
 # Initialse variables
 # HSV colour thresholds
-HSV_blue = [[76, 92, 44], [113, 255, 255]]
-HSV_green = [[33, 77, 26], [74, 255, 255]]
-HSV_yellow = [[15, 26, 27], [40, 255, 255]]
+
+HSV_blue = [[76, 88, 18], [113, 255, 255]]
+HSV_green = [[33, 77, 18], [74, 255, 255]]
+HSV_yellow = [[15, 77, 40], [36, 255, 255]]
 HSV_wall = [[0, 0, 0], [170, 28, 255]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
@@ -24,10 +25,10 @@ OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
 OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255]] # box colours
 # Set camera image frame
-#IMG_X = 640
-#IMG_Y = 480
-IMG_X = 320
-IMG_Y = 240
+IMG_X = 640
+IMG_Y = 480
+#IMG_X = 320
+#IMG_Y = 240
 # Calculate pixel focal width
 KNOWN_PIXEL_WIDTH = 92  # Pixels
 KNOWN_DIST = 0.20         # m
