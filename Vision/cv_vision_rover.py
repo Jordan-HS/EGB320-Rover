@@ -369,8 +369,19 @@ try:
     input("Press Enter to continue...")
     time.sleep(2)
     while True:
+        now = time.time()
         observation, img = current_observation()
+        elapsed = time.time() - now
+        rate = 1.0 / elapsed
+        print("Processing Rate:{}.".format(rate))
         cv2.imshow("View", img)
         key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
+        # Save image output by pressing 's'
+        elif key == ord("s"):
+            cv2.imwrite('mask.png',mask)
+            cv2.imwrite('image_frame.png',image)
+            cv2.imwrite('result.png',obs_image)
 except KeyboardInterrupt:
     print("Done")
