@@ -381,4 +381,4 @@ try:
         elif key == ord("s"):
             cv2.imwrite('mask.png',mask)
             cv2.imwrite('image_frame.png',image)
-            cv2.imwrite('result.png',obs_image
+            cv2.imwrite('result.png',obs_images)
