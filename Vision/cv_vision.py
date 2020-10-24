@@ -199,7 +199,7 @@ def detect_obs(hsv_masks):
             # Boundary (x,y,w,h) box of contour
             boundary = cv2.boundingRect(cnt)
             # Error if boundaries outside of norm
-            error = 0 # 
+            error = 0 # No error for wall checking
             centre, radius = cv2.minEnclosingCircle(cnt)
             # Width of contour in pixels
             pix_width = boundary[2]
@@ -207,7 +207,6 @@ def detect_obs(hsv_masks):
             obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
             # Distance from camera in cm
             obs_dist = boundary[1]-boundary[3]
-            print(obs_dist)
             if obs_dist < 20:
                 error = 2
             # Create list of values
@@ -323,7 +322,7 @@ def hidden_obs(cnt, obs_indx, id_type, boundary, error):
     obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
     # Create list of values
     obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-    return obs_array_boundary       
+    return obs_array_boundary
 
 # Process frame from PiCamera
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -335,13 +334,13 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     # Crop image
     image = crop_image(image)
-    cv2.imshow("Original Frame", image)
+    # cv2.imshow("Original Frame", image)
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     # Output mask for checking
-    for indx,mask in enumerate(hsv_masks):
-        cv2.imshow(OBS_type[indx], mask)
+    # for indx,mask in enumerate(hsv_masks):
+    #     cv2.imshow(OBS_type[indx], mask)
 
     # Determine distance, angle ID and type
     new_obs = detect_obs(hsv_masks)
