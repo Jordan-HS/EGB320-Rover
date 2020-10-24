@@ -369,17 +369,9 @@ try:
     print("Booted")
     time.sleep(2)
     input("Press Enter to continue...")
+    time.sleep(2)
     while not True:
         observation, img = current_observation()
         cv2.imshow("View", img)
         key = cv2.waitKey(1) & 0xFF
-        rawCapture.truncate(0)
 except KeyboardInterrupt:
-    if key == ord("q"):
-        print("exit")
-    # Save image output by pressing 's'
-    elif key == ord("s"):
-        cv2.imwrite('mask.png',mask)
-        cv2.imwrite('image_frame.png',image)
-        cv2.imwrite('result.png',obs_images)
-        print("save")
