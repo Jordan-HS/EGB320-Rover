@@ -376,9 +376,10 @@ try:
         rawCapture.truncate(0)
 except KeyboardInterrupt:
     if key == ord("q"):
-        break
+        print("exit")
     # Save image output by pressing 's'
     elif key == ord("s"):
         cv2.imwrite('mask.png',mask)
         cv2.imwrite('image_frame.png',image)
         cv2.imwrite('result.png',obs_images)
+        print("save")
