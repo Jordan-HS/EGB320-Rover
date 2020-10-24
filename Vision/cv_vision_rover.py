@@ -364,7 +364,7 @@ def current_observation():
     return_im = disp_image(image, obstacle_array)
     return obstacle_array, return_im
 
-if __name__ == '__main__':
+try:
     observation, img = current_observation()
     print("Booted")
     time.sleep(2)
@@ -372,7 +372,7 @@ if __name__ == '__main__':
     while True:
         observation, img = current_observation()
         cv2.imshow("View", img)
-        cv2.waitKey(0)
+        key = cv2.waitKey(1) & 0xFF
         rawCapture.truncate(0)
         if key == ord("q"):
             break
