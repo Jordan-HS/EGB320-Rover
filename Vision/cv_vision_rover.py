@@ -383,5 +383,5 @@ try:
             cv2.imwrite('mask.png',mask)
             cv2.imwrite('image_frame.png',image)
             cv2.imwrite('result.png',obs_image)
-except KeyboardInterrupt:
-    print("Done")
+# except KeyboardInterrupt:
+#     print("Done")
