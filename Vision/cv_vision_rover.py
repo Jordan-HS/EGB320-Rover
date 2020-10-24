@@ -365,9 +365,7 @@ def current_observation():
     return obstacle_array, return_im
 
 try:
-    observation = current_observation()
-    # rover.current_movement = "stop"
-    # rover.updateCurrentPos()
+    observation, img = current_observation()
     print("Booted")
     time.sleep(2)
     input("Press Enter to continue...")
