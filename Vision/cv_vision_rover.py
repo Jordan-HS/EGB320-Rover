@@ -364,7 +364,7 @@ def current_observation():
     return_im = disp_image(image, obstacle_array)
     return obstacle_array, return_im
 
-try:
+if __name__ == '__main__':
     observation, img = current_observation()
     print("Booted")
     time.sleep(2)
