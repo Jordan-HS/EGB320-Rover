@@ -387,9 +387,9 @@ def current_observation():
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     # Apply filter to mask images to remove noise
-    mask_filter = 
+    mask_filter = 0
     # Determine distance, angle ID and type
-    obstacle_array = detect_obs(mask_filter)
+    obstacle_array = detect_obs(hsv_masks)
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
     return obstacle_array, return_im
