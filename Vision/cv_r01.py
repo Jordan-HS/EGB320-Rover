@@ -59,41 +59,10 @@ def crop_image(image):
     print([rate, "Crop"]) 
     return crop_img
 
-# # HSV colour threshold filter
-# def mask_obs(image):
-#     # Convert BGR to HSV image
-#     now = time.time()
-#     HSV_bgy = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-#     # Convert RGB to HSV image
-#     HSV_o = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-#     masks_HSV = []
-#     # Apply mask for HSV range
-#     for indx, thresh in enumerate(HSV_thresh):
-#         # Blue Green and Yellow threshold and filter
-#         if indx < 4:
-#             HSV_tempmask = cv2.inRange(HSV_bgy, thresh[0], thresh[1])
-#             HSV_sum = np.sum(HSV_tempmask)
-#             if HSV_sum == 0:
-#                 masks_HSV.append(HSV_tempmask)
-#             else:
-#                 masks_HSV.append(HSV_filter(HSV_tempmask))
-#         # Orange threshold and filter
-#         else:
-#             HSV_tempmask = cv2.inRange(HSV_o, thresh[0], thresh[1])
-#             HSV_sum = np.sum(HSV_tempmask)
-#             if HSV_sum == 0:
-#                 masks_HSV.append(HSV_tempmask)
-#             else:
-#                 #masks_HSV.append((HSV_tempmask))
-#                 masks_HSV.append(HSV_orange_filter(HSV_tempmask))
-#     elapsed = time.time() - now
-#     rate = 1.0 / elapsed
-#     print([rate, "HSV_mask"]) 
-#     return masks_HSV
-
 # HSV colour threshold filter
 def mask_obs(image):
     # Convert BGR to HSV image
+    now = time.time()
     HSV_bgy = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # Convert RGB to HSV image
     HSV_o = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -104,19 +73,29 @@ def mask_obs(image):
         if indx < 4:
             now = time.time()
             HSV_tempmask = cv2.inRange(HSV_bgy, thresh[0], thresh[1])
+            HSV_sum = np.sum(HSV_tempmask)
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, "HSV_thresh"]) 
-            now = time.time()
-            masks_HSV.append(HSV_filter(HSV_tempmask))
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            print([rate, "HSV_filter"]) 
+            print([rate, "HSV_thresh+sum"]) 
+            if HSV_sum == 0:
+                masks_HSV.append(HSV_tempmask)
+            else:
+                masks_HSV.append(HSV_filter(HSV_tempmask))
         # Orange threshold and filter
         else:
             HSV_tempmask = cv2.inRange(HSV_o, thresh[0], thresh[1])
-            masks_HSV.append(HSV_orange_filter(HSV_tempmask))
+            HSV_sum = np.sum(HSV_tempmask)
+            if HSV_sum == 0:
+                masks_HSV.append(HSV_tempmask)
+            else:
+                #masks_HSV.append((HSV_tempmask))
+                masks_HSV.append(HSV_orange_filter(HSV_tempmask))
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "HSV_mask"]) 
     return masks_HSV
+
+
 
 
 # Filters HSV image to remove noise
