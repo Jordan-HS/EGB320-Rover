@@ -52,12 +52,17 @@ rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
 
 # Image crop to decrease image processing time
 def crop_image(image):
+    now = time.time()
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Crop"]) 
     return crop_img
 
 # HSV colour threshold filter
 def mask_obs(image):
     # Convert BGR to HSV image
+    now = time.time()
     HSV_bgy = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # Convert RGB to HSV image
     HSV_o = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -81,25 +86,36 @@ def mask_obs(image):
             else:
                 #masks_HSV.append((HSV_tempmask))
                 masks_HSV.append(HSV_orange_filter(HSV_tempmask))
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "HSV_mask"]) 
     return masks_HSV
 
 # Filters HSV image to remove noise
 def HSV_filter(image):
+    now = time.time()
     # Opening - Erosion followed by dilation
     mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
     #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     mask = cv2.erode(mask, None, iterations=5)
     # Applying dilation a second time removes noise
     mask = cv2.dilate(mask, None, iterations=5)
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "HSV_filter"]) 
     return mask
 
 def HSV_orange_filter(image):
+    now = time.time()
     # Opening - Erosion followed by dilation
     mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
     #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     mask = cv2.erode(mask, None, iterations=1)
     # Applying dilation a second time removes noise
     mask = cv2.dilate(mask, None, iterations=3)
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Orange_filter"]) 
     return mask
 
 # Define obstacles
@@ -113,6 +129,7 @@ def detect_obs(hsv_masks):
         #contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # Check for rocks and satellite crash obstacles
         if indx < 2:
+            now = time.time()
             _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
@@ -162,8 +179,12 @@ def detect_obs(hsv_masks):
                     # Create list of values
                     #print([id_type, pix_width, obs_dist])
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+            elapsed = time.time() - now
+            rate = 1.0 / elapsed
+            print([rate, OBS_type[indx]]) 
         # Check for lander
         elif indx == 2:
+            now = time.time()
             _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
@@ -188,8 +209,12 @@ def detect_obs(hsv_masks):
             obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+            elapsed = time.time() - now
+            rate = 1.0 / elapsed
+            print([rate, OBS_type[indx]]) 
         # Check for Wall
         elif indx == 3:
+            now = time.time()
             _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
@@ -212,8 +237,12 @@ def detect_obs(hsv_masks):
                 error = 2
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+            elapsed = time.time() - now
+            rate = 1.0 / elapsed
+            print([rate, OBS_type[indx]]) 
         # Check for samples
         else:
+            now = time.time()
             _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
@@ -237,6 +266,9 @@ def detect_obs(hsv_masks):
                     obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
                     # Create list of values
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+            elapsed = time.time() - now
+            rate = 1.0 / elapsed
+            print([rate, OBS_type[indx]]) 
     #print(obs_array)
     return obs_array
 
@@ -372,10 +404,11 @@ try:
     av_count = 0
     rate = 0
     while True:
-        now = time.time()
+        total_now = time.time()
         observation, img = current_observation()
-        elapsed = time.time() - now
-        rate = 1.0 / elapsed
+        total_elapsed = time.time() - total_now
+        total_rate = 1.0 / tota_elapsed
+        #print(total_rate)
         av_process += rate
         av_count += 1
         if av_count == 15:
