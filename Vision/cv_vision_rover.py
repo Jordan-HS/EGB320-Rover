@@ -407,7 +407,7 @@ try:
         total_now = time.time()
         observation, img = current_observation()
         total_elapsed = time.time() - total_now
-        total_rate = 1.0 / tota_elapsed
+        total_rate = 1.0 / total_elapsed
         #print(total_rate)
         av_process += rate
         av_count += 1
