@@ -92,12 +92,16 @@ def mask_obs(image):
 # Filters HSV image to remove noise
 def HSV_filter(image):
     now = time.time()
-    # Opening - Erosion followed by dilation
-    mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
-    #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    mask = cv2.erode(mask, None, iterations=5)
-    # Applying dilation a second time removes noise
-    mask = cv2.dilate(mask, None, iterations=5)
+    HSV_sum = np.sum(image)
+    if HSV_sum > 0:
+        # Opening - Erosion followed by dilation
+        mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+        #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+        mask = cv2.erode(mask, None, iterations=5)
+        # Applying dilation a second time removes noise
+        mask = cv2.dilate(mask, None, iterations=5)
+    else:
+        mask = image
     elapsed = time.time() - now
     rate = 1.0 / elapsed
     print([rate, "HSV_filter"]) 
