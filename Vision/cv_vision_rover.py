@@ -11,7 +11,7 @@ obstacle_avoidance = True
 HSV_blue = [[76, 88, 18], [113, 255, 255]]
 HSV_green = [[33, 77, 18], [74, 255, 255]]
 HSV_yellow = [[15, 77, 40], [36, 255, 255]]
-HSV_wall = [[0, 0, 0], [170, 28, 255]]
+HSV_wall = [[0, 0, 0], [179, 255, 80]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 
