@@ -382,6 +382,7 @@ try:
             av_rate = av_process/15
             print("Average processing rate:{}.".format(av_rate))
             av_count = 0
+            av_process = 0
         cv2.imshow("View", img)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
