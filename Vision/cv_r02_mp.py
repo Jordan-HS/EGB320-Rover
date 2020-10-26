@@ -387,9 +387,14 @@ def current_observation():
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     # Apply filter to mask images to remove noise
-    mask_filter = 0
+    now = time.time()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        mask_filter = executor.map(HSV_filter, hsv_masks)
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Filter"]) 
     # Determine distance, angle ID and type
-    obstacle_array = detect_obs(hsv_masks)
+    obstacle_array = detect_obs(mask_filter)
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
     return obstacle_array, return_im
