@@ -392,16 +392,8 @@ def current_observation():
     hsv_masks = mask_obs(image)
     # Apply filter to mask images to remove noise
     now = time.time()
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     mask_filter = executor.map(HSV_filter, hsv_masks)
-    mask_filter = []
-    for mask in hsv_masks:
-        p = multiprocessing.Process(HSV_filter, args=mask)
-        p.start()
-        mask_filter.append(p)
-
-    for process in mask_filter:
-        process.join()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        mask_filter = executor.map(HSV_filter, hsv_masks)
 
     elapsed = time.time() - now
     rate = 1.0 / elapsed
