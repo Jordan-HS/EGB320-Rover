@@ -393,7 +393,7 @@ def current_observation():
     # Apply filter to mask images to remove noise
     mask_filter_loop = []
     now = time.time()
-    for mask in hsv_masks
+    for mask in hsv_masks:
         mask_filter_loop.append = HSV_filter(mask)
     elapsed = time.time() - now
     rate = 1.0 / elapsed
