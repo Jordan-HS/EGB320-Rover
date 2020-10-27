@@ -467,6 +467,10 @@ def detect_wall(hsv_masks):
     obs_dist = boundary[1]-boundary[3]
     if obs_dist > 15:
         error = 2
+    # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
+    print(cnt)
+    for i in cnt:
+        if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]
     # Create list of values
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
