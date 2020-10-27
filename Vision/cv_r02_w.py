@@ -403,7 +403,8 @@ def detect_land(hsv_masks):
         return
     obs_array = []
     indx = 2
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = np.concatenate(contours)
     #boundary_area = cv2.findNonZero(mask)
     # obstacle type index
@@ -441,7 +442,8 @@ def detect_wall(hsv_masks):
         return
     obs_array = []
     indx = 3
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = np.concatenate(contours)
     #boundary_area = cv2.findNonZero(mask)
     # obstacle type index
@@ -594,7 +596,7 @@ def disp_image(image, obstacle_array):
     obs_image = image
     new_obs = obstacle_array
     for i, obs in enumerate(new_obs):
-        if i != 3
+        if i != 3:
             # Draw rectangle
             cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
             (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
@@ -611,7 +613,9 @@ def disp_image(image, obstacle_array):
             # Draw area of obstacle from camera
             #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-        else
+        else:
+            # Draw contour around wall
+            cv2.drawContours(obs_image, new_obs[i][5], -1, OBS_col[new_obs[i][0]], 3)
 
     return obs_image
 
