@@ -85,7 +85,8 @@ try:
             break
         # Save image output by pressing 's'
         elif key == ord("s"):
-            timestr = time.strftime("%Y%m%d-%H%M%S")
+            timestr = time.strftime("%Y%m%d-%H%M%S")+(".png")
+            print(timestr)
             #cv2.imwrite('image_crop.png',img)
             cv2.imwrite(timestr,img)
 except KeyboardInterrupt:
