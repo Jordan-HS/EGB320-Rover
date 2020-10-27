@@ -58,7 +58,7 @@ def crop_image(image):
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Crop"]) 
+    print([rate, "Crop"])
     return crop_img
 
 # HSV colour threshold filter
@@ -77,13 +77,13 @@ def mask_obs(image):
             masks_HSV.append(cv2.inRange(HSV_bgy, thresh[0], thresh[1]))
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, "HSV_thresh+sum"]) 
+            print([rate, "HSV_thresh+sum"])
         # Orange threshold and filter
         else:
             masks_HSV.append(cv2.inRange(HSV_o, thresh[0], thresh[1]))
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "HSV_mask"]) 
+    print([rate, "HSV_mask"])
     return masks_HSV
 
 # Filters HSV image to remove noise
@@ -101,7 +101,7 @@ def HSV_filter(image):
     #     mask = image
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "HSV_filter"]) 
+    print([rate, "HSV_filter"])
     return mask
 
 def HSV_orange_filter(image):
@@ -114,12 +114,12 @@ def HSV_orange_filter(image):
     mask = cv2.dilate(mask, None, iterations=3)
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Orange_filter"]) 
+    print([rate, "Orange_filter"])
     return mask
 
 # Define obstacles
 def detect_obs(hsv_masks):
-    obs_array = []    
+    obs_array = []
     for indx, mask in enumerate(hsv_masks):
         HSV_sum = np.sum(mask)
         if HSV_sum == 0:
@@ -179,7 +179,7 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]]) 
+            print([rate, OBS_type[indx]])
         # Check for lander
         elif indx == 2:
             now = time.time()
@@ -209,7 +209,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]]) 
+            print([rate, OBS_type[indx]])
         # Check for Wall
         elif indx == 3:
             now = time.time()
@@ -237,7 +237,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]]) 
+            print([rate, OBS_type[indx]])
         # Check for samples
         else:
             now = time.time()
@@ -266,14 +266,14 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]]) 
+            print([rate, OBS_type[indx]])
     #print(obs_array)
     return obs_array
 
 # Define Rocks
 def detect_rock(hsv_masks):
-    mask = hsv_masks
     now = time.time()
+    mask = hsv_masks
     HSV_sum = np.sum(mask)
     if HSV_sum == 0:
         return
@@ -329,13 +329,13 @@ def detect_rock(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]]) 
+    print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Satellite
 def detect_sat(hsv_masks):
-    mask = hsv_masks
     now = time.time()
+    mask = hsv_masks
     HSV_sum = np.sum(mask)
     if HSV_sum == 0:
         return
@@ -391,13 +391,13 @@ def detect_sat(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]]) 
+    print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Lander
 def detect_land(hsv_masks):
-    mask = hsv_masks
     now = time.time()
+    mask = hsv_masks
     HSV_sum = np.sum(mask)
     if HSV_sum == 0:
         return
@@ -429,13 +429,13 @@ def detect_land(hsv_masks):
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]]) 
+    print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Wall
 def detect_wall(hsv_masks):
-    mask = hsv_masks
     now = time.time()
+    mask = hsv_masks
     HSV_sum = np.sum(mask)
     if HSV_sum == 0:
         return
@@ -465,7 +465,7 @@ def detect_wall(hsv_masks):
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]]) 
+    print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Samples
@@ -594,22 +594,25 @@ def disp_image(image, obstacle_array):
     obs_image = image
     new_obs = obstacle_array
     for i, obs in enumerate(new_obs):
-        # Draw rectangle
-        cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
-        (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
-        new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
-        # Draw shape type
-        #cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
-        #int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-        # Draw distance in m
-        cv2.putText(obs_image, "Dist:{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
-        int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-        # Draw angle in degrees to obstacle from camera
-        cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
-        int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-        # Draw area of obstacle from camera
-        #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
-        #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+        if i != 3
+            # Draw rectangle
+            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
+            (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
+            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
+            # Draw shape type
+            #cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
+            #int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+            # Draw distance in m
+            cv2.putText(obs_image, "Dist:{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+            # Draw angle in degrees to obstacle from camera
+            cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
+            int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+            # Draw area of obstacle from camera
+            #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
+            #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+        else
+
     return obs_image
 
 def current_observation():
@@ -632,7 +635,7 @@ def current_observation():
         mask_filter_loop.append(HSV_filter(mask))
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Filter_Loop"]) 
+    print([rate, "Filter_Loop"])
 
     # Multiprocess filter
     now = time.time()
@@ -640,7 +643,7 @@ def current_observation():
         mask_filter = executor.map(HSV_filter, hsv_masks)
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Filter_CC"]) 
+    print([rate, "Filter_CC"])
 
     obstacle_array = []
     # Determine distance, angle ID and type
@@ -658,10 +661,18 @@ def current_observation():
 
     # Lander distance, angle ID and type
     obstacle_array.append(detect_land(mask_filter[2]))
+    for obs in sat_array:
+        obstacle_array.append(obs)
+
     # Wall distance, angle ID and type
     obstacle_array.append(detect_wall(mask_filter[3]))
+    for obs in sat_array:
+        obstacle_array.append(obs)
+
     # Samples distance, angle ID and type
     obstacle_array.append(detect_samp(mask_filter[4]))
+    for obs in sat_array:
+        obstacle_array.append(obs)
 
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array_loop)
