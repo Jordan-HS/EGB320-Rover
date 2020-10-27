@@ -451,12 +451,16 @@ def detect_wall(hsv_masks):
     # Obstacle label
     id_type = OBS_type[indx]
     # Boundary (x,y,w,h) box of contour
-    boundary = cv2.boundingRect(cnt)
+    #boundary = cv2.boundingRect(cnt)
+    #boundary = cnt
+    # Try episilon value between 0.01 and 0.1
+    epsilon = 0.05*cv2.arcLength(cnt,True)
+    boundary = cv2.approxPolyDP(cnt,epsilon,True)
+
     # Error if boundaries outside of norm
     error = 0 # No error for wall
-    centre, radius = cv2.minEnclosingCircle(cnt)
-    # Width of contour in pixels
-    pix_width = boundary[2]
+    centre, _ = cv2.minEnclosingCircle(cnt)
+
     # Angle from centre of screen in radians
     obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
     # Distance from camera in cm

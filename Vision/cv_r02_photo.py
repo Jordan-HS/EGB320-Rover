@@ -80,7 +80,6 @@ try:
     while True:
         img = current_observation()
         cv2.imshow("View", img)
-
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
