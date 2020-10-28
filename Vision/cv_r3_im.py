@@ -1,10 +1,10 @@
-import numpy as np
-import time
-import cv2
-import multiprocessing
 import concurrent.futures
+import multiprocessing
 import sys
-from ../venv/lib/python3.8/site-packages import cv2
+import time
+
+import cv2
+import numpy as np
 
 # Initialse variablescd
 # HSV colour thresholds
@@ -114,7 +114,7 @@ def detect_obs(hsv_masks):
         # Check for rocks and satellite crash obstacles
         if indx < 2:
             now = time.time()
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 # print(area)
@@ -153,7 +153,7 @@ def detect_obs(hsv_masks):
                             else:
                                 error = 0   # No obstacle overlap
                     # Find centre of enclosing circle
-                    centre, radius = cv2.minEnclosingCircle(cnt)
+                    centre, _ = cv2.minEnclosingCircle(cnt)
                     # Width of contour in pixels
                     pix_width = boundary[2]
                     # Angle from centre of screen in radians
@@ -169,7 +169,7 @@ def detect_obs(hsv_masks):
         # Check for lander
         elif indx == 2:
             now = time.time()
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
             # obstacle type index
@@ -199,7 +199,7 @@ def detect_obs(hsv_masks):
         # Check for Wall
         elif indx == 3:
             now = time.time()
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cnt = np.concatenate(contours)
             #boundary_area = cv2.findNonZero(mask)
             # obstacle type index
@@ -227,7 +227,7 @@ def detect_obs(hsv_masks):
         # Check for samples
         else:
             now = time.time()
-            _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 if area > 40:
@@ -265,7 +265,7 @@ def detect_rock(hsv_masks):
         return
     obs_array = []
     indx = 0
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         # print(area)
@@ -327,7 +327,7 @@ def detect_sat(hsv_masks):
         return
     obs_array = []
     indx = 1
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         # print(area)
@@ -365,7 +365,7 @@ def detect_sat(hsv_masks):
                 else:
                     error = 0   # No obstacle overlap
             # Find centre of enclosing circle
-            centre, radius = cv2.minEnclosingCircle(cnt)
+            centre, _ = cv2.minEnclosingCircle(cnt)
             # Width of contour in pixels
             pix_width = boundary[2]
             # Angle from centre of screen in radians
@@ -390,7 +390,7 @@ def detect_land(hsv_masks):
     obs_array = []
     indx = 2
     #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = np.concatenate(contours)
     #boundary_area = cv2.findNonZero(mask)
     # obstacle type index
@@ -429,7 +429,7 @@ def detect_wall(hsv_masks):
     obs_array = []
     indx = 3
     #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = np.concatenate(contours)
     #boundary_area = cv2.findNonZero(mask)
     # obstacle type index
@@ -441,8 +441,8 @@ def detect_wall(hsv_masks):
     #boundary = cnt
     # Try episilon value between 0.01 and 0.1
     epsilon = 0.05*cv2.arcLength(cnt,True)
-    boundary = cv2.approxPolyDP(cnt,epsilon,True)
-
+    #boundary = cv2.approxPolyDP(cnt,epsilon,True)
+    boundary = contours
     # Error if boundaries outside of norm
     error = 0 # No error for wall
     centre, _ = cv2.minEnclosingCircle(cnt)
@@ -450,11 +450,11 @@ def detect_wall(hsv_masks):
     # Angle from centre of screen in radians
     obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
     # Distance from camera in cm
-    obs_dist = boundary[1]-boundary[3]
+    obs_dist = 1
     if obs_dist > 15:
         error = 2
     # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
-    print(cnt)
+    print('Contours {}', cnt)
     # for i in cnt:
     #     if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]:
 
@@ -474,7 +474,7 @@ def detect_samp(hsv_masks):
         return
     obs_array = []
     indx = 4
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         if area > 40:
@@ -488,7 +488,7 @@ def detect_samp(hsv_masks):
             # Error if boundaries outside of norm
             error = 0
             # Find centre of enclosing circle
-            centre, radius = cv2.minEnclosingCircle(cnt)
+            centre, _ = cv2.minEnclosingCircle(cnt)
             # Width of contour in pixels
             pix_width = boundary[2]
             # Angle from centre of screen in radians
@@ -576,7 +576,7 @@ def hidden_obs(cnt, obs_indx, id_type, boundary, error):
     # Boundary points
     boundary = boundary
     # Centre point for obstacle based on height
-    centre, radius = cv2.minEnclosingCircle(cnt)
+    centre, _ = cv2.minEnclosingCircle(cnt)
     # Width of contour in pixels
     pix_width = boundary[3]
     # Angle from centre of screen in radians
@@ -590,8 +590,9 @@ def hidden_obs(cnt, obs_indx, id_type, boundary, error):
 def disp_image(image, obstacle_array):
     obs_image = image
     new_obs = obstacle_array
-    for i, obs in enumerate(new_obs):
-        if i != 3:
+    for i, _ in enumerate(new_obs):
+        if new_obs[i][0] != 3:
+            print(i)
             # Draw rectangle
             cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
             (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
@@ -610,6 +611,10 @@ def disp_image(image, obstacle_array):
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
         else:
             # Draw contour around wall
+            print('test')
+            print(new_obs[i][5])
+            print(new_obs[i])
+            #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
             cv2.drawContours(obs_image, new_obs[i][5], -1, OBS_col[new_obs[i][0]], 3)
 
     return obs_image
@@ -650,33 +655,43 @@ def current_observation():
     obstacle_array_loop = detect_obs(mask_filter)
 
     # Rocks distance, angle ID and type
-    rock_array = detect_rock(mask_filter[0])
-    for obs in rock_array:
-        obstacle_array.append(obs)
+    rock_array = detect_rock(mask_filter_loop[0])
+    if rock_array is not None:
+        print(rock_array)
+        for obs in rock_array:
+            obstacle_array.append(obs)
 
     # Satellites distance, angle ID and type
-    sat_array = detect_sat(mask_filter[1])
-    for obs in sat_array:
-        obstacle_array.append(obs)
+    sat_array = detect_sat(mask_filter_loop[1])
+    if sat_array is not None:
+        print(sat_array)
+        for obs in sat_array:
+            obstacle_array.append(obs)
 
     # Lander distance, angle ID and type
-    land_array.append(detect_land(mask_filter[2]))
-    for obs in land_array:
-        obstacle_array.append(obs)
+    land_array = (detect_land(mask_filter_loop[2]))
+    if land_array is not None:
+        print(land_array)
+        for obs in land_array:
+            obstacle_array.append(obs)
 
     # Wall distance, angle ID and type
-    wall_array.append(detect_wall(mask_filter[3]))
-    for obs in wall_array:
-        obstacle_array.append(obs)
+    wall_array = (detect_wall(mask_filter_loop[3]))
+    if wall_array is not None:
+        print(wall_array)
+        for obs in wall_array:
+            obstacle_array.append(obs)
 
     # Samples distance, angle ID and type
-    samp_array.append(detect_samp(mask_filter[4]))
-    for obs in samp_array:
-        obstacle_array.append(obs)
-
+    samp_array = (detect_samp(mask_filter_loop[4]))
+    if samp_array is not None:
+        print(samp_array)
+        for obs in samp_array:
+            obstacle_array.append(obs)
+    print(obstacle_array)
     # Draw from and boundary
-    return_im = disp_image(image, obstacle_array_loop)
-    return obstacle_array_loop, return_im
+    return_im = disp_image(image, obstacle_array)
+    return obstacle_array, return_im
 
 try:
     observation, img = current_observation()
