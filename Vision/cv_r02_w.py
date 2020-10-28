@@ -469,8 +469,9 @@ def detect_wall(hsv_masks):
         error = 2
     # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
     print(cnt)
-    for i in cnt:
-        if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]
+    # for i in cnt:
+    #     if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]:
+
     # Create list of values
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
@@ -630,7 +631,8 @@ def disp_image(image, obstacle_array):
 def current_observation():
     # Grab frame
     camera.capture(rawCapture, format="bgr", use_video_port=True)
-    image = rawCapture.array
+    #image = rawCapture.array
+    image = cv2.imread('20201028-072507.png') # reads image 'opencv-logo.png' as grayscale
     rawCapture.truncate(0)
 
     # Crop image
@@ -672,18 +674,18 @@ def current_observation():
         obstacle_array.append(obs)
 
     # Lander distance, angle ID and type
-    obstacle_array.append(detect_land(mask_filter[2]))
-    for obs in sat_array:
+    land_array.append(detect_land(mask_filter[2]))
+    for obs in land_array:
         obstacle_array.append(obs)
 
     # Wall distance, angle ID and type
-    obstacle_array.append(detect_wall(mask_filter[3]))
-    for obs in sat_array:
+    wall_array.append(detect_wall(mask_filter[3]))
+    for obs in wall_array:
         obstacle_array.append(obs)
 
     # Samples distance, angle ID and type
-    obstacle_array.append(detect_samp(mask_filter[4]))
-    for obs in sat_array:
+    samp_array.append(detect_samp(mask_filter[4]))
+    for obs in samp_array:
         obstacle_array.append(obs)
 
     # Draw from and boundary
