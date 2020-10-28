@@ -430,23 +430,20 @@ def detect_wall(hsv_masks):
     indx = 3
     #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnt = np.concatenate(contours)
-    #boundary_area = cv2.findNonZero(mask)
+    # Sort contours by size
+    areas = [cv2.contourArea(cnt) for cnt in contours]
+    # index largest object
+    max_index = np.argmax(areas)
+    cnt = contours[max_index]
+    # Draw simplified boundary
+    boundary = cv2.convexHull(cnt)
     # obstacle type index
     obs_indx = indx
     # Obstacle label
     id_type = OBS_type[indx]
-    # Boundary (x,y,w,h) box of contour
-    #boundary = cv2.boundingRect(cnt)
-    #boundary = cnt
-    # Try episilon value between 0.01 and 0.1
-    epsilon = 0.05*cv2.arcLength(cnt,True)
-    #boundary = cv2.approxPolyDP(cnt,epsilon,True)
-    boundary = contours
     # Error if boundaries outside of norm
     error = 0 # No error for wall
     centre, _ = cv2.minEnclosingCircle(cnt)
-
     # Angle from centre of screen in radians
     obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
     # Distance from camera in cm
@@ -454,7 +451,6 @@ def detect_wall(hsv_masks):
     if obs_dist > 15:
         error = 2
     # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
-    print('Contours {}', cnt)
     # for i in cnt:
     #     if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]:
 
@@ -592,7 +588,6 @@ def disp_image(image, obstacle_array):
     new_obs = obstacle_array
     for i, _ in enumerate(new_obs):
         if new_obs[i][0] != 3:
-            print(i)
             # Draw rectangle
             cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
             (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
@@ -611,11 +606,8 @@ def disp_image(image, obstacle_array):
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
         else:
             # Draw contour around wall
-            print('test')
-            print(new_obs[i][5])
-            print(new_obs[i])
             #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
-            cv2.drawContours(obs_image, new_obs[i][5], -1, OBS_col[new_obs[i][0]], 3)
+            cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
 
     return obs_image
 
@@ -623,7 +615,7 @@ def current_observation():
     # Grab frame
     #camera.capture(rawCapture, format="bgr", use_video_port=True)
     #image = rawCapture.array
-    image = cv2.imread('20201028-072507.png') # reads image 'opencv-logo.png' as grayscale
+    image = cv2.imread('/home/logic/EGB320-Rover/Vision/20201028-072905.png') # reads image 'opencv-logo.png' as grayscale
     #rawCapture.truncate(0)
 
     # Crop image
@@ -652,53 +644,53 @@ def current_observation():
 
     obstacle_array = []
     # Determine distance, angle ID and type
-    obstacle_array_loop = detect_obs(mask_filter)
+    #obstacle_array_loop = detect_obs(mask_filter)
 
     # Rocks distance, angle ID and type
     rock_array = detect_rock(mask_filter_loop[0])
     if rock_array is not None:
-        print(rock_array)
+        #print(rock_array)
         for obs in rock_array:
             obstacle_array.append(obs)
 
     # Satellites distance, angle ID and type
     sat_array = detect_sat(mask_filter_loop[1])
     if sat_array is not None:
-        print(sat_array)
+        #print(sat_array)
         for obs in sat_array:
             obstacle_array.append(obs)
 
     # Lander distance, angle ID and type
     land_array = (detect_land(mask_filter_loop[2]))
     if land_array is not None:
-        print(land_array)
+        #print(land_array)
         for obs in land_array:
             obstacle_array.append(obs)
 
     # Wall distance, angle ID and type
     wall_array = (detect_wall(mask_filter_loop[3]))
     if wall_array is not None:
-        print(wall_array)
+        #print(wall_array)
         for obs in wall_array:
             obstacle_array.append(obs)
 
     # Samples distance, angle ID and type
     samp_array = (detect_samp(mask_filter_loop[4]))
     if samp_array is not None:
-        print(samp_array)
+        #print(samp_array)
         for obs in samp_array:
             obstacle_array.append(obs)
-    print(obstacle_array)
+    #print(obstacle_array)
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
     return obstacle_array, return_im
 
 try:
-    observation, img = current_observation()
     print("Booted")
-    time.sleep(2)
+    time.sleep(1)
     input("Press Enter to continue...")
-    time.sleep(2)
+    time.sleep(1)
+    observation, img = current_observation()
     av_process = 0
     av_count = 0
     rate = 0
