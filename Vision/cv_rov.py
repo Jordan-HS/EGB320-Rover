@@ -2,7 +2,8 @@ import concurrent.futures
 import multiprocessing
 import sys
 import time
-
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import cv2
 import numpy as np
 
