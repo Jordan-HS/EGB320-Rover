@@ -20,7 +20,7 @@ HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
-OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255], [255, 0, 0], [255, 0, 0]] # box colours
+OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255], [255, 0, 0], [0, 0, 255]] # box colours
 # Set camera image frame
 #IMG_X = 640
 #IMG_Y = 480
@@ -37,7 +37,7 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 def obs_setup():
     # Define barrier around cropped image
-    barrier_cont = np.array([[[0, 160]],[[33, 140]],[[66, 120]],[[99, 100]], [[219, 100]],[[252, 120]],[[285, 140]], [[CROP_X, 160]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
+    barrier_cont = np.array([[[0, 150]],[[14, 140]],[[29, 130]],[[44, 120]],[[59, 110]],[[99, 100]], [[219, 100]],[[252, 120]],[[285, 140]], [[CROP_X, 150]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
     return barrier_cont
 
 # Image crop to decrease image processing time
@@ -430,7 +430,7 @@ def detect_wall(hsv_masks):
         return
     obs_array = []
     indx = 3
-    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for cnt in contours:
         boundary = cv2.boundingRect(cnt)
         # print(area)
@@ -446,12 +446,14 @@ def detect_wall(hsv_masks):
                         id_type = OBS_type[indx]
                         # Error if boundaries outside of norm
                         error = 2 # Danger - Wall detected at location
+                        # Define point location
+                        centre = (x,y)
                         # Angle from centre of screen in radians
                         obs_ang = np.arctan(((IMG_X/2) - x)/FOCAL_PIX)
                         # Distance from camera in cm
                         obs_dist = 0.20 # Distance to point (m)
                         # Create list of values
-                        obs_array.append([obs_indx, id_type, obs_ang, obs_dist, points, cnt, error])
+                        obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, cnt, error])
                     else:
                         obs_indx = indx
                         # Obstacle label
@@ -634,7 +636,7 @@ def disp_image(image, obstacle_array):
             # Draw contour around wall
             #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
             if new_obs[i][6] == 2:
-                cv2.circle(obs_image, [new_obs[i][4]], -1, OBS_col[6], 1)
+                cv2.circle(obs_image, new_obs[i][4], 4, OBS_col[6], 1)
             else:
                 cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
     cv2.drawContours(obs_image, [barrier_cont], -1, OBS_col[5], 1)
@@ -732,8 +734,8 @@ try:
     cc_rate_av = 0
     loop_rate_av = 0
     th_rate_av = 0
-    images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
-    #images = ['Vision/20201028-072710_2.png']
+    #images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    images = ['Vision/20201028-072710_2.png']
     while True:
         for im in images:
             #total_now = time.time()
