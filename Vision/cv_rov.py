@@ -102,7 +102,7 @@ def HSV_filter(image):
     # Opening - Erosion followed by dilation
     mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
     #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    mask = cv2.erode(mask, None, iterations=2)
+    mask = cv2.erode(mask, None, iterations=1)
     # Applying dilation a second time removes noise
     mask = cv2.dilate(mask, None, iterations=2)
     # else:
