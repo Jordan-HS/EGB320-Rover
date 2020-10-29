@@ -23,6 +23,8 @@ kernel = np.ones((5, 5))
 # Initiate counter to only show every 10th computation
 image_cnt = 0
 
+
+
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
@@ -38,14 +40,33 @@ KNOWN_DIST = 0.20         # m
 KNOWN_WIDTH = 0.069       # m
 FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
+# Initialise camera setup
+camera = PiCamera()
+camera.resolution = (IMG_X, IMG_Y)
+camera.framerate = 8
+# Allow time for the camera to warmup
+time.sleep(2.0)
+camera.video_stabilization = False
+camera.exposure_mode = 'off'
+camera.awb_mode = 'off'
+camera.awb_gains = 2.0
+
+#camera.awb_gains = 3
+rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
+
 # Image crop to decrease image processing time
 def crop_image(image):
-    now = time.time()
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    print([rate, "Crop"])
     return crop_img
+
+# # Image crop to decrease image processing time
+# def crop_image(image):
+#     now = time.time()
+#     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
+#     elapsed = time.time() - now
+#     rate = 1.0 / elapsed
+#     print([rate, "Crop"])
+#     return crop_img
 
 # HSV colour threshold filter
 def mask_obs(image):
@@ -63,13 +84,13 @@ def mask_obs(image):
             masks_HSV.append(cv2.inRange(HSV_bgy, thresh[0], thresh[1]))
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, "HSV_thresh+sum"])
+            #print([rate, "HSV_thresh+sum"])
         # Orange threshold and filter
         else:
             masks_HSV.append(cv2.inRange(HSV_o, thresh[0], thresh[1]))
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "HSV_mask"])
+    #print([rate, "HSV_mask"])
     return masks_HSV
 
 # Filters HSV image to remove noise
@@ -87,7 +108,7 @@ def HSV_filter(image):
     #     mask = image
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "HSV_filter"])
+    #print([rate, "HSV_filter"])
     return mask
 
 def HSV_orange_filter(image):
@@ -100,7 +121,7 @@ def HSV_orange_filter(image):
     mask = cv2.dilate(mask, None, iterations=3)
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Orange_filter"])
+    #print([rate, "Orange_filter"])
     return mask
 
 # Define obstacles
@@ -165,7 +186,7 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]])
+            #print([rate, OBS_type[indx]])
         # Check for lander
         elif indx == 2:
             now = time.time()
@@ -195,7 +216,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]])
+            #print([rate, OBS_type[indx]])
         # Check for Wall
         elif indx == 3:
             now = time.time()
@@ -223,7 +244,7 @@ def detect_obs(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]])
+            #print([rate, OBS_type[indx]])
         # Check for samples
         else:
             now = time.time()
@@ -252,7 +273,7 @@ def detect_obs(hsv_masks):
                     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
             elapsed = time.time() - now
             rate = 1.0 / elapsed
-            print([rate, OBS_type[indx]])
+            #print([rate, OBS_type[indx]])
     #print(obs_array)
     return obs_array
 
@@ -315,7 +336,7 @@ def detect_rock(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]])
+    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Satellite
@@ -377,7 +398,7 @@ def detect_sat(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]])
+    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Lander
@@ -416,7 +437,7 @@ def detect_land(hsv_masks):
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]])
+    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Wall
@@ -458,7 +479,7 @@ def detect_wall(hsv_masks):
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]])
+    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Samples
@@ -495,7 +516,7 @@ def detect_samp(hsv_masks):
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, OBS_type[indx]])
+    #print([rate, OBS_type[indx]])
     return obs_array
 
 def overlap_obs(cnt, obs_indx, id_type, boundary, error):
@@ -632,7 +653,7 @@ def current_observation():
         mask_filter_loop.append(HSV_filter(mask))
     elapsed = time.time() - now
     rate = 1.0 / elapsed
-    print([rate, "Filter_Loop"])
+    #print([rate, "Filter_Loop"])
 
     # Multiprocess filter
     # now = time.time()
