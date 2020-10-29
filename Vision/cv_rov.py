@@ -13,8 +13,8 @@ obstacle_avoidance = True
 
 HSV_blue = [[76, 88, 18], [113, 255, 255]]
 HSV_green = [[33, 77, 50], [74, 255, 255]]
-HSV_yellow = [[15, 77, 40], [36, 255, 255]]
-HSV_wall = [[0, 0, 0], [179, 255, 80]]
+HSV_yellow = [[15, 77, 23], [36, 255, 255]]
+HSV_wall = [[0, 0, 0], [179, 255, 16]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 
@@ -102,7 +102,7 @@ def HSV_filter(image):
     # Opening - Erosion followed by dilation
     mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
     #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    mask = cv2.erode(mask, None, iterations=2)
+    mask = cv2.erode(mask, None, iterations=1)
     # Applying dilation a second time removes noise
     mask = cv2.dilate(mask, None, iterations=2)
     # else:
