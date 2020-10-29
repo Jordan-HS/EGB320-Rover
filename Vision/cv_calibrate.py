@@ -27,7 +27,7 @@ class pi_cam_setup:
 
     def capture_frame(self):
         self.stream = PiRGBArray(self.camera) 
-        self.camera.capture(self.stream, format='bgr',use_video_port=True)
+        self.camera.capture(self.stream, format='rgb',use_video_port=True)
         frame = self.stream.array
         # Clear the stream between frame captures 
         self.stream.truncate()
