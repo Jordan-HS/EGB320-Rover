@@ -458,7 +458,8 @@ def detect_wall(hsv_masks):
     max_index = np.argmax(areas)
     cnt = contours[max_index]
     # Draw simplified boundary
-    boundary = cv2.convexHull(cnt)
+    boundary = cnt
+    #boundary = cv2.convexHull(cnt)
     # obstacle type index
     obs_indx = indx
     # Obstacle label
@@ -472,9 +473,7 @@ def detect_wall(hsv_masks):
     obs_dist = 1
     if obs_dist > 15:
         error = 2
-    # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
-    # for i in cnt:
-    #     if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]:
+
 
     # Create list of values
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
