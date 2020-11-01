@@ -10,7 +10,7 @@ import numpy as np
 # HSV colour thresholds
 obstacle_avoidance = True
 
-HSV_blue = [[97, 124, 5], [112, 255, 172]]
+HSV_blue = [[92, 104, 5], [127, 255, 172]]
 HSV_green = [[33, 77, 30], [74, 255, 255]]
 HSV_yellow = [[21, 0, 0], [40, 255, 255]]
 HSV_wall = [[0, 0, 0], [179, 255, 0]]
@@ -67,18 +67,35 @@ def mask_obs(image):
     #print([rate, "HSV_mask"])
     return masks_HSV
 
-def HSV_orange_filter(image):
-    now = time.time()
+# Define morphology kernal size for filter
+kernel = np.ones((3,3))
+
+# Filters HSV image to remove noise
+def HSV_filter(image):
+    #HSV_sum = np.sum(image)
+    #if HSV_sum == 0:
+    #    return image
+    #else:
+    #Gaus_im = cv2.GaussianBlur(image,(3,3),0)
+    #n1_im = cv2.fastNlMeansDenoising(image, None, 3, 3, 5)
+    #blur_im = cv2.medianBlur(image, 9)
     # Opening - Erosion followed by dilation
-    mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
-    #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    mask = cv2.erode(mask, None, iterations=1)
+    morph_open_im = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+    #morph_close_im = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+    erode_im = cv2.erode(morph_open_im, None, iterations=2)
     # Applying dilation a second time removes noise
-    mask = cv2.dilate(mask, None, iterations=3)
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, "Orange_filter"])
-    return mask
+    dil_im = cv2.dilate(erode_im, None, iterations=1)
+    return dil_im
+
+# Reduced erosion filter noise filter for long range searching
+def HSV_orange_filter(image):
+    # Opening - Erosion followed by dilation
+    morph_open_im = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+    #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    erode_im = cv2.erode(morph_open_im, None, iterations=1)
+    # Applying dilation a second time removes noise
+    dil_im = cv2.dilate(erode_im, None, iterations=1)
+    return dil_im
 
 # Define obstacles
 def detect_obs(hsv_masks):
@@ -590,11 +607,13 @@ def disp_image(image, obstacle_array):
             cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
     return obs_image
 
-# Set morphology kernel size for image filtering
-kernel = np.ones((3,3))
+
+
 
 # Filters HSV image to remove noise
 def HSV_filter(image):
+    # Set morphology kernel size for image filtering
+    kernel = np.ones((3,3))
     #HSV_sum = np.sum(image)
     #if HSV_sum == 0:
     #    return image
@@ -608,7 +627,6 @@ def HSV_filter(image):
     erode_im = cv2.erode(morph_open_im, None, iterations=2)
     # Applying dilation a second time removes noise
     dil_im = cv2.dilate(erode_im, None, iterations=1)
-
     return dil_im
 
 def current_observation(img):
@@ -695,8 +713,6 @@ def current_observation(img):
 try:
     print("PROGRAM INITIATED...")
     time.sleep(1)
-    # input("Press Enter to continue...")
-    # time.sleep(1)
     av_process = 0
     av_count = 0
     rate = 0
@@ -706,7 +722,7 @@ try:
     cc_rate_av = 0
     loop_rate_av = 0
     th_rate_av = 0
-    images = ['Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    images = ['Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
     #images = ['Vision/20201030-115813.png']
     while True:
         for im in images:
