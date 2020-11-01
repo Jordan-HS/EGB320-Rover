@@ -20,12 +20,14 @@ HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
-OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255]] # box colours
+OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255], [255, 0, 0]] # box colours
 # Set camera image frame
 #IMG_X = 640
 #IMG_Y = 480
 IMG_X = 320
 IMG_Y = 240
+CROP_X = (IMG_X-1)
+CROP_Y = (IMG_Y -(int(IMG_Y*0.25))-1)
 
 # Calculate pixel focal width
 KNOWN_PIXEL_WIDTH = 92  # Measured width of test tile (pixels)
@@ -33,7 +35,13 @@ KNOWN_DIST = 0.20       # Distance to test tile from camera (m)
 KNOWN_WIDTH = 0.069     # Width of test tile (m)
 FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
+def obs_setup():
+    # Define barrier around cropped image
+    barrier_cont = np.array([[[0, 160]], [[99, 90]], [[219, 90]], [[CROP_X, 160]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
+    return barrier_cont
+
 # Image crop to decrease image processing time
+# Crops 240px image height to 180px
 def crop_image(image):
     now = time.time()
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
@@ -68,14 +76,14 @@ def mask_obs(image):
     return masks_HSV
 
 # Define morphology kernal size for filter
-kernel = np.ones((3,3))
+kernel = np.ones((5,5))
 
 # Filters HSV image to remove noise
 def HSV_filter(image):
-    #HSV_sum = np.sum(image)
-    #if HSV_sum == 0:
-    #    return image
-    #else:
+    # HSV_sum = np.count_nonzero(image)
+    # if HSV_sum == 0:
+    #     return image
+    # else:
     #Gaus_im = cv2.GaussianBlur(image,(3,3),0)
     #n1_im = cv2.fastNlMeansDenoising(image, None, 3, 3, 5)
     #blur_im = cv2.medianBlur(image, 9)
@@ -84,7 +92,7 @@ def HSV_filter(image):
     #morph_close_im = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
     erode_im = cv2.erode(morph_open_im, None, iterations=2)
     # Applying dilation a second time removes noise
-    dil_im = cv2.dilate(erode_im, None, iterations=1)
+    dil_im = cv2.dilate(erode_im, None, iterations=2)
     return dil_im
 
 # Reduced erosion filter noise filter for long range searching
@@ -254,7 +262,7 @@ def detect_obs(hsv_masks):
 def detect_rock(hsv_masks):
     now = time.time()
     mask = hsv_masks
-    HSV_sum = np.sum(mask)
+    HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
     obs_array = []
@@ -316,7 +324,7 @@ def detect_rock(hsv_masks):
 def detect_sat(hsv_masks):
     now = time.time()
     mask = hsv_masks
-    HSV_sum = np.sum(mask)
+    HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
     obs_array = []
@@ -378,7 +386,7 @@ def detect_sat(hsv_masks):
 def detect_land(hsv_masks):
     now = time.time()
     mask = hsv_masks
-    HSV_sum = np.sum(mask)
+    HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
     obs_array = []
@@ -417,39 +425,54 @@ def detect_land(hsv_masks):
 def detect_wall(hsv_masks):
     now = time.time()
     mask = hsv_masks
-    HSV_sum = np.sum(mask)
+    HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
     obs_array = []
     indx = 3
-    #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # Sort contours by size
-    areas = [cv2.contourArea(cnt) for cnt in contours]
-    # index largest object
-    max_index = np.argmax(areas)
-    cnt = contours[max_index]
-    # Draw simplified boundary
-    boundary = cv2.convexHull(cnt)
-    # obstacle type index
-    obs_indx = indx
-    # Obstacle label
-    id_type = OBS_type[indx]
-    # Error if boundaries outside of norm
-    error = 0 # No error for wall
-    centre, _ = cv2.minEnclosingCircle(cnt)
-    # Angle from centre of screen in radians
-    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-    # Distance from camera in cm
-    obs_dist = 1
-    if obs_dist > 15:
-        error = 2
-    # If both edge points don't touch the same edge, then the edge is hot and should be recorded as a boundary
-    # for i in cnt:
-    #     if cnt[] == cnt[i+1][0] or cnt[0][i] == cnt[i+1][0]:
-
-    # Create list of values
-    obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        boundary = cv2.boundingRect(cnt)
+        # print(area)
+        if (boundary[1] <= 0):
+            if ((boundary[0] + boundary[2]) > 100):
+                boundary_warning = []
+                for barrier_points in barrier_cont:
+                    # Define (x,y) coordinates
+                    x,y = points[0]
+                    if cv2.pointPolygonTest(cnt, (x,y), False) >= 0:
+                        # Index for wall type
+                        obs_indx = indx
+                        # Obstacle label
+                        id_type = OBS_type[indx]
+                        # Error if boundaries outside of norm
+                        error = 2 # Danger - Wall detected at location
+                        # Angle from centre of screen in radians
+                        obs_ang = np.arctan(((IMG_X/2) - x)/FOCAL_PIX)
+                        # Distance from camera in cm
+                        obs_dist = 0.20 # Distance to point (m)
+                        # Create list of values
+                        obs_array.append([obs_indx, id_type, obs_ang, obs_dist, points, cnt, error])
+            #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # Sort contours by size
+            #areas = [cv2.contourArea(cnt) for cnt in contours]
+            # index largest object
+            #max_index = np.argmax(areas)
+            #cnt = contours[max_index]
+            # obstacle type index
+            obs_indx = indx
+            # Obstacle label
+            id_type = OBS_type[indx]
+            # Error if obstacle outside of norm
+            error = 0 # Wall not within range
+            centre, _ = cv2.minEnclosingCircle(cnt)
+            # Angle from centre of screen in radians
+            obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+            # Distance from camera in cm
+            obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+            # Create list of values
+            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
     #print([rate, OBS_type[indx]])
@@ -459,7 +482,7 @@ def detect_wall(hsv_masks):
 def detect_samp(hsv_masks):
     mask = hsv_masks
     now = time.time()
-    HSV_sum = np.sum(mask)
+    HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
     obs_array = []
@@ -583,9 +606,7 @@ def disp_image(image, obstacle_array):
     for i, _ in enumerate(new_obs):
         if new_obs[i][0] != 3:
             # Draw rectangle
-            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
-            (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] +\
-            new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
+            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])), (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] + new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
             # Draw shape type
             #cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
@@ -605,32 +626,11 @@ def disp_image(image, obstacle_array):
             # Draw contour around wall
             #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
             cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
+    cv2.drawContours(obs_image, [barrier_cont], -1, OBS_col[5], 1)
     return obs_image
 
-
-
-
-# Filters HSV image to remove noise
-def HSV_filter(image):
-    # Set morphology kernel size for image filtering
-    kernel = np.ones((3,3))
-    #HSV_sum = np.sum(image)
-    #if HSV_sum == 0:
-    #    return image
-    #else:
-    #Gaus_im = cv2.GaussianBlur(image,(3,3),0)
-    #n1_im = cv2.fastNlMeansDenoising(image, None, 3, 3, 5)
-    #blur_im = cv2.medianBlur(image, 9)
-    # Opening - Erosion followed by dilation
-    morph_open_im = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
-    #morph_close_im = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
-    erode_im = cv2.erode(morph_open_im, None, iterations=2)
-    # Applying dilation a second time removes noise
-    dil_im = cv2.dilate(erode_im, None, iterations=1)
-    return dil_im
-
 def current_observation(img):
-    image = img # reads image 'opencv-logo.png' as grayscale
+    image = img # reads image
     #rawCapture.truncate(0)
 
     # Apply HSV threshold to frame
@@ -668,8 +668,6 @@ def current_observation(img):
     #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
 
     obstacle_array = []
-    # Determine distance, angle ID and type
-    #obstacle_array_loop = detect_obs(mask_filter)
 
     # Rocks distance, angle ID and type
     rock_array = detect_rock(mask_filter_th[0])
@@ -712,6 +710,7 @@ def current_observation(img):
 
 try:
     print("PROGRAM INITIATED...")
+    barrier_cont = obs_setup()
     time.sleep(1)
     av_process = 0
     av_count = 0
@@ -722,12 +721,12 @@ try:
     cc_rate_av = 0
     loop_rate_av = 0
     th_rate_av = 0
-    images = ['Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
-    #images = ['Vision/20201030-115813.png']
+    images = ['Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    #images = ['Vision/20201028-072710_2.png']
     while True:
         for im in images:
             #total_now = time.time()
-            img = cv2.imread(im) # reads image 'opencv-logo.png' as grayscale
+            img = cv2.imread(im) # reads image
             observation, img, cc_rate, loop_rate, th_rate = current_observation(img)
             #total_elapsed = time.time() - total_now
             #total_rate = 1.0 / total_elapsed
