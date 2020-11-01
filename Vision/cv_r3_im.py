@@ -37,7 +37,7 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 def obs_setup():
     # Define barrier around cropped image
-    barrier_cont = np.array([[[0, 160]], [[99, 90]], [[219, 90]], [[CROP_X, 160]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
+    barrier_cont = np.array([[[0, 160]],[[33, 140]],[[66, 120]],[[99, 100]], [[219, 100]],[[252, 120]],[[285, 140]], [[CROP_X, 160]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
     return barrier_cont
 
 # Image crop to decrease image processing time
@@ -457,7 +457,7 @@ def detect_wall(hsv_masks):
                         # Obstacle label
                         id_type = OBS_type[indx]
                         # Error if obstacle outside of norm
-                        error = 0 # Wall not within range
+                        error = 3 # Wall outside of boundary
                         centre, _ = cv2.minEnclosingCircle(cnt)
                         # Angle from centre of screen in radians
                         obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
@@ -618,22 +618,18 @@ def disp_image(image, obstacle_array):
     for i, _ in enumerate(new_obs):
         if new_obs[i][0] != 3:
             # Draw rectangle
-            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])), (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] + new_obs[i][5][3])), OBS_col[new_obs[i][0]], 1)
-            # Draw shape type
-            #cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
-            #int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+            cv2.rectangle(obs_image, (int(new_obs[i][5][0]), int(new_obs[i][5][1])),\
+            (int(new_obs[i][5][0] + new_obs[i][5][2]), int(new_obs[i][5][1] + new_obs[i][5][3])),
+            OBS_col[new_obs[i][0]], 1)
             # Draw distance in m
             cv2.putText(obs_image, "Dist:{:.2f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
             int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
             # # Draw angle in degrees to obstacle from camera
-            # cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
-            # int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-            # Draw angle in radians to obstacle from camera
-            cv2.putText(obs_image, "Deg:{:.2f}".format((new_obs[i][2])), (int(new_obs[i][5][0]),\
+            cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
             int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-            # Draw area of obstacle from camera
-            #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
-            #int(new_obs[i][5][1] + new_obs[i][5][3]) + 39), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
+            # # Draw angle in radians to obstacle from camera
+            # cv2.putText(obs_image, "Deg:{:.2f}".format((new_obs[i][2])), (int(new_obs[i][5][0]),\
+            # int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
         else:
             # Draw contour around wall
             #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
@@ -736,7 +732,7 @@ try:
     cc_rate_av = 0
     loop_rate_av = 0
     th_rate_av = 0
-    images = ['Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
     #images = ['Vision/20201028-072710_2.png']
     while True:
         for im in images:
