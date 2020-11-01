@@ -10,12 +10,18 @@ import numpy as np
 # HSV colour thresholds
 obstacle_avoidance = True
 
-HSV_blue = [[97, 124, 5], [112, 255, 172]]
-HSV_green = [[33, 77, 30], [74, 255, 255]]
-HSV_yellow = [[21, 0, 0], [40, 255, 255]]
-HSV_wall = [[0, 0, 0], [179, 255, 0]]
+HSV_blue = [[76, 88, 18], [113, 255, 255]]
+HSV_green = [[33, 77, 50], [74, 255, 255]]
+HSV_yellow = [[15, 77, 23], [36, 255, 255]]
+HSV_wall = [[0, 0, 0], [179, 255, 16]]
 HSV_orange = [[101, 41, 51], [124, 255, 255]]
 HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
+
+# Set morphology kernel size for image filtering
+kernel = np.ones((5, 5))
+
+# Initiate counter to only show every 10th computation
+image_cnt = 0
 
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
@@ -26,11 +32,10 @@ OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 25
 #IMG_Y = 480
 IMG_X = 320
 IMG_Y = 240
-
 # Calculate pixel focal width
-KNOWN_PIXEL_WIDTH = 92  # Measured width of test tile (pixels)
-KNOWN_DIST = 0.20       # Distance to test tile from camera (m)
-KNOWN_WIDTH = 0.069     # Width of test tile (m)
+KNOWN_PIXEL_WIDTH = 92  # Pixels
+KNOWN_DIST = 0.20         # m
+KNOWN_WIDTH = 0.069       # m
 FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 # Image crop to decrease image processing time
@@ -66,6 +71,24 @@ def mask_obs(image):
     rate = 1.0 / elapsed
     #print([rate, "HSV_mask"])
     return masks_HSV
+
+# Filters HSV image to remove noise
+def HSV_filter(image):
+    now = time.time()
+    # HSV_sum = np.sum(image)
+    # if HSV_sum > 0:
+    # Opening - Erosion followed by dilation
+    mask = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+    #mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.erode(mask, None, iterations=2)
+    # Applying dilation a second time removes noise
+    mask = cv2.dilate(mask, None, iterations=2)
+    # else:
+    #     mask = image
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    #print([rate, "HSV_filter"])
+    return mask
 
 def HSV_orange_filter(image):
     now = time.time()
@@ -469,7 +492,7 @@ def detect_samp(hsv_masks):
             # Distance from camera in cm
             obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
             # Create list of values
-            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, cnt, error])
+            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
     #print([rate, OBS_type[indx]])
@@ -573,13 +596,10 @@ def disp_image(image, obstacle_array):
             #cv2.putText(obs_image, new_obs[i][1], (int(new_obs[i][5][0]),\
             #int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
             # Draw distance in m
-            cv2.putText(obs_image, "Dist:{:.2f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
+            cv2.putText(obs_image, "Dist:{:.1f}".format(new_obs[i][3]), (int(new_obs[i][5][0]),\
             int(new_obs[i][5][1] + new_obs[i][5][3]) + 13), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-            # # Draw angle in degrees to obstacle from camera
-            # cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
-            # int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
-            # Draw angle in radians to obstacle from camera
-            cv2.putText(obs_image, "Deg:{:.2f}".format((new_obs[i][2])), (int(new_obs[i][5][0]),\
+            # Draw angle in degrees to obstacle from camera
+            cv2.putText(obs_image, "Deg:{:.1f}".format(np.degrees(new_obs[i][2])), (int(new_obs[i][5][0]),\
             int(new_obs[i][5][1] + new_obs[i][5][3]) + 26), cv2.FONT_HERSHEY_SIMPLEX, 0.3, OBS_col[new_obs[i][0]],1)
             # Draw area of obstacle from camera
             #cv2.putText(obs_image, "Area:{:.1f}".format(new_obs[i][6]), (int(new_obs[i][5][0]),\
@@ -590,30 +610,15 @@ def disp_image(image, obstacle_array):
             cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
     return obs_image
 
-# Set morphology kernel size for image filtering
-kernel = np.ones((3,3))
-
-# Filters HSV image to remove noise
-def HSV_filter(image):
-    #HSV_sum = np.sum(image)
-    #if HSV_sum == 0:
-    #    return image
-    #else:
-    #Gaus_im = cv2.GaussianBlur(image,(3,3),0)
-    #n1_im = cv2.fastNlMeansDenoising(image, None, 3, 3, 5)
-    #blur_im = cv2.medianBlur(image, 9)
-    # Opening - Erosion followed by dilation
-    morph_open_im = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
-    #morph_close_im = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
-    erode_im = cv2.erode(morph_open_im, None, iterations=2)
-    # Applying dilation a second time removes noise
-    dil_im = cv2.dilate(erode_im, None, iterations=1)
-
-    return dil_im
-
-def current_observation(img):
-    image = img # reads image 'opencv-logo.png' as grayscale
+def current_observation():
+    # Grab frame
+    #camera.capture(rawCapture, format="bgr", use_video_port=True)
+    #image = rawCapture.array
+    image = cv2.imread('/home/logic/EGB320-Rover/Vision/20201030-120002.png') # reads image 'opencv-logo.png' as grayscale
     #rawCapture.truncate(0)
+
+    # Crop image
+    #image = crop_image(image)
 
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
@@ -625,64 +630,51 @@ def current_observation(img):
     for mask in hsv_masks:
         mask_filter_loop.append(HSV_filter(mask))
     elapsed = time.time() - now
-    loop_rate = 1.0 / elapsed
+    rate = 1.0 / elapsed
+    print([rate, "Filter_Loop"])
 
     # Multiprocess filter
-    mask_filter_cc = []
     now = time.time()
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        mask_filter_cc = list(executor.map(HSV_filter, hsv_masks))
-    # for masks in mask_filter:
-    #     mask_filter_cc.append(masks)
+        mask_filter = executor.map(HSV_filter, hsv_masks)
     elapsed = time.time() - now
-    cc_rate = 1.0 / elapsed
-    #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
-
-    # Thread filter
-    mask_filter_th = []
-    now = time.time()
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        mask_filter_th = list(executor.map(HSV_filter, hsv_masks))
-    # for masks in mask_filter:
-    #     mask_filter_cc.append(masks)
-    elapsed = time.time() - now
-    th_rate = 1.0 / elapsed
-    #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
+    rate = 1.0 / elapsed
+    print([rate, "Filter_CC"])
 
     obstacle_array = []
     # Determine distance, angle ID and type
     #obstacle_array_loop = detect_obs(mask_filter)
 
     # Rocks distance, angle ID and type
-    rock_array = detect_rock(mask_filter_th[0])
+    rock_array = detect_rock(mask_filter_loop[0])
     if rock_array is not None:
         #print(rock_array)
         for obs in rock_array:
             obstacle_array.append(obs)
 
     # Satellites distance, angle ID and type
-    sat_array = detect_sat(mask_filter_th[1])
+    sat_array = detect_sat(mask_filter_loop[1])
     if sat_array is not None:
         #print(sat_array)
         for obs in sat_array:
             obstacle_array.append(obs)
 
     # Lander distance, angle ID and type
-    land_array = (detect_land(mask_filter_th[2]))
+    land_array = (detect_land(mask_filter_loop[2]))
     if land_array is not None:
         #print(land_array)
         for obs in land_array:
             obstacle_array.append(obs)
 
     # Wall distance, angle ID and type
-    wall_array = (detect_wall(mask_filter_th[3]))
+    wall_array = (detect_wall(mask_filter_loop[3]))
     if wall_array is not None:
         #print(wall_array)
         for obs in wall_array:
             obstacle_array.append(obs)
 
     # Samples distance, angle ID and type
-    samp_array = (detect_samp(mask_filter_th[4]))
+    samp_array = (detect_samp(mask_filter_loop[4]))
     if samp_array is not None:
         #print(samp_array)
         for obs in samp_array:
@@ -690,61 +682,38 @@ def current_observation(img):
     #print(obstacle_array)
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
-    return obstacle_array, return_im, cc_rate, loop_rate, th_rate
+    return obstacle_array, return_im
 
 try:
     print("PROGRAM INITIATED...")
     time.sleep(1)
     # input("Press Enter to continue...")
     # time.sleep(1)
+    observation, img = current_observation()
     av_process = 0
     av_count = 0
     rate = 0
-    lp_total = 0
-    cc_total = 0
-    th_total = 0
-    cc_rate_av = 0
-    loop_rate_av = 0
-    th_rate_av = 0
-    images = ['Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
-    #images = ['Vision/20201030-115813.png']
     while True:
-        for im in images:
-            #total_now = time.time()
-            img = cv2.imread(im) # reads image 'opencv-logo.png' as grayscale
-            observation, img, cc_rate, loop_rate, th_rate = current_observation(img)
-            #total_elapsed = time.time() - total_now
-            #total_rate = 1.0 / total_elapsed
-            #print(total_rate)
-            lp_total += loop_rate
-            cc_total += cc_rate
-            th_total += th_rate
-            av_count += 1
-            if av_count == 40:
-                cc_rate_av = cc_total/40
-                loop_rate_av = lp_total/40
-                th_rate_av = th_total/40
-                print([cc_rate_av, "Filter_CC"],[loop_rate_av,"Filter_loop"], [th_rate_av,"Filter_th"])
-                print(observation)
-                av_count = 0
-                lp_total = 0
-                cc_total = 0
-                th_total = 0
-                cc_rate_av = 0
-                loop_rate_av = 0
-                th_rate_av = 0
-            #     av_rate = av_process/15
-            #     print("Average processing rate:{}.".format(av_rate))
-            #     av_count = 0
-            #     av_process = 0
-            cv2.imshow(im, img)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
-            # Save image output by pressing 's'
-            elif key == ord("s"):
-                cv2.imwrite('mask.png',mask)
-                cv2.imwrite('image_frame.png',image)
-                cv2.imwrite('result.png',obs_image)
+        total_now = time.time()
+        observation, img = current_observation()
+        total_elapsed = time.time() - total_now
+        total_rate = 1.0 / total_elapsed
+        #print(total_rate)
+        av_process += total_rate
+        av_count += 1
+        if av_count == 15:
+            av_rate = av_process/15
+            print("Average processing rate:{}.".format(av_rate))
+            av_count = 0
+            av_process = 0
+        cv2.imshow("View", img)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
+        # Save image output by pressing 's'
+        elif key == ord("s"):
+            cv2.imwrite('mask.png',mask)
+            cv2.imwrite('image_frame.png',image)
+            cv2.imwrite('result.png',obs_image)
 except KeyboardInterrupt:
     print("Stopped")
