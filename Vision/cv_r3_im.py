@@ -20,7 +20,7 @@ HSV_thresh = np.array([HSV_blue, HSV_green, HSV_yellow, HSV_wall, HSV_orange])
 # Define obstacle size, label, and colour
 OBS_size = [0.075, 0.151, 0.56, 0, 0.044]   # size of obstacles in m
 OBS_type = ["ROC", "SAT", "LAND", "WALL", "SAMP"] # labels
-OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255], [255, 0, 0]] # box colours
+OBS_col = [[255, 127, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [0, 127, 255], [255, 0, 0], [255, 0, 0]] # box colours
 # Set camera image frame
 #IMG_X = 640
 #IMG_Y = 480
@@ -435,9 +435,8 @@ def detect_wall(hsv_masks):
         boundary = cv2.boundingRect(cnt)
         # print(area)
         if (boundary[1] <= 0):
-            if ((boundary[0] + boundary[2]) > 100):
-                boundary_warning = []
-                for barrier_points in barrier_cont:
+            if ((boundary[1] + boundary[3]) > 100):
+                for points in barrier_cont:
                     # Define (x,y) coordinates
                     x,y = points[0]
                     if cv2.pointPolygonTest(cnt, (x,y), False) >= 0:
@@ -453,6 +452,19 @@ def detect_wall(hsv_masks):
                         obs_dist = 0.20 # Distance to point (m)
                         # Create list of values
                         obs_array.append([obs_indx, id_type, obs_ang, obs_dist, points, cnt, error])
+                    else:
+                        obs_indx = indx
+                        # Obstacle label
+                        id_type = OBS_type[indx]
+                        # Error if obstacle outside of norm
+                        error = 0 # Wall not within range
+                        centre, _ = cv2.minEnclosingCircle(cnt)
+                        # Angle from centre of screen in radians
+                        obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
+                        # Distance from camera in cm
+                        obs_dist = ((CROP_Y - boundary[3]) * FOCAL_PIX)
+                        # Create list of values
+                        obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, cnt, error])
             #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             # Sort contours by size
@@ -470,9 +482,9 @@ def detect_wall(hsv_masks):
             # Angle from centre of screen in radians
             obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
             # Distance from camera in cm
-            obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
+            obs_dist = ((CROP_Y - boundary[3]) * FOCAL_PIX)
             # Create list of values
-            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, cnt, error])
     elapsed = time.time() - now
     rate = 1.0 / elapsed
     #print([rate, OBS_type[indx]])
@@ -625,7 +637,10 @@ def disp_image(image, obstacle_array):
         else:
             # Draw contour around wall
             #cv2.drawContours(canvas, [new_obs[i][5]], -1, (0, 0, 255), 3)
-            cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
+            if new_obs[i][6] == 2:
+                cv2.circle(obs_image, [new_obs[i][4]], -1, OBS_col[6], 1)
+            else:
+                cv2.drawContours(obs_image, [new_obs[i][5]], -1, OBS_col[new_obs[i][0]], 1)
     cv2.drawContours(obs_image, [barrier_cont], -1, OBS_col[5], 1)
     return obs_image
 
