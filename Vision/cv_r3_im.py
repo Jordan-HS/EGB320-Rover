@@ -486,8 +486,8 @@ def current_observation(img):
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "mask_loop"])
+    rate = 1.0 / elapsed
+    print([rate, "mask_loop"])
 
 
     now = time.time()
@@ -497,8 +497,8 @@ def current_observation(img):
     for mask in hsv_masks:
         mask_filter_loop.append(HSV_filter(mask))
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "filter_loop"])
+    rate = 1.0 / elapsed
+    print([rate, "filter_loop"])
 
     # Multiprocess filter
     # mask_filter_cc = []
@@ -532,8 +532,8 @@ def current_observation(img):
         for obs in rock_array:
             obstacle_array.append(obs)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "rock_array"])
+    rate = 1.0 / elapsed
+    print([rate, "rock_array"])
 
     now = time.time()
     # Satellites distance, angle ID and type
@@ -543,8 +543,8 @@ def current_observation(img):
         for obs in sat_array:
             obstacle_array.append(obs)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "sat_array"])
+    rate = 1.0 / elapsed
+    print([rate, "sat_array"])
 
     now = time.time()
     # Lander distance, angle ID and type
@@ -554,8 +554,8 @@ def current_observation(img):
         for obs in land_array:
             obstacle_array.append(obs)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "land_array"])
+    rate = 1.0 / elapsed
+    print([rate, "land_array"])
 
     now = time.time()
     # Wall distance, angle ID and type
@@ -565,8 +565,8 @@ def current_observation(img):
         for obs in wall_array:
             obstacle_array.append(obs)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "wall_array"])
+    rate = 1.0 / elapsed
+    print([rate, "wall_array"])
 
     now = time.time()
     # Samples distance, angle ID and type
@@ -576,13 +576,16 @@ def current_observation(img):
         for obs in samp_array:
             obstacle_array.append(obs)
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "samp_array"])
+    rate = 1.0 / elapsed
+    print([rate, "samp_array"])
 
     #print(obstacle_array)
     # Draw from and boundary
-    return_im = disp_image(image, obstacle_array)
-    return obstacle_array, return_im
+    # return_im = disp_image(image, obstacle_array)
+    # return obstacle_array, return_im
+
+    #return_im = disp_image(image, obstacle_array)
+    return obstacle_array
 
 try:
     print("PROGRAM INITIATED...")
@@ -597,7 +600,7 @@ try:
         for im in images:
             total_now = time.time()
             img = cv2.imread(im) # reads image
-            observation, img = current_observation(img)
+            observation = current_observation(img)
             total_elapsed = time.time() - total_now
             total_rate = 1.0 / total_elapsed
             print([total_rate, "total_rate"])
@@ -609,7 +612,7 @@ try:
                 print(total_rate_av)
                 av_count = 0
                 total_rate_sum = 0
-            cv2.imshow(im, img)
+            #cv2.imshow(im, img)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
