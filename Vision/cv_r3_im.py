@@ -28,6 +28,8 @@ IMG_X = 320
 IMG_Y = 240
 CROP_X = (IMG_X-1)
 CROP_Y = (IMG_Y -(int(IMG_Y*0.25))-1)
+PIX_FRONT = 80      # Pixel boundary on screen
+PIX_WIDTH = IMG_X/2 # Radius of eclipse
 
 # Calculate pixel focal width
 KNOWN_PIXEL_WIDTH = 92  # Measured width of test tile (pixels)
@@ -37,7 +39,20 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
 def obs_setup():
     # Define barrier around cropped image
-    barrier_cont = np.array([[[0, 150]],[[14, 140]],[[29, 130]],[[44, 120]],[[59, 110]],[[99, 100]], [[219, 100]],[[252, 120]],[[285, 140]], [[CROP_X, 150]], [[CROP_X, CROP_Y]], [[0, CROP_Y]]])
+    barrier_cont = []
+    x = range(IMG_X)
+    x_arr = x[::15]
+    start = (0, CROP_Y)
+    barrier_cont.append([start])
+    for x in x_arr:
+        y = 179 - int(np.sqrt((80)**2*(1-((x-CROP_X/2)**2/(170**2)))))
+        point = (x,y)
+        barrier_cont.append([point])
+    wall_end = (CROP_X, (179 - int(np.sqrt((80)**2*(1-((CROP_X-CROP_X/2)**2/(170**2)))))))
+    barrier_cont.append([wall_end])
+    end = (CROP_X, CROP_Y)
+    barrier_cont.append([end])
+    barrier_cont = np.array(barrier_cont)
     return barrier_cont
 
 # Image crop to decrease image processing time
@@ -46,14 +61,13 @@ def crop_image(image):
     now = time.time()
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
     elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    print([rate, "Crop"])
+    #rate = 1.0 / elapsed
+    print([elapsed, "Crop"])
     return crop_img
 
 # HSV colour threshold filter
 def mask_obs(image):
     # Convert BGR to HSV image
-    now = time.time()
     HSV_bgy = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # Convert RGB to HSV image
     HSV_o = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -62,17 +76,10 @@ def mask_obs(image):
     for indx, thresh in enumerate(HSV_thresh):
         # Blue Green and Yellow threshold and filter
         if indx < 4:
-            now = time.time()
             masks_HSV.append(cv2.inRange(HSV_bgy, thresh[0], thresh[1]))
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            #print([rate, "HSV_thresh+sum"])
         # Orange threshold and filter
         else:
             masks_HSV.append(cv2.inRange(HSV_o, thresh[0], thresh[1]))
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, "HSV_mask"])
     return masks_HSV
 
 # Define morphology kernal size for filter
@@ -80,6 +87,7 @@ kernel = np.ones((5,5))
 
 # Filters HSV image to remove noise
 def HSV_filter(image):
+    # now = time.time()
     # HSV_sum = np.count_nonzero(image)
     # if HSV_sum == 0:
     #     return image
@@ -93,6 +101,9 @@ def HSV_filter(image):
     erode_im = cv2.erode(morph_open_im, None, iterations=2)
     # Applying dilation a second time removes noise
     dil_im = cv2.dilate(erode_im, None, iterations=2)
+    # elapsed = time.time() - now
+    # #rate = 1.0 / elapsed
+    # print([elapsed, "HSV_filter"])
     return dil_im
 
 # Reduced erosion filter noise filter for long range searching
@@ -104,159 +115,6 @@ def HSV_orange_filter(image):
     # Applying dilation a second time removes noise
     dil_im = cv2.dilate(erode_im, None, iterations=1)
     return dil_im
-
-# Define obstacles
-def detect_obs(hsv_masks):
-    obs_array = []
-    for indx, mask in enumerate(hsv_masks):
-        HSV_sum = np.sum(mask)
-        if HSV_sum == 0:
-            continue
-        #contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # Check for rocks and satellite crash obstacles
-        if indx < 2:
-            now = time.time()
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            for cnt in contours:
-                area = cv2.contourArea(cnt)
-                # print(area)
-                if area > 150:
-                    # obstacle type index
-                    obs_indx = indx
-                    # Obstacle label
-                    id_type = OBS_type[indx]
-                    # Boundary (x,y,w,h) box of contour
-                    boundary = cv2.boundingRect(cnt)
-                    # Check for error if boundaries outside of expected
-                    error = 0
-                    if indx == 1:
-                        if boundary[1] >= 3:
-                            if ((boundary[3]/boundary[2])<0.6):
-                                error = 1   # Obstacle overlapping
-                                # Creates boundary for two obstacles with error noted
-                                obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
-                                # Appends two obstacles to array
-                                for obs in obs_array_overlap:
-                                    obs_array.append(obs)
-                                # Exit loop
-                                continue
-                            elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
-                                error = 1   # Obstacle on boundary
-                                obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
-                                obs_array.append(obs_array_boundary)
-                                # Exit loop
-                                continue
-                            elif ((boundary[3]/boundary[2]) > 1.4):
-                                error = 1   # Obstacle on boundary
-                                obs_array_hidden = hidden_obs(cnt, obs_indx, id_type, boundary, error)
-                                obs_array.append(obs_array_hidden)
-                                # Exit loop
-                                continue
-                            else:
-                                error = 0   # No obstacle overlap
-                    # Find centre of enclosing circle
-                    centre, _ = cv2.minEnclosingCircle(cnt)
-                    # Width of contour in pixels
-                    pix_width = boundary[2]
-                    # Angle from centre of screen in radians
-                    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-                    # Distance from camera in cm
-                    obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
-                    # Create list of values
-                    #print([id_type, pix_width, obs_dist])
-                    obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            #print([rate, OBS_type[indx]])
-        # Check for lander
-        elif indx == 2:
-            now = time.time()
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cnt = np.concatenate(contours)
-            #boundary_area = cv2.findNonZero(mask)
-            # obstacle type index
-            obs_indx = indx
-            # Obstacle label
-            id_type = OBS_type[indx]
-            # Boundary (x,y,w,h) box of contour
-            boundary = cv2.boundingRect(cnt)
-            # Error if boundaries outside of norm
-            if ((boundary[3]/boundary[2])>0.26):
-                error = 1 # Lander partially obscured
-            else:
-                error = 0 # Lander completely visable
-            # Find centre of enclosing circle
-            centre, radius = cv2.minEnclosingCircle(cnt)
-            # Width of contour in pixels
-            pix_width = boundary[2]
-            # Angle from centre of screen in radians
-            obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-            # Distance from camera in cm
-            obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
-            # Create list of values
-            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            #print([rate, OBS_type[indx]])
-        # Check for Wall
-        elif indx == 3:
-            now = time.time()
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cnt = np.concatenate(contours)
-            #boundary_area = cv2.findNonZero(mask)
-            # obstacle type index
-            obs_indx = indx
-            # Obstacle label
-            id_type = OBS_type[indx]
-            # Boundary (x,y,w,h) box of contour
-            boundary = cv2.boundingRect(cnt)
-            # Error if boundaries outside of norm
-            error = 0 # No error for wall
-            centre, radius = cv2.minEnclosingCircle(cnt)
-            # Width of contour in pixels
-            pix_width = boundary[2]
-            # Angle from centre of screen in radians
-            obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-            # Distance from camera in cm
-            obs_dist = boundary[1]-boundary[3]
-            if obs_dist > 15:
-                error = 2
-            # Create list of values
-            obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            #print([rate, OBS_type[indx]])
-        # Check for samples
-        else:
-            now = time.time()
-            contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            for cnt in contours:
-                area = cv2.contourArea(cnt)
-                if area > 40:
-                    # obstacle type index
-                    obs_indx = indx
-                    # Obstacle label
-                    id_type = OBS_type[indx]
-                    #print([area, id_type])
-                    # Boundary (x,y,w,h) box of contour
-                    boundary = cv2.boundingRect(cnt)
-                    # Error if boundaries outside of norm
-                    error = 0
-                    # Find centre of enclosing circle
-                    centre, radius = cv2.minEnclosingCircle(cnt)
-                    # Width of contour in pixels
-                    pix_width = boundary[2]
-                    # Angle from centre of screen in radians
-                    obs_ang = np.arctan(((IMG_X/2) - int(centre[0]))/FOCAL_PIX)
-                    # Distance from camera in cm
-                    obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
-                    # Create list of values
-                    obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-            elapsed = time.time() - now
-            rate = 1.0 / elapsed
-            #print([rate, OBS_type[indx]])
-    #print(obs_array)
-    return obs_array
 
 # Define Rocks
 def detect_rock(hsv_masks):
@@ -280,8 +138,8 @@ def detect_rock(hsv_masks):
             boundary = cv2.boundingRect(cnt)
             # Check for error if boundaries outside of expected
             error = 0
-            if boundary[1] >= 3:
-                if ((boundary[3]/boundary[2])<0.6):
+            if boundary[1] >= 2:
+                if ((boundary[3]/boundary[2])<0.7):
                     error = 1   # Obstacle overlapping
                     # Creates boundary for two obstacles with error noted
                     obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
@@ -315,14 +173,10 @@ def detect_rock(hsv_masks):
             # Create list of values
             #print([id_type, pix_width, obs_dist])
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Satellite
 def detect_sat(hsv_masks):
-    now = time.time()
     mask = hsv_masks
     HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
@@ -342,30 +196,12 @@ def detect_sat(hsv_masks):
             boundary = cv2.boundingRect(cnt)
             # Check for error if boundaries outside of expected
             error = 0
-            # if boundary[1] >= 3:
-            #     if ((boundary[3]/boundary[2])<0.6):
-            #         error = 1   # Obstacle overlapping
-            #         # Creates boundary for two obstacles with error noted
-            #         obs_array_overlap = overlap_obs(cnt, obs_indx, id_type, boundary, error)
-            #         # Appends two obstacles to array
-            #         for obs in obs_array_overlap:
-            #             obs_array.append(obs)
-            #         # Exit loop
-            #         continue
-            #     elif (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
-            #         error = 1   # Obstacle on boundary
-            #         obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
-            #         obs_array.append(obs_array_boundary)
-            #         # Exit loop
-            #         continue
-            #     elif ((boundary[3]/boundary[2]) > 1.4):
-            #         error = 1   # Obstacle on boundary
-            #         obs_array_hidden = hidden_obs(cnt, obs_indx, id_type, boundary, error)
-            #         obs_array.append(obs_array_hidden)
-            #         # Exit loop
-            #         continue
-            #     else:
-            #         error = 0   # No obstacle overlap
+            if (boundary[0] <= 3) or ((boundary[0] + boundary[2]) >= (IMG_X-3)):
+                error = 1   # Obstacle on boundary
+                obs_array_boundary = boundary_obs(cnt, obs_indx, id_type, boundary, error)
+                obs_array.append(obs_array_boundary)
+                # Exit loop
+                continue
             # Find centre of enclosing circle
             centre, _ = cv2.minEnclosingCircle(cnt)
             # Width of contour in pixels
@@ -377,14 +213,10 @@ def detect_sat(hsv_masks):
             # Create list of values
             #print([id_type, pix_width, obs_dist])
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Lander
 def detect_land(hsv_masks):
-    now = time.time()
     mask = hsv_masks
     HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
@@ -416,14 +248,10 @@ def detect_land(hsv_masks):
     obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
     # Create list of values
     obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Wall
 def detect_wall(hsv_masks):
-    now = time.time()
     mask = hsv_masks
     HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
@@ -487,15 +315,11 @@ def detect_wall(hsv_masks):
             obs_dist = ((CROP_Y - boundary[3]) * FOCAL_PIX)
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, cnt, error])
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, OBS_type[indx]])
     return obs_array
 
 # Define Samples
 def detect_samp(hsv_masks):
     mask = hsv_masks
-    now = time.time()
     HSV_sum = np.count_nonzero(mask)
     if HSV_sum == 0:
         return
@@ -524,12 +348,10 @@ def detect_samp(hsv_masks):
             obs_dist = ((OBS_size[indx] * FOCAL_PIX) / pix_width)
             # Create list of values
             obs_array.append([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, cnt, error])
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    #print([rate, OBS_type[indx]])
     return obs_array
 
 def overlap_obs(cnt, obs_indx, id_type, boundary, error):
+    now = time.time()
     # Define arrays
     obs_boundary = []
     obs_array_overlap = []
@@ -557,9 +379,13 @@ def overlap_obs(cnt, obs_indx, id_type, boundary, error):
         obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
         # Create list of values
         obs_array_overlap.append([obs_indx, id_type, obs_ang, obs_dist, centre, obs, error])
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "overlap_obs"])
     return obs_array_overlap
 
 def boundary_obs(cnt, obs_indx, id_type, boundary, error):
+    now = time.time()
     # Obstacle type index
     obs_indx = obs_indx
     # Obstacle label
@@ -579,6 +405,9 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
         obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
         # Create list of values
         obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+        elapsed = time.time() - now
+        #rate = 1.0 / elapsed
+        print([elapsed, "boundary_obs"])
         return obs_array_boundary
     else:
         # Centre point for obstacle based on height
@@ -591,9 +420,13 @@ def boundary_obs(cnt, obs_indx, id_type, boundary, error):
         obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
         # Create list of values
         obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+        elapsed = time.time() - now
+        #rate = 1.0 / elapsed
+        print([elapsed, "boundary_obs"])
         return obs_array_boundary
 
 def hidden_obs(cnt, obs_indx, id_type, boundary, error):
+    now = time.time()
     # Obstacle type index
     obs_indx = obs_indx
     # Obstacle label
@@ -612,6 +445,9 @@ def hidden_obs(cnt, obs_indx, id_type, boundary, error):
     obs_dist = ((OBS_size[obs_indx] * FOCAL_PIX) / pix_width)
     # Create list of values
     obs_array_boundary = ([obs_indx, id_type, obs_ang, obs_dist, centre, boundary, error])
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "hidden_obs"])
     return obs_array_boundary
 
 def disp_image(image, obstacle_array):
@@ -646,80 +482,107 @@ def current_observation(img):
     image = img # reads image
     #rawCapture.truncate(0)
 
+    now = time.time()
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "mask_loop"])
 
+
+    now = time.time()
     # Apply filter to mask images to remove noise
     # Loop through filter
     mask_filter_loop = []
-    now = time.time()
     for mask in hsv_masks:
         mask_filter_loop.append(HSV_filter(mask))
     elapsed = time.time() - now
-    loop_rate = 1.0 / elapsed
+    #rate = 1.0 / elapsed
+    print([elapsed, "filter_loop"])
 
     # Multiprocess filter
-    mask_filter_cc = []
-    now = time.time()
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        mask_filter_cc = list(executor.map(HSV_filter, hsv_masks))
-    # for masks in mask_filter:
-    #     mask_filter_cc.append(masks)
-    elapsed = time.time() - now
-    cc_rate = 1.0 / elapsed
-    #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
+    # mask_filter_cc = []
+    # now = time.time()
+    # with concurrent.futures.ProcessPoolExecutor() as executor:
+    #     mask_filter_cc = list(executor.map(HSV_filter, hsv_masks))
+    # # for masks in mask_filter:
+    # #     mask_filter_cc.append(masks)
+    # elapsed = time.time() - now
+    # cc_rate = 1.0 / elapsed
+    # #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
 
     # Thread filter
-    mask_filter_th = []
-    now = time.time()
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        mask_filter_th = list(executor.map(HSV_filter, hsv_masks))
-    # for masks in mask_filter:
-    #     mask_filter_cc.append(masks)
-    elapsed = time.time() - now
-    th_rate = 1.0 / elapsed
-    #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
+    # mask_filter_th = []
+    # now = time.time()
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+    #     mask_filter_th = list(executor.map(HSV_filter, hsv_masks))
+    # # for masks in mask_filter:
+    # #     mask_filter_cc.append(masks)
+    # elapsed = time.time() - now
+    # th_rate = 1.0 / elapsed
+    # #print([cc_rate, "Filter_CC"],[loop_rate,"Filter_loop"])
 
     obstacle_array = []
 
+    now = time.time()
     # Rocks distance, angle ID and type
-    rock_array = detect_rock(mask_filter_th[0])
+    rock_array = detect_rock(mask_filter_loop[0])
     if rock_array is not None:
         #print(rock_array)
         for obs in rock_array:
             obstacle_array.append(obs)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "rock_array"])
 
+    now = time.time()
     # Satellites distance, angle ID and type
-    sat_array = detect_sat(mask_filter_th[1])
+    sat_array = detect_sat(mask_filter_loop[1])
     if sat_array is not None:
         #print(sat_array)
         for obs in sat_array:
             obstacle_array.append(obs)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "sat_array"])
 
+    now = time.time()
     # Lander distance, angle ID and type
-    land_array = (detect_land(mask_filter_th[2]))
+    land_array = (detect_land(mask_filter_loop[2]))
     if land_array is not None:
         #print(land_array)
         for obs in land_array:
             obstacle_array.append(obs)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "land_array"])
 
+    now = time.time()
     # Wall distance, angle ID and type
-    wall_array = (detect_wall(mask_filter_th[3]))
+    wall_array = (detect_wall(mask_filter_loop[3]))
     if wall_array is not None:
         #print(wall_array)
         for obs in wall_array:
             obstacle_array.append(obs)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "wall_array"])
 
+    now = time.time()
     # Samples distance, angle ID and type
-    samp_array = (detect_samp(mask_filter_th[4]))
+    samp_array = (detect_samp(mask_filter_loop[4]))
     if samp_array is not None:
         #print(samp_array)
         for obs in samp_array:
             obstacle_array.append(obs)
+    elapsed = time.time() - now
+    #rate = 1.0 / elapsed
+    print([elapsed, "samp_array"])
+
     #print(obstacle_array)
     # Draw from and boundary
     return_im = disp_image(image, obstacle_array)
-    return obstacle_array, return_im, cc_rate, loop_rate, th_rate
+    return obstacle_array, return_im
 
 try:
     print("PROGRAM INITIATED...")
@@ -727,44 +590,25 @@ try:
     time.sleep(1)
     av_process = 0
     av_count = 0
-    rate = 0
-    lp_total = 0
-    cc_total = 0
-    th_total = 0
-    cc_rate_av = 0
-    loop_rate_av = 0
-    th_rate_av = 0
-    #images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    total_rate_sum = 0
+    # images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
     images = ['Vision/20201028-072710_2.png']
     while True:
         for im in images:
-            #total_now = time.time()
+            total_now = time.time()
             img = cv2.imread(im) # reads image
-            observation, img, cc_rate, loop_rate, th_rate = current_observation(img)
-            #total_elapsed = time.time() - total_now
-            #total_rate = 1.0 / total_elapsed
-            #print(total_rate)
-            lp_total += loop_rate
-            cc_total += cc_rate
-            th_total += th_rate
+            observation, img = current_observation(img)
+            total_elapsed = time.time() - total_now
+            total_rate = 1.0 / total_elapsed
+            print([total_rate, "total_rate"])
+            total_rate_sum += total_rate
             av_count += 1
             if av_count == 40:
-                cc_rate_av = cc_total/40
-                loop_rate_av = lp_total/40
-                th_rate_av = th_total/40
-                print([cc_rate_av, "Filter_CC"],[loop_rate_av,"Filter_loop"], [th_rate_av,"Filter_th"])
+                total_rate_av = total_rate_sum/40
                 print(observation)
+                print(total_rate_av)
                 av_count = 0
-                lp_total = 0
-                cc_total = 0
-                th_total = 0
-                cc_rate_av = 0
-                loop_rate_av = 0
-                th_rate_av = 0
-            #     av_rate = av_process/15
-            #     print("Average processing rate:{}.".format(av_rate))
-            #     av_count = 0
-            #     av_process = 0
+                total_rate_sum = 0
             cv2.imshow(im, img)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
