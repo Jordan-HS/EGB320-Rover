@@ -258,16 +258,20 @@ def detect_wall(hsv_masks):
         return
     obs_array = []
     indx = 3
-    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         boundary = cv2.boundingRect(cnt)
         # print(area)
         if (boundary[1] <= 0):
             if ((boundary[1] + boundary[3]) > 100):
                 for points in barrier_cont:
+                    # Reduce sample points for testing rover barrier
+                    #hull = cv2.convexHull(cnt)
+                    epsilon = 0.01 * cv2.arcLength(cnt, True)
+                    approx = cv2.approxPolyDP(cnt, epsilon, closed=True)
                     # Define (x,y) coordinates
                     x,y = points[0]
-                    if cv2.pointPolygonTest(cnt, (x,y), False) >= 0:
+                    if cv2.pointPolygonTest(approx, (x,y), False) >= 0:
                         # Index for wall type
                         obs_indx = indx
                         # Obstacle label
@@ -581,11 +585,11 @@ def current_observation(img):
 
     #print(obstacle_array)
     # Draw from and boundary
-    # return_im = disp_image(image, obstacle_array)
-    # return obstacle_array, return_im
+    return_im = disp_image(image, obstacle_array)
+    return obstacle_array, return_im
 
     #return_im = disp_image(image, obstacle_array)
-    return obstacle_array
+    # return obstacle_array
 
 try:
     print("PROGRAM INITIATED...")
@@ -606,13 +610,13 @@ try:
             print([total_rate, "total_rate"])
             total_rate_sum += total_rate
             av_count += 1
-            if av_count == 40:
-                total_rate_av = total_rate_sum/40
+            if av_count == 10:
+                total_rate_av = total_rate_sum/10
                 print(observation)
                 print(total_rate_av)
                 av_count = 0
                 total_rate_sum = 0
-            #cv2.imshow(im, img)
+                cv2.imshow(im, img)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
