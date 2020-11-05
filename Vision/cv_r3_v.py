@@ -608,23 +608,20 @@ def current_observation():
 
     #print(obstacle_array)
     # Draw from and boundary
-    return_im = disp_image(image, obstacle_array)
-    return obstacle_array, return_im
+    # return_im = disp_image(image, obstacle_array)
+    return obstacle_array, image
 
     #return_im = disp_image(image, obstacle_array)
-    # return obstacle_array
+    #return obstacle_array
 
 try:
     print("PROGRAM INITIATED...")
     barrier_cont = obs_setup()
-    observation, img = current_observation()
+    observation = current_observation()
     time.sleep(1)
     av_process = 0
     av_count = 0
     total_rate_sum = 0
-    #images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
-    #images = ['Vision/20201028-072710_2.png']
-    #images = ['Vision/20201030-120002.png']
     while True:
         total_now = time.time()
         observation, img = current_observation()
@@ -638,14 +635,15 @@ try:
             print(total_rate_av)
             av_count = 0
             total_rate_sum = 0
-            cv2.imshow('Final_image', img)
+            return_im = disp_image(img, observation)
+            cv2.imshow('Final_image', return_im)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
         # Save image output by pressing 's'
         elif key == ord("s"):
             #cv2.imwrite('mask.png',mask)
-            cv2.imwrite('image_frame.png',img)
+            #cv2.imwrite('image_frame.png',img)
             #cv2.imwrite('result.png',obs_image)
 except KeyboardInterrupt:
     print("Stopped")
