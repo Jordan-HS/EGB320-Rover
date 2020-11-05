@@ -466,7 +466,7 @@ def hidden_obs(cnt, obs_indx, id_type, boundary, error):
     print([elapsed, "hidden_obs"])
     return obs_array_boundary
 
-def disp_image(image, obstacle_array):
+def disp_image(obstacle_array, image):
     obs_image = image
     new_obs = obstacle_array
     for i, _ in enumerate(new_obs):
@@ -611,13 +611,10 @@ def current_observation():
     # return_im = disp_image(image, obstacle_array)
     return obstacle_array, image
 
-    #return_im = disp_image(image, obstacle_array)
-    #return obstacle_array
-
 try:
     print("PROGRAM INITIATED...")
     barrier_cont = obs_setup()
-    observation = current_observation()
+    observation, img = current_observation()
     time.sleep(1)
     av_process = 0
     av_count = 0
@@ -635,7 +632,7 @@ try:
             print(total_rate_av)
             av_count = 0
             total_rate_sum = 0
-            return_im = disp_image(img, observation)
+            return_im = disp_image(observation, img)
             cv2.imshow('Final_image', return_im)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
@@ -643,7 +640,7 @@ try:
         # Save image output by pressing 's'
         elif key == ord("s"):
             #cv2.imwrite('mask.png',mask)
-            #cv2.imwrite('image_frame.png',img)
+            cv2.imwrite('image_frame.png',return_im)
             #cv2.imwrite('result.png',obs_image)
 except KeyboardInterrupt:
     print("Stopped")
