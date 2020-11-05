@@ -37,6 +37,20 @@ KNOWN_DIST = 0.20       # Distance to test tile from camera (m)
 KNOWN_WIDTH = 0.069     # Width of test tile (m)
 FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 
+# Initialise camera setup
+camera = PiCamera()
+camera.resolution = (IMG_X, IMG_Y)
+camera.framerate = 16
+# Allow time for the camera to warmup
+time.sleep(2.0)
+camera.video_stabilization = False
+camera.exposure_mode = 'off'
+camera.awb_mode = 'off'
+camera.awb_gains = 2.0
+
+#camera.awb_gains = 3
+rawCapture = PiRGBArray(camera, size=(IMG_X, IMG_Y))
+
 def obs_setup():
     # Define barrier around cropped image
     barrier_cont = []
@@ -58,11 +72,7 @@ def obs_setup():
 # Image crop to decrease image processing time
 # Crops 240px image height to 180px
 def crop_image(image):
-    now = time.time()
     crop_img = image[int(image.shape[0]*0.25):image.shape[0]]
-    elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "Crop"])
     return crop_img
 
 # HSV colour threshold filter
@@ -482,17 +492,28 @@ def disp_image(image, obstacle_array):
     cv2.drawContours(obs_image, [barrier_cont], -1, OBS_col[5], 1)
     return obs_image
 
-def current_observation(img):
-    image = img # reads image
-    #rawCapture.truncate(0)
-
+def current_observation():
+    # Grab frame
     now = time.time()
+    camera.capture(rawCapture, format="bgr", use_video_port=True)
+    image = rawCapture.array
+    rawCapture.truncate(0)
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Frame_cap"])
+
+    # Crop image
+    now = time.time()
+    image = crop_image(image)
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Crop_frame"])
+
     # Apply HSV threshold to frame
     hsv_masks = mask_obs(image)
     elapsed = time.time() - now
     rate = 1.0 / elapsed
     print([rate, "mask_loop"])
-
 
     now = time.time()
     # Apply filter to mask images to remove noise
@@ -594,37 +615,36 @@ def current_observation(img):
 try:
     print("PROGRAM INITIATED...")
     barrier_cont = obs_setup()
+    observation, img = current_observation()
     time.sleep(1)
     av_process = 0
     av_count = 0
     total_rate_sum = 0
-    images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
+    #images = ['Vision/20201030-114123.png','Vision/20201030-115341.png','Vision/20201028-072710_2.png','Vision/20201028-072649_2.png','Vision/20201030-114207.png','Vision/20201030-114235.png','Vision/20201030-115943.png','Vision/20201030-115731.png','Vision/20201030-115813.png', 'Vision/20201030-120016.png', 'Vision/20201030-120002.png', 'Vision/20201030-115848.png']
     #images = ['Vision/20201028-072710_2.png']
     #images = ['Vision/20201030-120002.png']
     while True:
-        for im in images:
-            total_now = time.time()
-            img = cv2.imread(im) # reads image
-            observation = current_observation(img)
-            total_elapsed = time.time() - total_now
-            total_rate = 1.0 / total_elapsed
-            print([total_rate, "total_rate"])
-            total_rate_sum += total_rate
-            av_count += 1
-            if av_count == 10:
-                total_rate_av = total_rate_sum/10
-                print(observation)
-                print(total_rate_av)
-                av_count = 0
-                total_rate_sum = 0
-                cv2.imshow(im, img)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
-            # Save image output by pressing 's'
-            elif key == ord("s"):
-                cv2.imwrite('mask.png',mask)
-                cv2.imwrite('image_frame.png',image)
-                cv2.imwrite('result.png',obs_image)
+        total_now = time.time()
+        observation, img = current_observation()
+        total_elapsed = time.time() - total_now
+        total_rate = 1.0 / total_elapsed
+        print([total_rate, "total_rate"])
+        total_rate_sum += total_rate
+        av_count += 1
+        if av_count == 10:
+            total_rate_av = total_rate_sum/10
+            print(observation)
+            print(total_rate_av)
+            av_count = 0
+            total_rate_sum = 0
+            cv2.imshow('Final_image', img)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
+        # Save image output by pressing 's'
+        elif key == ord("s"):
+            #cv2.imwrite('mask.png',mask)
+            cv2.imwrite('image_frame.png',img)
+            #cv2.imwrite('result.png',obs_image)
 except KeyboardInterrupt:
     print("Stopped")
