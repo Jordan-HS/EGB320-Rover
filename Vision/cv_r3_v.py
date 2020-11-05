@@ -42,7 +42,7 @@ FOCAL_PIX = (KNOWN_PIXEL_WIDTH * KNOWN_DIST)/KNOWN_WIDTH
 # Initialise camera setup
 camera = PiCamera()
 camera.resolution = (IMG_X, IMG_Y)
-camera.framerate = 16
+camera.framerate = 8
 # Allow time for the camera to warmup
 time.sleep(2.0)
 camera.video_stabilization = False
