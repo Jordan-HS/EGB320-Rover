@@ -137,7 +137,7 @@ def detect_rock(hsv_masks):
         return
     obs_array = []
     indx = 0
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         # print(area)
@@ -195,7 +195,7 @@ def detect_sat(hsv_masks):
         return
     obs_array = []
     indx = 1
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         # print(area)
@@ -236,7 +236,7 @@ def detect_land(hsv_masks):
     obs_array = []
     indx = 2
     #_, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = np.concatenate(contours)
     #boundary_area = cv2.findNonZero(mask)
     # obstacle type index
@@ -270,7 +270,7 @@ def detect_wall(hsv_masks):
         return
     obs_array = []
     indx = 3
-    _, contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         boundary = cv2.boundingRect(cnt)
         # print(area)
@@ -341,7 +341,7 @@ def detect_samp(hsv_masks):
         return
     obs_array = []
     indx = 4
-    _,contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
         if area > 40:
