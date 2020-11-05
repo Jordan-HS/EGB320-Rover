@@ -396,8 +396,8 @@ def overlap_obs(cnt, obs_indx, id_type, boundary, error):
         # Create list of values
         obs_array_overlap.append([obs_indx, id_type, obs_ang, obs_dist, centre, obs, error])
     elapsed = time.time() - now
-    #rate = 1.0 / elapsed
-    print([elapsed, "overlap_obs"])
+    rate = 1.0 / elapsed
+    print([rate, "overlap_obs"])
     return obs_array_overlap
 
 def boundary_obs(cnt, obs_indx, id_type, boundary, error):
@@ -633,9 +633,8 @@ try:
         print([total_rate, "total_rate"])
         total_rate_sum += total_rate
         av_count += 1
-        if av_count == 10:
-            total_rate_av = total_rate_sum/10
-            print(observation)
+        if av_count == 20:
+            total_rate_av = total_rate_sum/20
             print(total_rate_av)
             av_count = 0
             total_rate_sum = 0

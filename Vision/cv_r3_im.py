@@ -258,7 +258,7 @@ def detect_wall(hsv_masks):
         return
     obs_array = []
     indx = 3
-    contours, _ = cv2.findContours(mask, cv2.cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         boundary = cv2.boundingRect(cnt)
         # print(area)
