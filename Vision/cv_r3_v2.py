@@ -615,7 +615,7 @@ time.sleep(1)
 av_process = 0
 av_count = 0
 total_rate_sum = 0
-
+now = time.time()
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 #try:
     print("PROGRAM INITIATED...")
