@@ -612,7 +612,7 @@ def current_observation(image):
     return obstacle_array, image
 
 barrier_cont = obs_setup()
-image = frame.array
+
 observation, img = current_observation(image)
 time.sleep(1)
 av_process = 0
@@ -622,6 +622,7 @@ total_rate_sum = 0
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 #try:
     print("PROGRAM INITIATED...")
+    image = frame.array
     # barrier_cont = obs_setup()
     # image = frame.array
     # observation, img = current_observation(image)
