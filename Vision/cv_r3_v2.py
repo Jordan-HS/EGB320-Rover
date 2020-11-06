@@ -644,5 +644,5 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             #cv2.imwrite('mask.png',mask)
             cv2.imwrite('image_frame.png',return_im)
             #cv2.imwrite('result.png',obs_image)
-except KeyboardInterrupt:
-    print("Stopped")
+# except KeyboardInterrupt:
+#     print("Stopped")
