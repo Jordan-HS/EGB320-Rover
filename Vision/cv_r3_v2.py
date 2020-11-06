@@ -611,38 +611,46 @@ def current_observation(image):
     # return_im = disp_image(image, obstacle_array)
     return obstacle_array, image
 
+barrier_cont = obs_setup()
+image = frame.array
+observation, img = current_observation(image)
+time.sleep(1)
+av_process = 0
+av_count = 0
+total_rate_sum = 0
+
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 #try:
     print("PROGRAM INITIATED...")
-    barrier_cont = obs_setup()
-    image = frame.array
+    # barrier_cont = obs_setup()
+    # image = frame.array
+    # observation, img = current_observation(image)
+    # time.sleep(1)
+    # av_process = 0
+    # av_count = 0
+    # total_rate_sum = 0
+
+    total_now = time.time()
     observation, img = current_observation(image)
-    time.sleep(1)
-    av_process = 0
-    av_count = 0
-    total_rate_sum = 0
-    while True:
-        total_now = time.time()
-        observation, img = current_observation()
-        total_elapsed = time.time() - total_now
-        total_rate = 1.0 / total_elapsed
-        print([total_rate, "total_rate"])
-        total_rate_sum += total_rate
-        av_count += 1
-        if av_count == 20:
-            total_rate_av = total_rate_sum/20
-            print(total_rate_av)
-            av_count = 0
-            total_rate_sum = 0
-            return_im = disp_image(observation, img)
-            cv2.imshow('Final_image', return_im)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
-        # Save image output by pressing 's'
-        elif key == ord("s"):
-            #cv2.imwrite('mask.png',mask)
-            cv2.imwrite('image_frame.png',return_im)
-            #cv2.imwrite('result.png',obs_image)
+    total_elapsed = time.time() - total_now
+    total_rate = 1.0 / total_elapsed
+    print([total_rate, "total_rate"])
+    total_rate_sum += total_rate
+    av_count += 1
+    if av_count == 20:
+        total_rate_av = total_rate_sum/20
+        print(total_rate_av)
+        av_count = 0
+        total_rate_sum = 0
+        return_im = disp_image(observation, img)
+        cv2.imshow('Final_image', return_im)
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
+    # Save image output by pressing 's'
+    elif key == ord("s"):
+        #cv2.imwrite('mask.png',mask)
+        cv2.imwrite('image_frame.png',return_im)
+        #cv2.imwrite('result.png',obs_image)
 # except KeyboardInterrupt:
 #     print("Stopped")
