@@ -496,13 +496,11 @@ def disp_image(obstacle_array, image):
 
 def current_observation(image):
     # Grab frame
-    now = time.time()
+
     # camera.capture(rawCapture, format="bgr", use_video_port=True)
     # image = rawCapture.array
     rawCapture.truncate(0)
-    elapsed = time.time() - now
-    rate = 1.0 / elapsed
-    print([rate, "Frame_cap"])
+
 
     # Crop image
     now = time.time()
@@ -621,7 +619,11 @@ total_rate_sum = 0
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 #try:
     print("PROGRAM INITIATED...")
+
     image = frame.array
+    elapsed = time.time() - now
+    rate = 1.0 / elapsed
+    print([rate, "Frame_cap"])
     # barrier_cont = obs_setup()
     # image = frame.array
     # observation, img = current_observation(image)
@@ -646,6 +648,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         return_im = disp_image(observation, img)
         cv2.imshow('Final_image', return_im)
     key = cv2.waitKey(1) & 0xFF
+    now = time.time()
     if key == ord("q"):
         break
     # Save image output by pressing 's'
