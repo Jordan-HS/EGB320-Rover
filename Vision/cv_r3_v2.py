@@ -613,7 +613,6 @@ def current_observation(image):
 
 barrier_cont = obs_setup()
 
-observation, img = current_observation(image)
 time.sleep(1)
 av_process = 0
 av_count = 0
@@ -630,6 +629,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     # av_process = 0
     # av_count = 0
     # total_rate_sum = 0
+    observation, img = current_observation(image)
 
     total_now = time.time()
     observation, img = current_observation(image)
